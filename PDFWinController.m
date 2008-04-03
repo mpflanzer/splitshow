@@ -13,48 +13,166 @@
 
 @implementation PDFWinController
 
+- (void)init
+{
+    _pdfDoc1 =      nil;
+    _pdfDoc2 =      nil;
+    _pdfNotesMode = PDFNotesMirror;
+}
+
+- (void)newWindow: (id)sender
+{
+    NSLog(@"New window");
+}
+   
 - (void)openPDF: (id)sender
 {
-    int result;
+    int             result;
+    NSURL *         url;
     
-    NSOpenPanel *oPanel = [NSOpenPanel openPanel];
+    NSOpenPanel *   oPanel = [NSOpenPanel openPanel];
+    [oPanel setAccessoryView:_presentationModeChooser];
+    [oPanel setCanChooseFiles: YES];
+    [oPanel setCanChooseDirectories: NO];
+    [oPanel setResolvesAliases: YES];
     [oPanel setAllowsMultipleSelection: NO];
     
     result = [oPanel runModalForDirectory: NSHomeDirectory()
                                      file: nil
                                     types: [NSArray arrayWithObject: @"pdf"]];
     if (result == NSOKButton)
+        url = [NSURL fileURLWithPath: [[oPanel filenames] objectAtIndex: 0]];
+    else
+        return;
+
+    // split document according to Notes mode
+    switch (_pdfNotesMode)
     {
-        NSURL * url = [NSURL fileURLWithPath: [[oPanel filenames] objectAtIndex: 0]];
-        _pdfDoc = [[PDFDocument alloc] initWithURL: url];
+        case PDFNotesMirror:
+            _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
+            _pdfDoc2 = _pdfDoc1;
+            break;
+
+        case PDFNotesWidePage:
+            _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
+            _pdfDoc2 = [[PDFDocument alloc] initWithURL:url];
+            
+            // display half document
+            for (int i = 0; i < [_pdfDoc1 pageCount]; i++)
+            {
+                PDFPage * page1 =   [_pdfDoc1 pageAtIndex: i];
+                PDFPage * page2 =   [_pdfDoc2 pageAtIndex: i];
+                NSRect rect =       [page1 boundsForBox: kPDFDisplayBoxCropBox];
+                rect.size.width /=  2;
+                [page1 setBounds: rect forBox: kPDFDisplayBoxCropBox];
+                rect.origin.x += rect.size.width;
+                [page2 setBounds: rect forBox: kPDFDisplayBoxCropBox];
+            }
+            break;
+            
+        case PDFNotesInterleaved:
+            //TODO: what if PDF doc has less that two pages?
+            _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
+            _pdfDoc2 = [[PDFDocument alloc] initWithURL:url];
+            
+            // drop every second page
+            for (NSInteger i = [_pdfDoc1 pageCount]-1; i > 0; i-=2)
+            {
+                [_pdfDoc1 removePageAtIndex:i];
+                [_pdfDoc2 removePageAtIndex:i-1];
+            }
+            break;
+    }
+
+    [_pdfView1 setDocument: _pdfDoc1];
+    [_pdfView2 setDocument: _pdfDoc2];
+    NSArray * views = [NSArray arrayWithObjects: _pdfView1, _pdfView2, nil];
+    for (id v in views)
+    {
+        [v setDisplayMode: kPDFDisplaySinglePage];
+        [v setDisplaysPageBreaks: NO];
+        [v setBackgroundColor: [NSColor blackColor]];
+        [v setAutoScales: YES];
     }
     
-    // display half document
-    int i;
-    for (i = 0; i < [_pdfDoc pageCount]; i++)
-    {
-        PDFPage * page =    [_pdfDoc pageAtIndex: i];
-        NSRect rect =       [page boundsForBox: kPDFDisplayBoxCropBox];
-        rect.size.width /=  2;
-        [page setBounds: rect forBox: kPDFDisplayBoxCropBox];
-    }
-    
-    [_pdfView1 setDocument: _pdfDoc];
-    [_pdfView2 setDocument: _pdfDoc];
-    [_pdfView1 setDisplayMode: kPDFDisplaySinglePage];
-    [_pdfView2 setDisplayMode: kPDFDisplaySinglePage];
-    [_pdfView1 setAutoScales: YES];
-    [_pdfView2 setAutoScales: YES];
+    // notifications
+    [[NSNotificationCenter defaultCenter] addObserver:self
+                                             selector:@selector(pdfPageChanged:)
+                                                 name:PDFViewPageChangedNotification
+                                               object:nil];
     NSLog(@"openPDF");
 }
 
 - (void)enterFullScreenMode: (id)sender
 {
-    NSArray * screens = [NSScreen screens];
-    [_pdfView1 enterFullScreenMode: [screens objectAtIndex: 0]
-                       withOptions: nil];
-    [_pdfView2 enterFullScreenMode: [screens objectAtIndex: 1]
-                       withOptions: nil];
+    PDFView *   pdfView;
+    NSScreen *  screen;
+    NSArray *   screens =   [NSScreen screens];
+    NSArray *   pdfViews =  [NSArray arrayWithObjects: _pdfView1, _pdfView2, nil];
+
+    for (int i = 0; i < [screens count]; i++)
+    {
+        pdfView =   [pdfViews objectAtIndex:i];
+        screen =    [screens objectAtIndex:i];
+
+        // go full-screen
+        [pdfView enterFullScreenMode: screen withOptions: nil];
+        [pdfView setNextResponder:self];
+    }
+    
+    NSLog(@"going full screen");
+}
+
+- (void)pdfPageChanged:(NSNotification *)notification
+{
+    PDFView * pdfView =     [notification object];
+    NSUInteger pageNbr =    [[pdfView document] indexForPage:[pdfView currentPage]];
+    
+    [_pdfView1 goToPage:[_pdfDoc1 pageAtIndex:pageNbr]];
+    [_pdfView2 goToPage:[_pdfDoc2 pageAtIndex:pageNbr]];
+}
+
+// get out of full-screen mode upon ESC or Command-.
+- (void)cancelOperation:(id)sender
+{
+    NSLog(@"PDFWinController: cancelOperation");
+    [_pdfView1 exitFullScreenModeWithOptions: nil];
+    [_pdfView2 exitFullScreenModeWithOptions: nil];
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+}
+
+/*
+- (PDFNotesMode)_pdfNotesMode
+{
+    return _pdfNotesMode;
+}
+
+- (void)set_pdfNotesMode:(PDFNotesMode)pdfNotesMode
+{
+    _pdfNotesMode = pdfNotesMode;
+}
+*/
+
+- (void)setNotesMode:(id)sender
+{
+    switch ((int)[sender selectedColumn])
+    {
+        case 0:
+            _pdfNotesMode = PDFNotesMirror;
+            break;
+        case 1:
+            _pdfNotesMode = PDFNotesInterleaved;
+            break;
+        case 2:
+            _pdfNotesMode = PDFNotesWidePage;
+            break;
+        default:
+            _pdfNotesMode = PDFNotesMirror;
+    }
 }
 
 @end

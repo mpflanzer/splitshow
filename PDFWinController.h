@@ -10,12 +10,26 @@
 #import <Quartz/Quartz.h>
 
 
+typedef enum {
+    PDFNotesMirror,
+    PDFNotesWidePage,   // wide pages with notes on the right half
+    PDFNotesInterleaved // interleaved slides and notes
+} PDFNotesMode;
+
 @interface PDFWinController : NSWindowController {
     IBOutlet PDFView *  _pdfView1;
     IBOutlet PDFView *  _pdfView2;
-    PDFDocument *       _pdfDoc;
+    IBOutlet NSView *   _presentationModeChooser;
+    PDFDocument *       _pdfDoc1;
+    PDFDocument *       _pdfDoc2;
+    PDFNotesMode        _pdfNotesMode;
 }
-- (void) openPDF: (id)sender;
-- (void) enterFullScreenMode: (id)sender;
-
+- (void)init;
+- (void)newWindow:(id)sender;
+- (void)openPDF:(id)sender;
+- (void)enterFullScreenMode:(id)sender;
+- (void)pdfPageChanged:(NSNotification *)notification;
+//- (PDFNotesMode)_pdfNotesMode;
+//- (void)set_pdfNotesMode:(PDFNotesMode)pdfNotesMode;
+- (void)setNotesMode:(id)sender;
 @end
