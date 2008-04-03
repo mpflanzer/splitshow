@@ -11,10 +11,19 @@
 
 @implementation PDFViewSub
 
- - (void)cancelOperation: (id)sender
+/*
+ - (void)cancelOperation:(id)sender
 {
     NSLog(@"PDFViewSub: cancelOperation");
     [self exitFullScreenModeWithOptions: nil];
 }
+ */
+
+/*
+- (void)keyDown:(NSEvent *)theEvent
+{    
+    [[self nextResponder] keyDown:theEvent];
+}
+ */
 
 @end

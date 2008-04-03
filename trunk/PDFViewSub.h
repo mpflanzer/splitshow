@@ -13,6 +13,9 @@
 @interface PDFViewSub : PDFView {
 
 }
+/*
 - (void) cancelOperation: (id)sender;
+- (void)keyDown:(NSEvent *)theEvent;
+ */
 
 @end
