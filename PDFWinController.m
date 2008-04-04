@@ -24,19 +24,21 @@
 {
     NSLog(@"New window");
 }
-   
+
 - (void)openPDF: (id)sender
 {
     int             result;
     NSURL *         url;
-    
+    PDFDocument *   pdfDoc;
+    NSAlert *       theAlert;
+
     NSOpenPanel *   oPanel = [NSOpenPanel openPanel];
     [oPanel setAccessoryView:_presentationModeChooser];
     [oPanel setCanChooseFiles: YES];
     [oPanel setCanChooseDirectories: NO];
     [oPanel setResolvesAliases: YES];
     [oPanel setAllowsMultipleSelection: NO];
-    
+
     result = [oPanel runModalForDirectory: NSHomeDirectory()
                                      file: nil
                                     types: [NSArray arrayWithObject: @"pdf"]];
@@ -56,7 +58,7 @@
         case PDFNotesWidePage:
             _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
             _pdfDoc2 = [[PDFDocument alloc] initWithURL:url];
-            
+
             // display half document
             for (int i = 0; i < [_pdfDoc1 pageCount]; i++)
             {
@@ -69,12 +71,22 @@
                 [page2 setBounds: rect forBox: kPDFDisplayBoxCropBox];
             }
             break;
-            
+
         case PDFNotesInterleaved:
-            //TODO: what if PDF doc has less that two pages?
-            _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
+            pdfDoc = [[PDFDocument alloc] initWithURL:url];
+            if ([pdfDoc pageCount] % 2 == 1)
+            {
+                theAlert = [NSAlert alertWithMessageText:@"Not a proper interleaved format."
+                                           defaultButton:@"OK"
+                                         alternateButton:nil
+                                             otherButton:nil
+                               informativeTextWithFormat:@"This document contains an odd number of pages.\nCowardly refusing to open it."];
+                [theAlert runModal];
+                break;
+            }
+            _pdfDoc1 = pdfDoc;
             _pdfDoc2 = [[PDFDocument alloc] initWithURL:url];
-            
+
             // drop every second page
             for (NSInteger i = [_pdfDoc1 pageCount]-1; i > 0; i-=2)
             {
@@ -94,7 +106,7 @@
         [v setBackgroundColor: [NSColor blackColor]];
         [v setAutoScales: YES];
     }
-    
+
     // notifications
     [[NSNotificationCenter defaultCenter] addObserver:self
                                              selector:@selector(pdfPageChanged:)
@@ -119,7 +131,7 @@
         [pdfView enterFullScreenMode: screen withOptions: nil];
         [pdfView setNextResponder:self];
     }
-    
+
     NSLog(@"going full screen");
 }
 
@@ -127,7 +139,7 @@
 {
     PDFView * pdfView =     [notification object];
     NSUInteger pageNbr =    [[pdfView document] indexForPage:[pdfView currentPage]];
-    
+
     [_pdfView1 goToPage:[_pdfDoc1 pageAtIndex:pageNbr]];
     [_pdfView2 goToPage:[_pdfDoc2 pageAtIndex:pageNbr]];
 }
