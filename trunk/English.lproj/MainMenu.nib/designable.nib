@@ -8,10 +8,10 @@
 		<string key="IBDocument.HIToolboxVersion">352.00</string>
 		<object class="NSMutableArray" key="IBDocument.EditedObjectIDs">
 			<bool key="EncodedWithXMLCoder">YES</bool>
-			<integer value="372"/>
-			<integer value="29"/>
 			<integer value="421"/>
 			<integer value="435"/>
+			<integer value="29"/>
+			<integer value="372"/>
 		</object>
 		<object class="NSArray" key="IBDocument.PluginDependencies">
 			<bool key="EncodedWithXMLCoder">YES</bool>
@@ -893,6 +893,7 @@
 								<int key="NSCellFlags2">0</int>
 								<string key="NSContents">Interleave Pages</string>
 								<reference key="NSSupport" ref="421292878"/>
+								<int key="NSTag">1</int>
 								<reference key="NSControlView" ref="530652790"/>
 								<int key="NSButtonFlags">1211912703</int>
 								<int key="NSButtonFlags2">402653312</int>
@@ -1041,8 +1042,9 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA</bytes>
 							<object class="NSButtonCell" id="8965725">
 								<int key="NSCellFlags">67239424</int>
 								<int key="NSCellFlags2">0</int>
-								<string key="NSContents">Wide Pages</string>
+								<string key="NSContents">Split Pages</string>
 								<reference key="NSSupport" ref="421292878"/>
+								<int key="NSTag">2</int>
 								<reference key="NSControlView" ref="530652790"/>
 								<int key="NSButtonFlags">1211912703</int>
 								<int key="NSButtonFlags2">402653312</int>
@@ -2572,7 +2574,7 @@ AAMAAAABAAEAAAFTAAMAAAAEAAAFwgAAAAAACAAIAAgACAABAAEAAQABA</bytes>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
-					<string>{{1, 366}, {383, 46}}</string>
+					<string>{{4, 365}, {383, 46}}</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
 					<string>com.apple.InterfaceBuilder.CocoaPlugin</string>
