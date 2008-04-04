@@ -12,8 +12,9 @@
 
 typedef enum {
     PDFNotesMirror,
-    PDFNotesWidePage,   // wide pages with notes on the right half
-    PDFNotesInterleaved // interleaved slides and notes
+    PDFNotesWidePage,       // wide pages with notes on the right half
+    PDFNotesInterleaved,    // interleaved slides and notes
+    PDFNotesNAV             // interleaved slides and notes with NAV file
 } PDFNotesMode;
 
 @interface PDFWinController : NSWindowController {
@@ -29,7 +30,6 @@ typedef enum {
 - (void)openPDF:(id)sender;
 - (void)enterFullScreenMode:(id)sender;
 - (void)pdfPageChanged:(NSNotification *)notification;
-//- (PDFNotesMode)_pdfNotesMode;
-//- (void)set_pdfNotesMode:(PDFNotesMode)pdfNotesMode;
 - (void)setNotesMode:(id)sender;
++ (void)parseNAVFileFromPath:(NSString *)navFilePath slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
 @end
