@@ -159,7 +159,7 @@
 
 - (void)setNotesMode:(id)sender
 {
-    switch ((int)[sender selectedColumn])
+    switch ([[sender selectedCell] tag])
     {
         case 0:
             _pdfNotesMode = PDFNotesMirror;
