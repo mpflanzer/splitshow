@@ -1,0 +1,13 @@
+- come up with a good name
+
+- add a preview to the open dialog
+
+- auto-guess "filetype"
+
+- preference to enable/disable "filetype" guessing
+
+- handle PDFs with an odd number of pages for interleaved mode
+
+- parse the .nav file
+
+- support drag and drop
