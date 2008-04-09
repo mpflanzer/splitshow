@@ -8,6 +8,9 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
+#import <ApplicationServices/ApplicationServices.h>
+#import "PDFViewCG.h"
+#import "TwinViewResponder.h"
 
 
 typedef enum {
@@ -18,18 +21,19 @@ typedef enum {
 } PDFNotesMode;
 
 @interface PDFWinController : NSWindowController {
-    IBOutlet PDFView *  _pdfView1;
-    IBOutlet PDFView *  _pdfView2;
-    IBOutlet NSView *   _presentationModeChooser;
-    PDFDocument *       _pdfDoc1;
-    PDFDocument *       _pdfDoc2;
-    PDFNotesMode        _pdfNotesMode;
+    IBOutlet NSView             * _presentationModeChooser;
+    PDFNotesMode                _pdfNotesMode;
+
+    IBOutlet PDFViewCG          * _pdfViewCG1;
+    IBOutlet PDFViewCG          * _pdfViewCG2;
+    IBOutlet TwinViewResponder  * _twinViewResponder;
+    CGPDFDocumentRef            pdfDocRef;
 }
 - (void)init;
 - (void)newWindow:(id)sender;
 - (void)openPDF:(id)sender;
-- (void)enterFullScreenMode:(id)sender;
-- (void)pdfPageChanged:(NSNotification *)notification;
+//- (void)enterFullScreenMode:(id)sender;
+//- (void)pdfPageChanged:(NSNotification *)notification;
 - (void)setNotesMode:(id)sender;
 + (void)parseNAVFileFromPath:(NSString *)navFilePath slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
 @end

@@ -15,9 +15,20 @@
 
 - (void)init
 {
-    _pdfDoc1 =      nil;
-    _pdfDoc2 =      nil;
     _pdfNotesMode = PDFNotesMirror;
+    pdfDocRef =     NULL;
+}
+
+- (void)dealloc
+{
+    CGPDFDocumentRelease(pdfDocRef);
+    [super dealloc];
+}
+
+- (void)awakeFromNib
+{
+    [[_pdfViewCG1 window] setNextResponder:_twinViewResponder];
+    [[_pdfViewCG2 window] setNextResponder:_twinViewResponder];
 }
 
 - (void)newWindow: (id)sender
@@ -25,13 +36,20 @@
     NSLog(@"New window");
 }
 
+//- (void)enterFullScreenMode:(id)sender
+//{
+//    [_twinViewResponder enterFullScreenMode];
+//}
+
 - (void)openPDF: (id)sender
 {
-    int             result;
-    NSURL           * url;
-    PDFDocument     * pdfDoc;
-
-    NSOpenPanel     * oPanel = [NSOpenPanel openPanel];
+    int         result;
+    size_t      pageCount;
+    NSURL       * url;
+    NSString    * navPath;
+    NSOpenPanel * oPanel;
+    
+    oPanel = [NSOpenPanel openPanel];
     [oPanel setAccessoryView:_presentationModeChooser];
     [oPanel setCanChooseFiles: YES];
     [oPanel setCanChooseDirectories: NO];
@@ -46,45 +64,55 @@
     else
         return;
     
-    // split document according to Notes mode
+
+    // load PDF document
+    pdfDocRef = CGPDFDocumentCreateWithURL( (CFURLRef)url );
+    pageCount = CGPDFDocumentGetNumberOfPages( pdfDocRef );
+    if (pageCount == 0) {
+        NSLog(@"PDF document needs at least one page!");
+        return;
+    }
+
+    // send PDF handle to the views
+    [_pdfViewCG1 setPdfDocumentRef:pdfDocRef];
+    [_pdfViewCG2 setPdfDocumentRef:pdfDocRef];
+
+    // build pages numbers according to Notes mode
+    NSMutableArray * pages1 = [NSMutableArray arrayWithCapacity:pageCount];
+    NSMutableArray * pages2 = [NSMutableArray arrayWithCapacity:pageCount];
+
     switch (_pdfNotesMode)
     {
         case PDFNotesMirror:
-            _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
-            _pdfDoc2 = _pdfDoc1;
-            break;
-            
-        case PDFNotesWidePage:
-            _pdfDoc1 = [[PDFDocument alloc] initWithURL:url];
-            _pdfDoc2 = [[PDFDocument alloc] initWithURL:url];
-            
-            // display half document
-            for (int i = 0; i < [_pdfDoc1 pageCount]; i++)
+            for (int i = 0; i < pageCount; i++)
             {
-                PDFPage * page1 =   [_pdfDoc1 pageAtIndex: i];
-                PDFPage * page2 =   [_pdfDoc2 pageAtIndex: i];
-                NSRect rect =       [page1 boundsForBox: kPDFDisplayBoxCropBox];
-                rect.size.width /=  2;
-                [page1 setBounds: rect forBox: kPDFDisplayBoxCropBox];
-                rect.origin.x += rect.size.width;
-                [page2 setBounds: rect forBox: kPDFDisplayBoxCropBox];
+                [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
+                [pages2 addObject:[NSNumber numberWithUnsignedInt:i+1]];
             }
+            break;
+
+        case PDFNotesWidePage:
+            for (int i = 0; i < pageCount; i++)
+            {
+                [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
+                [pages2 addObject:[NSNumber numberWithUnsignedInt:i+1]];
+            }
+            [_pdfViewCG1 setCropType:LEFT_HALF];
+            [_pdfViewCG2 setCropType:RIGHT_HALF];
             break;
             
         case PDFNotesInterleaved:
-            pdfDoc = [[PDFDocument alloc] initWithURL:url];
-            
             // check if NAV file is present
-            NSString *navPath = [[[url path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"nav"];
-            BOOL isDirectory = FALSE;
-            BOOL navFileExists = [[NSFileManager defaultManager] fileExistsAtPath:navPath
-                                                                      isDirectory:&isDirectory];
-            navFileExists &= !isDirectory;
+            navPath =     [[[url path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"nav"];
+            BOOL isDirectory =      FALSE;
+            BOOL navFileExists =    [[NSFileManager defaultManager] fileExistsAtPath:navPath
+                                                                         isDirectory:&isDirectory];
+            navFileExists &=        !isDirectory;
             
             if (!navFileExists)
             {
                 // no NAV file, file must contain an even number of pages
-                if ([pdfDoc pageCount] % 2 == 1)
+                if (pageCount % 2 == 1)
                 {
                     NSAlert * theAlert = [NSAlert alertWithMessageText:@"Not a proper interleaved format."
                                                          defaultButton:@"OK"
@@ -94,103 +122,28 @@
                     [theAlert runModal];
                     break;
                 }
-
-                // build PDFs from interleaved PDF
-                _pdfDoc1 = pdfDoc;
-                _pdfDoc2 = [[PDFDocument alloc] initWithURL:url];
                 
-                // drop every second page
-                for (int i = [_pdfDoc1 pageCount]-1; i > 0; i-=2)
+                // build arrays of interleaved page numbers
+                for (int i = 0; i < pageCount; i += 2)
                 {
-                    [_pdfDoc1 removePageAtIndex:i];
-                    [_pdfDoc2 removePageAtIndex:i-1];
+                    [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
+                    [pages2 addObject:[NSNumber numberWithUnsignedInt:i+2]];                
                 }
             }
             else
             {
-                // NAV file found
-                NSMutableArray *slides1 =   [NSMutableArray arrayWithCapacity:0];
-                NSMutableArray *slides2 =   [NSMutableArray arrayWithCapacity:0];
-                
                 // parse NAV file
-                [PDFWinController parseNAVFileFromPath:navPath slides1:slides1 slides2:slides2];
-                
-                // build PDF from NAV description
-                int p1 = [[slides1 objectAtIndex:0] unsignedIntValue];
-                int p2 = [[[slides2 objectAtIndex:0] objectAtIndex:0] unsignedIntValue];
-                
-                _pdfDoc1 = [[PDFDocument alloc] initWithData:[[[pdfDoc pageAtIndex:p1] dataRepresentation] copy]];
-                _pdfDoc2 = [[PDFDocument alloc] initWithData:[[[pdfDoc pageAtIndex:p2] dataRepresentation] copy]];
-                for (int i = 1; i < [slides1 count]; i++)
-                {
-                    p1 = [[slides1 objectAtIndex:i] unsignedIntValue];
-                    p2 = [[[slides2 objectAtIndex:i] objectAtIndex:0] unsignedIntValue];
-                    [_pdfDoc1 insertPage:[[pdfDoc pageAtIndex:p1] copy] atIndex:i];
-                    [_pdfDoc2 insertPage:[[pdfDoc pageAtIndex:p2] copy] atIndex:i];
-                }
+                [PDFWinController parseNAVFileFromPath:navPath slides1:pages1 slides2:pages2];
+                NSLog([pages1 description]);
+                NSLog([pages2 description]);
             }
             break;
     }
     
-    [_pdfView1 setDocument: _pdfDoc1];
-    [_pdfView2 setDocument: _pdfDoc2];
-    NSArray * views = [NSArray arrayWithObjects: _pdfView1, _pdfView2, nil];
-    for (id v in views)
-    {
-        [v setDisplayMode: kPDFDisplaySinglePage];
-        [v setDisplaysPageBreaks: NO];
-        [v setBackgroundColor: [NSColor blackColor]];
-        [v setAutoScales: YES];
-    }
-
-    // notifications
-    [[NSNotificationCenter defaultCenter] addObserver:self
-                                             selector:@selector(pdfPageChanged:)
-                                                 name:PDFViewPageChangedNotification
-                                               object:nil];
+    [_twinViewResponder setPageNbrs1:pages1];
+    [_twinViewResponder setPageNbrs2:pages2];
+    
     NSLog(@"openPDF");
-}
-
-- (void)enterFullScreenMode: (id)sender
-{
-    PDFView *   pdfView;
-    NSScreen *  screen;
-    NSArray *   screens =   [NSScreen screens];
-    NSArray *   pdfViews =  [NSArray arrayWithObjects: _pdfView1, _pdfView2, nil];
-
-    for (int i = 0; i < [screens count]; i++)
-    {
-        pdfView =   [pdfViews objectAtIndex:i];
-        screen =    [screens objectAtIndex:i];
-
-        // go full-screen
-        [pdfView enterFullScreenMode: screen withOptions: nil];
-        [pdfView setNextResponder:self];
-    }
-
-    NSLog(@"going full screen");
-}
-
-- (void)pdfPageChanged:(NSNotification *)notification
-{
-    PDFView * pdfView =     [notification object];
-    NSUInteger pageNbr =    [[pdfView document] indexForPage:[pdfView currentPage]];
-
-    [_pdfView1 goToPage:[_pdfDoc1 pageAtIndex:pageNbr]];
-    [_pdfView2 goToPage:[_pdfDoc2 pageAtIndex:pageNbr]];
-}
-
-// get out of full-screen mode upon ESC or Command-.
-- (void)cancelOperation:(id)sender
-{
-    NSLog(@"PDFWinController: cancelOperation");
-    [_pdfView1 exitFullScreenModeWithOptions: nil];
-    [_pdfView2 exitFullScreenModeWithOptions: nil];
-}
-
-- (void)keyDown:(NSEvent *)theEvent
-{
-    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
 }
 
 - (void)setNotesMode:(id)sender
@@ -253,8 +206,8 @@
             [theScanner scanInteger:&last])
         {
             NSLog(@"pages: %2d  %2d", first, last);
-            [firstFrames addObject:[NSNumber numberWithInt:first-1]];
-            [lastFrames addObject:[NSNumber numberWithInt:last-1]];
+            [firstFrames addObject:[NSNumber numberWithUnsignedInt:first]];
+            [lastFrames addObject:[NSNumber numberWithUnsignedInt:last]];
         }
     }
     // append total number of pages to the list of first pages
@@ -266,20 +219,21 @@
     {
         for (j = [[firstFrames objectAtIndex:i] unsignedIntValue]; j <= [[lastFrames objectAtIndex:i] unsignedIntValue]; j++, k++)
         {
-            [slides1 addObject:[NSNumber numberWithUnsignedInt:j]];
             int nbNotes = [[firstFrames objectAtIndex:i+1] unsignedIntValue] - [[lastFrames objectAtIndex:i] unsignedIntValue] - 1;
             if (nbNotes == 0)
             {
-                // no note, mirror slide on second screen
-                [slides2 addObject:[NSArray arrayWithObject:[NSNumber numberWithUnsignedInt:j]]];
+                // no note, mirror slides
+                [slides1 addObject:[NSNumber numberWithUnsignedInt:j]];
+                [slides2 addObject:[NSNumber numberWithUnsignedInt:j]];
             }
             else
             {
                 // one or more note pages
-                NSMutableArray * tmp = [NSMutableArray arrayWithCapacity:0];
-                for (l = 1; l <= nbNotes; l++)
-                    [tmp addObject:[NSNumber numberWithUnsignedInt:[[lastFrames objectAtIndex:i] unsignedIntValue]+l]];
-                [slides2 addObject:tmp];
+                for (l = 0; l < nbNotes; l++)
+                {
+                    [slides1 addObject:[NSNumber numberWithUnsignedInt:j]];
+                    [slides2 addObject:[NSNumber numberWithUnsignedInt:[[lastFrames objectAtIndex:i] unsignedIntValue]+1+l]];
+                }
             }
         }
     }

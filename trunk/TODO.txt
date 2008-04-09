@@ -11,3 +11,5 @@
 - parse the .nav file
 
 - support drag and drop
+
+- switch debug target setting back to : $(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)
