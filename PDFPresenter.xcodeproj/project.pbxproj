@@ -14,7 +14,8 @@
 		D0852D1E0DA26C4200D81D82 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		D0852DDE0DA2790200D81D82 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0852DDD0DA2790200D81D82 /* Quartz.framework */; };
 		D08E47B30DA258CE00A016A3 /* PDFWinController.m in Sources */ = {isa = PBXBuildFile; fileRef = D08E47B20DA258CE00A016A3 /* PDFWinController.m */; };
-		D0C5DD0D0DA2E69400DA4861 /* PDFViewSub.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C5DD0C0DA2E69400DA4861 /* PDFViewSub.m */; };
+		D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C8D9110DA784A6009276E4 /* PDFViewCG.m */; };
+		D0C8DAA70DA96736009276E4 /* TwinViewResponder.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C8DAA60DA96736009276E4 /* TwinViewResponder.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,8 +32,10 @@
 		D0852DDD0DA2790200D81D82 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
 		D08E47B10DA258CE00A016A3 /* PDFWinController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFWinController.h; sourceTree = "<group>"; };
 		D08E47B20DA258CE00A016A3 /* PDFWinController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFWinController.m; sourceTree = "<group>"; };
-		D0C5DD0B0DA2E69400DA4861 /* PDFViewSub.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewSub.h; sourceTree = "<group>"; };
-		D0C5DD0C0DA2E69400DA4861 /* PDFViewSub.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFViewSub.m; sourceTree = "<group>"; };
+		D0C8D9100DA784A6009276E4 /* PDFViewCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewCG.h; sourceTree = "<group>"; };
+		D0C8D9110DA784A6009276E4 /* PDFViewCG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFViewCG.m; sourceTree = "<group>"; };
+		D0C8DAA50DA96736009276E4 /* TwinViewResponder.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TwinViewResponder.h; sourceTree = "<group>"; };
+		D0C8DAA60DA96736009276E4 /* TwinViewResponder.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TwinViewResponder.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -52,10 +55,12 @@
 		080E96DDFE201D6D7F000001 /* Classes */ = {
 			isa = PBXGroup;
 			children = (
-				D0C5DD0B0DA2E69400DA4861 /* PDFViewSub.h */,
-				D0C5DD0C0DA2E69400DA4861 /* PDFViewSub.m */,
 				D08E47B10DA258CE00A016A3 /* PDFWinController.h */,
 				D08E47B20DA258CE00A016A3 /* PDFWinController.m */,
+				D0C8D9100DA784A6009276E4 /* PDFViewCG.h */,
+				D0C8D9110DA784A6009276E4 /* PDFViewCG.m */,
+				D0C8DAA50DA96736009276E4 /* TwinViewResponder.h */,
+				D0C8DAA60DA96736009276E4 /* TwinViewResponder.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -184,7 +189,8 @@
 			files = (
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D08E47B30DA258CE00A016A3 /* PDFWinController.m in Sources */,
-				D0C5DD0D0DA2E69400DA4861 /* PDFViewSub.m in Sources */,
+				D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */,
+				D0C8DAA70DA96736009276E4 /* TwinViewResponder.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -214,6 +220,10 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = (
+					ppc,
+					i386,
+				);
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
