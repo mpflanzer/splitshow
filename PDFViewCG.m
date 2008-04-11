@@ -76,6 +76,71 @@ CGRect convertToCGRect(NSRect inRect);
     CGContextRestoreGState(myContext);
 }
 
+// -------------------------------------------------------------
+// Accept handling events
+// -------------------------------------------------------------
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+
+// -------------------------------------------------------------
+// Events: go to full-screen mode and exit from it
+// -------------------------------------------------------------
+
+- (void)enterFullScreenMode:(id)sender
+{
+    [twinViewResponder enterFullScreenMode];
+}
+
+- (void)cancelOperation:(id)sender
+{
+    [twinViewResponder exitFullScreenMode];
+}
+
+// -------------------------------------------------------------
+// Events: go to previous page
+// -------------------------------------------------------------
+
+- (void)moveUp:(id)sender
+{
+    [twinViewResponder goToPrevPage];
+}
+
+- (void)moveLeft:(id)sender
+{
+    [twinViewResponder goToPrevPage];
+}
+
+- (void)pageUp:(id)sender
+{
+    [twinViewResponder goToPrevPage];
+}
+
+// -------------------------------------------------------------
+// Events: go to next page
+// -------------------------------------------------------------
+
+- (void)moveDown:(id)sender
+{
+    [twinViewResponder goToNextPage];
+}
+
+- (void)moveRight:(id)sender
+{
+    [twinViewResponder goToNextPage];
+}
+
+- (void)pageDown:(id)sender
+{
+    [twinViewResponder goToNextPage];
+}
+
+// -------------------------------------------------------------
+// 
+// -------------------------------------------------------------
+
 @synthesize pdfDocumentRef;
 - (void)setPdfDocumentRef:(CGPDFDocumentRef)newPDFDocumentRef
 {
@@ -101,6 +166,14 @@ CGRect convertToCGRect(NSRect inRect);
     }
 }
 
+@synthesize cropType;
+- (void)setCropType:(PDFViewCropType)newCropType
+{
+    cropType = newCropType;
+    [self setNeedsDisplay:YES];
+}
+
+
 /**
  * Convert a NSRect into a CGRect
  */
@@ -108,7 +181,5 @@ CGRect convertToCGRect(NSRect inRect)
 {
     return CGRectMake(inRect.origin.x, inRect.origin.y, inRect.size.width, inRect.size.height);
 }
-
-@synthesize cropType;
 
 @end

@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "TwinViewResponder.h"
 
 
 typedef enum {
@@ -16,10 +17,12 @@ typedef enum {
 } PDFViewCropType;
 
 
-@interface PDFViewCG : NSView {
-    CGPDFDocumentRef    pdfDocumentRef;
-    size_t              currentPageNbr;
-    PDFViewCropType     cropType;
+@interface PDFViewCG : NSView
+{
+    IBOutlet TwinViewResponder  * twinViewResponder;
+    CGPDFDocumentRef            pdfDocumentRef;
+    size_t                      currentPageNbr;
+    PDFViewCropType             cropType;
 }
 @property CGPDFDocumentRef pdfDocumentRef;
 @property size_t currentPageNbr;

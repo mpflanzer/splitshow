@@ -7,6 +7,7 @@
 //
 
 #import "TwinViewResponder.h"
+#import "PDFViewCG.h"
 
 @implementation TwinViewResponder
 
@@ -26,75 +27,30 @@
     [super dealloc];
 }
 
-- (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
-// -------------------------------------------------------------
-// Events: go to full-screen mode and exit from it
 // -------------------------------------------------------------
 
-- (void)enterFullScreenMode:(id)sender
+- (void)enterFullScreenMode
 {
     NSArray * screens =     [NSScreen screens];
     NSArray * pdfViews =    [NSArray arrayWithObjects: pdfViewCG1, pdfViewCG2, nil];
     
-    for (int i = 0; i < [pdfViews count]; i++)
+    for (int i = 0; i < [pdfViews count] && i < [screens count]; i++)
     {
         PDFViewCG * pdfView =   [pdfViews objectAtIndex:i];
         NSScreen * screen =     [screens objectAtIndex:i];
         
         // go full-screen
-        [pdfView enterFullScreenMode: screen withOptions: nil];
-        [[pdfView window] setNextResponder:self];
+        [pdfView enterFullScreenMode:screen withOptions:nil];
+        //        [[pdfView window] setNextResponder:self];
     }
     
     NSLog(@"going full screen");
 }
 
-- (void)cancelOperation:(id)sender
+- (void)exitFullScreenMode
 {
     [pdfViewCG1 exitFullScreenModeWithOptions:nil];
     [pdfViewCG2 exitFullScreenModeWithOptions:nil];
-}
-
-// -------------------------------------------------------------
-// Events: go to previous page
-// -------------------------------------------------------------
-
-- (void)moveUp:(id)sender
-{
-    [self goToPrevPage];
-}
-
-- (void)moveLeft:(id)sender
-{
-    [self goToPrevPage];
-}
-
-- (void)pageUp:(id)sender
-{
-    [self goToPrevPage];
-}
-     
-// -------------------------------------------------------------
-// Events: go to next page
-// -------------------------------------------------------------
-
-- (void)moveDown:(id)sender
-{
-    [self goToNextPage];
-}
-
-- (void)moveRight:(id)sender
-{
-    [self goToNextPage];
-}
-
-- (void)pageDown:(id)sender
-{
-    [self goToNextPage];
 }
 
 // -------------------------------------------------------------
@@ -153,11 +109,22 @@
     if (newPageIdx >= 0 && newPageIdx < [pageNbrs1 count] && newPageIdx < [pageNbrs2 count])
     {
         currentPageIdx = newPageIdx;
-        [pdfViewCG1 setCurrentPageNbr:[[pageNbrs1 objectAtIndex:currentPageIdx] unsignedIntValue]];
-        [pdfViewCG2 setCurrentPageNbr:[[pageNbrs2 objectAtIndex:currentPageIdx] unsignedIntValue]];
+        [((PDFViewCG *)pdfViewCG1) setCurrentPageNbr:[[pageNbrs1 objectAtIndex:currentPageIdx] unsignedIntValue]];
+        [((PDFViewCG *)pdfViewCG2) setCurrentPageNbr:[[pageNbrs2 objectAtIndex:currentPageIdx] unsignedIntValue]];
     }
 }
 
+// -------------------------------------------------------------
+// Constraining split view to split evenly
+// -------------------------------------------------------------
 
+- (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset
+{
+    NSRect rect = [sender bounds];
+    CGFloat halfSize = rect.size.width / 2.f;
+    if (proposedPosition < (halfSize * .95) || proposedPosition > (halfSize * 1.05))
+        return proposedPosition;
+    return halfSize;
+}
 
 @end
