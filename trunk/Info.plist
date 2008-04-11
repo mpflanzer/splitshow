@@ -16,7 +16,7 @@
 				<string>application/pdf</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>PDF</string>
+			<string>DocumentType</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
 				<string>PDF</string>
@@ -24,7 +24,9 @@
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
 			<key>LSTypeIsPackage</key>
-			<true/>
+			<false/>
+			<key>NSDocumentClass</key>
+			<string>SSDocument</string>
 			<key>NSPersistentStoreTypeKey</key>
 			<string>Binary</string>
 		</dict>
