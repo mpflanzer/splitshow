@@ -14,26 +14,32 @@
 
 
 typedef enum {
-    PDFNotesMirror,
-    PDFNotesWidePage,       // wide pages with notes on the right half
-    PDFNotesInterleaved,    // interleaved slides and notes
-    PDFNotesNAV             // interleaved slides and notes with NAV file
-} PDFNotesMode;
+    SlideshowMirror,        // mirror pages
+    SlideshowInterleaved,   // interleaved slides and notes
+    SlideshowNAV,           // interleaved slides and notes with NAV file
+    SlideshowWidePage       // wide pages with notes on the right half
+} SlideshowMode;
 
-@interface PDFWinController : NSWindowController {
-    IBOutlet NSView             * _presentationModeChooser;
-    PDFNotesMode                _pdfNotesMode;
 
-    IBOutlet PDFViewCG          * _pdfViewCG1;
-    IBOutlet PDFViewCG          * _pdfViewCG2;
-    IBOutlet TwinViewResponder  * _twinViewResponder;
+@interface PDFWinController : NSWindowController
+{
+//    IBOutlet NSWindow           * mainWindow;
+    IBOutlet NSSplitView        * splitView;
+    IBOutlet PDFViewCG          * pdfViewCG1;
+    IBOutlet PDFViewCG          * pdfViewCG2;
+    IBOutlet NSButton           * slideshowModeChooser;
+    IBOutlet TwinViewResponder  * twinViewResponder;
+    NSURL                       * pdfDocURL;
     CGPDFDocumentRef            pdfDocRef;
+    SlideshowMode               slideshowMode;
 }
-- (void)init;
+- (id)init;
 - (void)newWindow:(id)sender;
 - (void)openPDF:(id)sender;
-//- (void)enterFullScreenMode:(id)sender;
+- (void)enterFullScreenMode:(id)sender;
 //- (void)pdfPageChanged:(NSNotification *)notification;
-- (void)setNotesMode:(id)sender;
-+ (void)parseNAVFileFromPath:(NSString *)navFilePath slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
+- (void)setSlideshowMode:(id)sender;
+- (NSString *)getEmbeddedNAVFile;
++ (void)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
+
 @end

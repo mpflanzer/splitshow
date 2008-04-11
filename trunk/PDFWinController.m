@@ -13,10 +13,15 @@
 
 @implementation PDFWinController
 
-- (void)init
+- (id)init
 {
-    _pdfNotesMode = PDFNotesMirror;
-    pdfDocRef =     NULL;
+    self = [super init];
+    if (self)
+    {
+        slideshowMode = SlideshowMirror;
+        pdfDocRef =     NULL;
+    }
+    return self;
 }
 
 - (void)dealloc
@@ -27,8 +32,10 @@
 
 - (void)awakeFromNib
 {
-    [[_pdfViewCG1 window] setNextResponder:_twinViewResponder];
-    [[_pdfViewCG2 window] setNextResponder:_twinViewResponder];
+    // force content view to resize its width multiples of 2
+    // (to allow images to have the same with and height)
+    NSSize increments = {2,1};
+    [[self window] setContentResizeIncrements:increments];
 }
 
 - (void)newWindow: (id)sender
@@ -36,21 +43,13 @@
     NSLog(@"New window");
 }
 
-//- (void)enterFullScreenMode:(id)sender
-//{
-//    [_twinViewResponder enterFullScreenMode];
-//}
-
 - (void)openPDF: (id)sender
 {
     int         result;
     size_t      pageCount;
-    NSURL       * url;
-    NSString    * navPath;
     NSOpenPanel * oPanel;
     
     oPanel = [NSOpenPanel openPanel];
-    [oPanel setAccessoryView:_presentationModeChooser];
     [oPanel setCanChooseFiles: YES];
     [oPanel setCanChooseDirectories: NO];
     [oPanel setResolvesAliases: YES];
@@ -60,56 +59,97 @@
                                      file: nil
                                     types: [NSArray arrayWithObject: @"pdf"]];
     if (result == NSOKButton)
-        url = [NSURL fileURLWithPath: [[oPanel filenames] objectAtIndex: 0]];
+        pdfDocURL = [NSURL fileURLWithPath: [[oPanel filenames] objectAtIndex: 0]];
     else
         return;
     
-
     // load PDF document
-    pdfDocRef = CGPDFDocumentCreateWithURL( (CFURLRef)url );
+    pdfDocRef = CGPDFDocumentCreateWithURL( (CFURLRef)pdfDocURL );
     pageCount = CGPDFDocumentGetNumberOfPages( pdfDocRef );
     if (pageCount == 0) {
         NSLog(@"PDF document needs at least one page!");
         return;
     }
-
+    
     // send PDF handle to the views
-    [_pdfViewCG1 setPdfDocumentRef:pdfDocRef];
-    [_pdfViewCG2 setPdfDocumentRef:pdfDocRef];
+    [pdfViewCG1 setPdfDocumentRef:pdfDocRef];
+    [pdfViewCG2 setPdfDocumentRef:pdfDocRef];
 
-    // build pages numbers according to Notes mode
+    // set slideshow mode
+    [self setSlideshowMode:self];
+    
+    NSLog(@"openPDF");
+}
+
+- (void)setSlideshowMode:(id)sender
+{
+    NSString    * navFileStr;
+    size_t      pageCount;
+
+    switch ([[slideshowModeChooser selectedCell] tag])
+    {
+        case 0:
+            slideshowMode = SlideshowMirror;
+            break;
+        case 1:
+            slideshowMode = SlideshowInterleaved;
+            break;
+        case 2:
+            slideshowMode = SlideshowWidePage;
+            break;
+        default:
+            slideshowMode = SlideshowMirror;
+    }
+    
+    // build pages numbers according to slideshow mode
+    pageCount = CGPDFDocumentGetNumberOfPages( pdfDocRef );
     NSMutableArray * pages1 = [NSMutableArray arrayWithCapacity:pageCount];
     NSMutableArray * pages2 = [NSMutableArray arrayWithCapacity:pageCount];
-
-    switch (_pdfNotesMode)
+    
+    switch (slideshowMode)
     {
-        case PDFNotesMirror:
+        case SlideshowMirror:
             for (int i = 0; i < pageCount; i++)
             {
                 [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
                 [pages2 addObject:[NSNumber numberWithUnsignedInt:i+1]];
             }
+            [pdfViewCG1 setCropType:FULL_PAGE];
+            [pdfViewCG2 setCropType:FULL_PAGE];
             break;
-
-        case PDFNotesWidePage:
+            
+        case SlideshowWidePage:
             for (int i = 0; i < pageCount; i++)
             {
                 [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
                 [pages2 addObject:[NSNumber numberWithUnsignedInt:i+1]];
             }
-            [_pdfViewCG1 setCropType:LEFT_HALF];
-            [_pdfViewCG2 setCropType:RIGHT_HALF];
+            [pdfViewCG1 setCropType:LEFT_HALF];
+            [pdfViewCG2 setCropType:RIGHT_HALF];
             break;
             
-        case PDFNotesInterleaved:
-            // check if NAV file is present
-            navPath =     [[[url path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"nav"];
-            BOOL isDirectory =      FALSE;
-            BOOL navFileExists =    [[NSFileManager defaultManager] fileExistsAtPath:navPath
-                                                                         isDirectory:&isDirectory];
-            navFileExists &=        !isDirectory;
+        case SlideshowInterleaved:
             
-            if (!navFileExists)
+            // check if NAV file is embedded
+            navFileStr = [self getEmbeddedNAVFile];
+            
+            if (navFileStr == nil)
+            {
+                // check if NAV file is next to PDF file
+                NSString * navPath =    [[[pdfDocURL path] stringByDeletingPathExtension] stringByAppendingPathExtension:@"nav"];
+                BOOL isDirectory =      FALSE;
+                BOOL navFileExists =    [[NSFileManager defaultManager] fileExistsAtPath:navPath
+                                                                             isDirectory:&isDirectory];
+                navFileExists &=        !isDirectory;
+                if (navFileExists)
+                {
+                    // read NAV file
+                    NSStringEncoding encoding;
+                    navFileStr = [NSString stringWithContentsOfFile:navPath usedEncoding:&encoding error:NULL];
+                }
+            }
+            
+            if (navFileStr == nil)
             {
                 // no NAV file, file must contain an even number of pages
                 if (pageCount % 2 == 1)
@@ -133,54 +173,95 @@
             else
             {
                 // parse NAV file
-                [PDFWinController parseNAVFileFromPath:navPath slides1:pages1 slides2:pages2];
-                NSLog([pages1 description]);
-                NSLog([pages2 description]);
+                [PDFWinController parseNAVFileFromStr:navFileStr slides1:pages1 slides2:pages2];
             }
+            [pdfViewCG1 setCropType:FULL_PAGE];
+            [pdfViewCG2 setCropType:FULL_PAGE];
             break;
     }
     
-    [_twinViewResponder setPageNbrs1:pages1];
-    [_twinViewResponder setPageNbrs2:pages2];
+    [twinViewResponder setPageNbrs1:pages1];
+    [twinViewResponder setPageNbrs2:pages2];
     
-    NSLog(@"openPDF");
+    NSLog(@"setSlideshowMode");
 }
 
-- (void)setNotesMode:(id)sender
+- (void)enterFullScreenMode:(id)sender
 {
-    switch ([[sender selectedCell] tag])
-    {
-        case 0:
-            _pdfNotesMode = PDFNotesMirror;
-            break;
-        case 1:
-            _pdfNotesMode = PDFNotesInterleaved;
-            break;
-        case 2:
-            _pdfNotesMode = PDFNotesWidePage;
-            break;
-        default:
-            _pdfNotesMode = PDFNotesMirror;
-    }
+    [twinViewResponder enterFullScreenMode];
 }
 
-+ (void)parseNAVFileFromPath:(NSString *)navFilePath slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2
+- (NSString *)getEmbeddedNAVFile
+{
+    size_t              count = 0;
+    CGPDFDictionaryRef  catalog = NULL;
+    CGPDFDictionaryRef  namesDict = NULL;
+    CGPDFDictionaryRef  efDict = NULL;
+    CGPDFDictionaryRef  fileSpecDict = NULL;
+    CGPDFDictionaryRef  efItemDict = NULL;
+    CGPDFArrayRef       efArray = NULL;
+    CGPDFStringRef      cgpdfFilename = NULL;
+    CFStringRef         cfFilename = NULL;
+    CFStringRef         navContent = NULL;
+    CGPDFStreamRef      fileStream = NULL;
+    CGPDFDataFormat     dataFormat;
+    CFDataRef           cfData = NULL;
+
+    if (pdfDocRef == NULL)
+        return FALSE;
+    
+    catalog = CGPDFDocumentGetCatalog(pdfDocRef);
+    if (! CGPDFDictionaryGetDictionary(catalog, "Names", &namesDict))
+        return FALSE;
+    if (! CGPDFDictionaryGetDictionary(namesDict, "EmbeddedFiles", &efDict))
+        return FALSE;
+    if (! CGPDFDictionaryGetArray(efDict, "Names", &efArray))
+        return FALSE;
+
+    count = CGPDFArrayGetCount(efArray);
+    for (size_t i = 0; i < count; i++)
+    {
+        if (!CGPDFArrayGetDictionary(efArray, i, &fileSpecDict))
+            continue;
+        if (! CGPDFDictionaryGetString(fileSpecDict, "F", &cgpdfFilename))
+            continue;
+        cfFilename = CGPDFStringCopyTextString(cgpdfFilename);
+
+        // is this a ".nav" file?
+        if ([[(NSString *)cfFilename pathExtension] caseInsensitiveCompare:@"nav"] != NSOrderedSame)
+            continue;
+
+        if (! CGPDFDictionaryGetDictionary(fileSpecDict, "EF", &efItemDict))
+            continue;
+        if (! CGPDFDictionaryGetStream(efItemDict, "F", &fileStream))
+            continue;
+        
+        cfData = CGPDFStreamCopyData(fileStream, &dataFormat);
+        navContent = CFStringCreateFromExternalRepresentation(NULL, cfData, kCFStringEncodingUTF8);
+        break;
+    }
+    
+    if (navContent != NULL)
+        return (NSString *)navContent;
+    return nil;
+}
+
++ (void)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2
 {
     int             i, j, k, l;
-    NSScanner       *theScanner;
+    NSScanner       * theScanner;
     NSInteger       nbPages;
     NSInteger       first;
     NSInteger       last;
-    NSMutableArray *firstFrames =   [NSMutableArray arrayWithCapacity:0];
-    NSMutableArray *lastFrames =    [NSMutableArray arrayWithCapacity:0];
-
-    // read NAV file
-    NSStringEncoding encoding;
-    NSString *navStr =  [NSString stringWithContentsOfFile:navFilePath usedEncoding:&encoding error:NULL];
+    NSMutableArray  * firstFrames =   [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray  * lastFrames =    [NSMutableArray arrayWithCapacity:0];
     
+    if (navFileStr == nil)
+        return;
+
     // read the total number of pages
-    theScanner = [NSScanner scannerWithString:navStr];
-    NSString *DOCUMENTPAGES = @"\\headcommand {\\beamer@documentpages {";
+    theScanner = [NSScanner scannerWithString:navFileStr];
+    NSString * DOCUMENTPAGES = @"\\headcommand {\\beamer@documentpages {";
     
     while ([theScanner isAtEnd] == NO)
     {
@@ -194,8 +275,8 @@
     }
     
     // read page numbers of frames (as opposed to notes)
-    theScanner = [NSScanner scannerWithString:navStr];
-    NSString *FRAMEPAGES = @"\\headcommand {\\beamer@framepages {";
+    theScanner = [NSScanner scannerWithString:navFileStr];
+    NSString * FRAMEPAGES = @"\\headcommand {\\beamer@framepages {";
     
     while ([theScanner isAtEnd] == NO)
     {

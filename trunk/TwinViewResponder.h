@@ -6,15 +6,17 @@
 //  Copyright 2008 __MyCompanyName__. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
-#import "PDFViewCG.h"
 
-@interface TwinViewResponder : NSResponder {
-    IBOutlet PDFViewCG  * pdfViewCG1;
-    IBOutlet PDFViewCG  * pdfViewCG2;
-    NSArray             * pageNbrs1;
-    NSArray             * pageNbrs2;
-    size_t              currentPageIdx;
+#import <Cocoa/Cocoa.h>
+//#import "PDFViewCG.h"
+
+@interface TwinViewResponder : NSObject
+{
+    IBOutlet NSView * pdfViewCG1;
+    IBOutlet NSView * pdfViewCG2;
+    NSArray         * pageNbrs1;
+    NSArray         * pageNbrs2;
+    size_t          currentPageIdx;
 }
 @property(copy) NSArray * pageNbrs1;
 @property(copy) NSArray * pageNbrs2;
@@ -23,7 +25,8 @@
 - (void)goToNextPage;
 - (void)goToLastPage;
 - (void)goToFirstPage;
-- (void)enterFullScreenMode:(id)sender;
-- (void)cancelOperation:(id)sender;
+- (void)enterFullScreenMode;
+- (void)exitFullScreenMode;
+- (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset;
 
 @end
