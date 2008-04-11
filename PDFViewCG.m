@@ -77,67 +77,6 @@ CGRect convertToCGRect(NSRect inRect);
 }
 
 // -------------------------------------------------------------
-// Accept handling events
-// -------------------------------------------------------------
-
-- (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-
-// -------------------------------------------------------------
-// Events: go to full-screen mode and exit from it
-// -------------------------------------------------------------
-
-- (void)enterFullScreenMode:(id)sender
-{
-    [twinViewResponder enterFullScreenMode];
-}
-
-- (void)cancelOperation:(id)sender
-{
-    [twinViewResponder exitFullScreenMode];
-}
-
-// -------------------------------------------------------------
-// Events: go to previous page
-// -------------------------------------------------------------
-
-- (void)moveUp:(id)sender
-{
-    [twinViewResponder goToPrevPage];
-}
-
-- (void)moveLeft:(id)sender
-{
-    [twinViewResponder goToPrevPage];
-}
-
-- (void)pageUp:(id)sender
-{
-    [twinViewResponder goToPrevPage];
-}
-
-// -------------------------------------------------------------
-// Events: go to next page
-// -------------------------------------------------------------
-
-- (void)moveDown:(id)sender
-{
-    [twinViewResponder goToNextPage];
-}
-
-- (void)moveRight:(id)sender
-{
-    [twinViewResponder goToNextPage];
-}
-
-- (void)pageDown:(id)sender
-{
-    [twinViewResponder goToNextPage];
-}
-
-// -------------------------------------------------------------
 // 
 // -------------------------------------------------------------
 
@@ -172,7 +111,6 @@ CGRect convertToCGRect(NSRect inRect);
     cropType = newCropType;
     [self setNeedsDisplay:YES];
 }
-
 
 /**
  * Convert a NSRect into a CGRect

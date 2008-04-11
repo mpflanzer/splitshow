@@ -11,3 +11,5 @@
 - support drag and drop
 
 - check embedded PDF rotation angle
+
+- support encrypted PDF documents
