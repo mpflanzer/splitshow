@@ -67,10 +67,12 @@
     if (ref == NULL)
         return NO;
     
+    //TODO: check file type
     size_t pageCount = CGPDFDocumentGetNumberOfPages(ref);
     if (pageCount == 0)
     {
         CGPDFDocumentRelease(ref);
+        //TODO: return an error
         NSLog(@"PDF document needs at least one page!");
         return NO;
     }
@@ -81,7 +83,7 @@
 
 - (CGPDFDocumentRef)pdfDocRef
 {
-    return CGPDFDocumentRetain(pdfDocRef);
+    return pdfDocRef;
 }
 
 - (void)setPdfDocRef:(CGPDFDocumentRef)newPdfDocRef

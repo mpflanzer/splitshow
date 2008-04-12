@@ -7,6 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "SSDocument.h"
 
 
 typedef enum {
@@ -18,12 +19,12 @@ typedef enum {
 
 @interface PDFViewCG : NSView
 {
-    CGPDFDocumentRef        pdfDocumentRef;
-    size_t                  currentPageNbr;
-    PDFViewCropType         cropType;
+    SSDocument      * document;
+    size_t          currentPageNbr;
+    PDFViewCropType cropType;
 }
-@property CGPDFDocumentRef  pdfDocumentRef;
-@property size_t            currentPageNbr;
-@property PDFViewCropType   cropType;
+@property(retain) NSDocument    * document;
+@property size_t                currentPageNbr;
+@property PDFViewCropType       cropType;
 
 @end

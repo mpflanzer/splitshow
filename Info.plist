@@ -19,7 +19,7 @@
 			<string>DocumentType</string>
 			<key>CFBundleTypeOSTypes</key>
 			<array>
-				<string>PDF</string>
+				<string>PDF </string>
 			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>

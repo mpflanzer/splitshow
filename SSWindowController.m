@@ -34,8 +34,31 @@
 
 - (void)windowDidLoad
 {
-    [pdfViewCG1 setPdfDocumentRef:[[self document] pdfDocRef]];
-    [pdfViewCG2 setPdfDocumentRef:[[self document] pdfDocRef]];
+//    [pdfViewCG1 setPdfDocumentRef:[[self document] pdfDocRef]];
+//    [pdfViewCG2 setPdfDocumentRef:[[self document] pdfDocRef]];
+    [pdfViewCG1 setDocument:[self document]];
+    [pdfViewCG2 setDocument:[self document]];
+    
+    // try to auto-detect document type
+//    CGPDFPageRef page = CGPDFDocumentGetPage([[self document] pdfDocRef], 1);
+//    CGRect rect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
+//    if (rect.size.width / rect.size.height >= 8./3.)
+//    {
+//        slideshowMode = SlideshowWidePage;
+//        [slideshowModeChooser setState:slideshowMode];
+//    }
+//    else
+//    {
+//        slideshowMode = SlideshowMirror;
+//        [slideshowModeChooser setState:slideshowMode];
+//    }
+    
+    // register PDF as an acceptable drag type
+    NSArray * dragType = [NSArray arrayWithObject:NSURLPboardType];
+    [[self window] registerForDraggedTypes:dragType];
+//    [pdfViewCG2 registerForDraggedTypes:dragType];
+    
+    // set slideshow mode and compute page numbers to display
     [self setSlideshowMode:self];
 }
 
@@ -143,6 +166,42 @@
     [self setPageNbrs2:pages2];
     
     NSLog(@"setSlideshowMode");
+}
+
+// -------------------------------------------------------------
+// Drag and Drop support (as delegate of the NSWindow)
+// -------------------------------------------------------------
+
+- (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender
+{
+    NSPasteboard    * pboard;
+    NSDragOperation sourceDragMask;
+    
+    sourceDragMask =    [sender draggingSourceOperationMask];
+    pboard =            [sender draggingPasteboard];
+    
+    if ( [[pboard types] containsObject:NSURLPboardType] )
+        if (sourceDragMask & NSDragOperationLink)
+            return NSDragOperationLink;
+    return NSDragOperationNone;
+}
+
+- (BOOL)performDragOperation:(id <NSDraggingInfo>)sender
+{
+    NSPasteboard    * pboard;
+    NSDragOperation sourceDragMask;
+    
+    sourceDragMask =    [sender draggingSourceOperationMask];
+    pboard =            [sender draggingPasteboard];
+    
+    if ( [[pboard types] containsObject:NSURLPboardType] )
+    {
+        NSURL * fileURL =   [NSURL URLFromPasteboard:pboard];
+        NSLog([fileURL description]);
+        [[self document] readFromURL:fileURL ofType:nil error:NULL];
+        [self setSlideshowMode:self];
+    }
+    return YES;
 }
 
 // -------------------------------------------------------------
