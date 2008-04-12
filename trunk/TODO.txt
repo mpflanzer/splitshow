@@ -13,3 +13,7 @@
 - check embedded PDF rotation angle
 
 - support encrypted PDF documents
+
+- support drag and drop of PDF data (in addition to already supported URLs)
+
+- page up / down does not work in full screen mode

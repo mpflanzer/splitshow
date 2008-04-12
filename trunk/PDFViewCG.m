@@ -20,8 +20,9 @@ CGRect convertToCGRect(NSRect inRect);
 
 - (id)initWithFrame:(NSRect)frame {
     self = [super initWithFrame:frame];
-    if (self) {
-        pdfDocumentRef =    NULL;
+    if (self)
+    {
+        document =          nil;
         currentPageNbr =    1;
         cropType =          FULL_PAGE;
     }
@@ -30,7 +31,7 @@ CGRect convertToCGRect(NSRect inRect);
 
 - (void)dealloc
 {
-    CGPDFDocumentRelease(pdfDocumentRef);
+    [document release];
     [super dealloc];
 }
 
@@ -38,7 +39,7 @@ CGRect convertToCGRect(NSRect inRect);
 {
     // get drawing context and PDF page
     CGContextRef myContext =    [[NSGraphicsContext currentContext]graphicsPort];
-    CGPDFPageRef page =         CGPDFDocumentGetPage(pdfDocumentRef, currentPageNbr);
+    CGPDFPageRef page =         CGPDFDocumentGetPage([document pdfDocRef], currentPageNbr);
 
     // get page crop box
     CGRect pagerect =           CGPDFPageGetBoxRect(page, kCGPDFCropBox);
@@ -80,17 +81,7 @@ CGRect convertToCGRect(NSRect inRect);
 // 
 // -------------------------------------------------------------
 
-@synthesize pdfDocumentRef;
-- (void)setPdfDocumentRef:(CGPDFDocumentRef)newPDFDocumentRef
-{
-    if (newPDFDocumentRef != pdfDocumentRef)
-    {
-        CGPDFDocumentRelease(pdfDocumentRef);
-        pdfDocumentRef = CGPDFDocumentRetain(newPDFDocumentRef);
-        [self setCurrentPageNbr:1];
-        [self setNeedsDisplay:YES];
-    }
-}
+@synthesize document;
 
 @synthesize currentPageNbr;
 - (void)setCurrentPageNbr:(size_t)newPageNbr
@@ -98,7 +89,7 @@ CGRect convertToCGRect(NSRect inRect);
     if (currentPageNbr == newPageNbr)
         return;
     
-    if (newPageNbr > 0 && newPageNbr <= CGPDFDocumentGetNumberOfPages(pdfDocumentRef))
+    if (newPageNbr > 0 && newPageNbr <= CGPDFDocumentGetNumberOfPages([document pdfDocRef]))
     {
         currentPageNbr = newPageNbr;
         [self setNeedsDisplay:YES];
