@@ -1,6 +1,8 @@
 - come up with a good name
 
-- add a preview to the open dialog
+- come up with a good icon
+
++ add a preview to the open dialog
 
 - auto-guess "filetype"
 
@@ -8,12 +10,21 @@
 
 - handle PDFs with an odd number of pages for interleaved mode
 
-- support drag and drop
+- fix alert panel about odd number of pages for interleaved mode
+  mode chooser should fall back on something else that "interleaved" mode
 
-- check embedded PDF rotation angle
+- make slideshowModeChooser follow 'slideshowMode' in SSWindowController.m
 
-- support encrypted PDF documents
++ support drag and drop
 
 - support drag and drop of PDF data (in addition to already supported URLs)
 
+- check embedded PDF rotation angle
+
++ support encrypted PDF documents
+
 - page up / down does not work in full screen mode
+
+- resizing, make sure content view's width is a multiple of 2 + 1
+
+- cascade windows of multiple documents

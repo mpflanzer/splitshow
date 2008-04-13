@@ -21,15 +21,16 @@ typedef enum {
     IBOutlet NSSplitView    * splitView;
     IBOutlet PDFViewCG      * pdfViewCG1;
     IBOutlet PDFViewCG      * pdfViewCG2;
-    IBOutlet NSButton       * slideshowModeChooser;
-    SlideshowMode           slideshowMode;
+    IBOutlet NSPopUpButton  * slideshowModeChooser;
     NSArray                 * pageNbrs1;
     NSArray                 * pageNbrs2;
     size_t                  currentPageIdx;
+    SlideshowMode           slideshowMode;
 }
 @property(copy) NSArray * pageNbrs1;
 @property(copy) NSArray * pageNbrs2;
 @property       size_t  currentPageIdx;
+
 - (void)setSlideshowMode:(id)sender;
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)moveUp:(id)sender;

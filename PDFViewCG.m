@@ -58,7 +58,6 @@ CGRect convertToCGRect(NSRect inRect);
 
     // affine transform to scale the PDF
     CGFloat scale =             MIN(rect.size.width / pagerect.size.width, rect.size.height / pagerect.size.height);
-    NSLog(@"scale: %f", scale);
     CGFloat tx =                (rect.size.width - pagerect.size.width * scale) / 2.f - pagerect.origin.x * scale;
     CGFloat ty =                (rect.size.height - pagerect.size.height * scale) / 2.f - pagerect.origin.y * scale;
     CGAffineTransform m =       CGAffineTransformMake(scale, 0, 0, scale, tx, ty);

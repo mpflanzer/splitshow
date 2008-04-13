@@ -10,6 +10,13 @@
 #import "SSWindowController.h"
 
 
+@interface SSDocument (Private)
+
+- (NSString *)promptForPDFPassword;
+
+@end
+
+
 @implementation SSDocument
 
 - (id)init
@@ -27,11 +34,6 @@
     CGPDFDocumentRelease(pdfDocRef);
     [super dealloc];
 }
-
-//- (NSString *)windowNibName {
-//    // Implement this to return a nib to load OR implement -makeWindowControllers to manually create your controllers.
-//    return @"SSDocument";
-//}
 
 - (void)makeWindowControllers
 {
@@ -67,6 +69,23 @@
     if (ref == NULL)
         return NO;
     
+    // prompt for password to decrypt the document
+    if (CGPDFDocumentIsEncrypted(ref))
+    {
+        NSString * passwd = nil;
+        do
+        {
+            passwd = [self promptForPDFPassword];
+            if (passwd == nil)
+            {
+                CGPDFDocumentRelease(ref);
+                NSLog(@"Could not decrypt document!");
+                return NO;
+            }
+        }
+        while (! CGPDFDocumentUnlockWithPassword(ref, [passwd UTF8String]));
+    }
+    
     //TODO: check file type
     size_t pageCount = CGPDFDocumentGetNumberOfPages(ref);
     if (pageCount == 0)
@@ -93,6 +112,42 @@
         CGPDFDocumentRelease(pdfDocRef);
         pdfDocRef = CGPDFDocumentRetain(newPdfDocRef);
     }
+}
+
+/**
+ * Prompt for a password to decrypt PDF.
+ * If the user dismisses the dialog with the 'Ok' button, return the typed password (possibly an empty string)
+ * If the user dismisses the dialog with the 'Cancel' button, return nil.
+ */
+- (NSString *)promptForPDFPassword
+{
+    NSRect              rect;
+    NSInteger           ret;
+    NSAlert             * theAlert =    nil;
+    NSSecureTextField   * passwdField = nil;
+    NSString            * passwd =      nil;
+    
+    // prepare password field as an accessory view
+    passwdField =   [[NSSecureTextField alloc] initWithFrame:NSMakeRect(0,0,300,20)];
+    [passwdField sizeToFit];
+    rect =          [passwdField frame];
+    [passwdField setFrameSize:(NSSize){300,rect.size.height}];
+    
+    // prepare the "alert"
+    theAlert =      [NSAlert alertWithMessageText:@"PDF document protected."
+                                    defaultButton:@"OK"
+                                  alternateButton:@"Cancel"
+                                      otherButton:nil
+                        informativeTextWithFormat:@"Enter a password to open the document."];
+    [theAlert setAccessoryView:passwdField];
+    [theAlert layout];
+    [[theAlert window] setInitialFirstResponder:passwdField];
+
+    // read user input
+    ret =           [theAlert runModal];
+    if (ret == NSAlertDefaultReturn)
+        passwd = [passwdField stringValue];
+    return passwd;
 }
 
 @end
