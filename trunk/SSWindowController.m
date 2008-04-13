@@ -17,10 +17,15 @@
     self = [super initWithWindowNibName:@"SSDocument"];
     if (self)
     {
-        slideshowMode =     SlideshowMirror;
-        pageNbrs1 =         [NSArray arrayWithObjects:nil];
-        pageNbrs2 =         [NSArray arrayWithObjects:nil];
-        currentPageIdx =    0;
+        splitView =             nil;
+        pdfViewCG1 =            nil;
+        pdfViewCG2 =            nil;
+        slideshowModeChooser =  nil;
+//        pdfPasswordPrompt =     nil;
+        pageNbrs1 =             [NSArray arrayWithObjects:nil];
+        pageNbrs2 =             [NSArray arrayWithObjects:nil];
+        currentPageIdx =        0;
+        slideshowMode =         SlideshowMirror;
     }
     return self;
 }
@@ -34,31 +39,38 @@
 
 - (void)windowDidLoad
 {
-//    [pdfViewCG1 setPdfDocumentRef:[[self document] pdfDocRef]];
-//    [pdfViewCG2 setPdfDocumentRef:[[self document] pdfDocRef]];
+    CGRect          rect;
+    CGPDFPageRef    page =          NULL;
+    NSArray         * draggableType =    nil;
+
     [pdfViewCG1 setDocument:[self document]];
     [pdfViewCG2 setDocument:[self document]];
     
     // try to auto-detect document type
-//    CGPDFPageRef page = CGPDFDocumentGetPage([[self document] pdfDocRef], 1);
-//    CGRect rect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
-//    if (rect.size.width / rect.size.height >= 8./3.)
-//    {
-//        slideshowMode = SlideshowWidePage;
-//        [slideshowModeChooser setState:slideshowMode];
-//    }
-//    else
-//    {
-//        slideshowMode = SlideshowMirror;
-//        [slideshowModeChooser setState:slideshowMode];
-//    }
+    
+    page = CGPDFDocumentGetPage([[self document] pdfDocRef], 1);
+    rect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
+    // consider 2.39:1 the widest commonly found aspect ratio of a single frame
+    if ((rect.size.width / rect.size.height) >= 2.39)
+    {
+        slideshowMode = SlideshowWidePage;
+        //TODO: set up constants instead of integers
+        [slideshowModeChooser selectItemWithTag:2];
+    }
+    else
+    {
+        slideshowMode = SlideshowMirror;
+        //TODO: set up constants instead of integers
+        [slideshowModeChooser selectItemWithTag:0];
+    }
     
     // register PDF as an acceptable drag type
-    NSArray * dragType = [NSArray arrayWithObject:NSURLPboardType];
-    [[self window] registerForDraggedTypes:dragType];
-//    [pdfViewCG2 registerForDraggedTypes:dragType];
+
+    draggableType = [NSArray arrayWithObject:NSURLPboardType];
+    [[self window] registerForDraggedTypes:draggableType];
     
     // set slideshow mode and compute page numbers to display
+    
     [self setSlideshowMode:self];
 }
 
@@ -67,7 +79,7 @@
     NSString    * navFileStr;
     size_t      pageCount;
     
-    switch ([[slideshowModeChooser selectedCell] tag])
+    switch ([slideshowModeChooser selectedTag])
     {
         case 0:
             slideshowMode = SlideshowMirror;
@@ -140,8 +152,11 @@
                                                          defaultButton:@"OK"
                                                        alternateButton:nil
                                                            otherButton:nil
-                                             informativeTextWithFormat:@"This document contains an odd number of pages.\nCowardly refusing to open it."];
-                    [theAlert runModal];
+                                             informativeTextWithFormat:@"This document contains an odd number of pages.\nFalling back to Mirror mode."];
+                    [theAlert beginSheetModalForWindow:[self window]
+                                         modalDelegate:self
+                                        didEndSelector:nil
+                                           contextInfo:nil];
                     break;
                 }
                 
