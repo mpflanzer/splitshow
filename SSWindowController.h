@@ -11,10 +11,9 @@
 
 
 typedef enum {
-    SlideshowMirror,        // mirror pages
-    SlideshowInterleaved,   // interleaved slides and notes
-    SlideshowNAV,           // interleaved slides and notes with NAV file
-    SlideshowWidePage       // wide pages with notes on the right half
+    SlideshowModeMirror,        // mirror pages
+    SlideshowModeInterleaved,   // interleaved slides and notes
+    SlideshowModeWidePage       // wide pages with notes on the right half
 } SlideshowMode;
 
 @interface SSWindowController : NSWindowController {
@@ -30,8 +29,11 @@ typedef enum {
 @property(copy) NSArray * pageNbrs1;
 @property(copy) NSArray * pageNbrs2;
 @property       size_t  currentPageIdx;
+@property SlideshowMode slideshowMode;
 
-- (void)setSlideshowMode:(id)sender;
+- (SlideshowMode)guessSlideshowMode;
+- (void)computePageNumbersAndCropBox;
+
 - (void)keyDown:(NSEvent *)theEvent;
 - (void)moveUp:(id)sender;
 - (void)moveLeft:(id)sender;
@@ -47,8 +49,6 @@ typedef enum {
 - (void)cancelOperation:(id)sender;
 - (void)exitFullScreenMode;
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset;
-- (NSString *)getEmbeddedNAVFile;
-+ (void)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender;
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;

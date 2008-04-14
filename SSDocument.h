@@ -11,7 +11,19 @@
 
 @interface SSDocument : NSDocument {
     CGPDFDocumentRef    pdfDocRef;
+    BOOL                hasNAVFile;
+    NSMutableArray      * navPageNbrSlides;
+    NSMutableArray      * navPageNbrNotes;
 }
-@property CGPDFDocumentRef pdfDocRef;
+
+@property CGPDFDocumentRef  pdfDocRef;
+@property BOOL              hasNAVFile;
+@property(copy) NSArray     * navPageNbrSlides;
+@property(copy) NSArray     * navPageNbrNotes;
+
+- (size_t)numberOfPages;
+- (NSString *)getEmbeddedNAVFile;
+- (BOOL)loadNAVFile;
++ (BOOL)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
 
 @end
