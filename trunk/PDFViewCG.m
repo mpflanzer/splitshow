@@ -22,16 +22,15 @@ CGRect convertToCGRect(NSRect inRect);
     self = [super initWithFrame:frame];
     if (self)
     {
-        document =          nil;
-        currentPageNbr =    1;
-        cropType =          FULL_PAGE;
+        pdfPage =   NULL;
+        cropType =  FULL_PAGE;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    [document release];
+    CGPDFPageRelease(pdfPage);
     [super dealloc];
 }
 
@@ -39,27 +38,26 @@ CGRect convertToCGRect(NSRect inRect);
 {
     // get drawing context and PDF page
     CGContextRef myContext =    [[NSGraphicsContext currentContext]graphicsPort];
-    CGPDFPageRef page =         CGPDFDocumentGetPage([document pdfDocRef], currentPageNbr);
 
     // get page crop box
-    CGRect pagerect =           CGPDFPageGetBoxRect(page, kCGPDFCropBox);
+    CGRect pageRect =           CGPDFPageGetBoxRect(pdfPage, kCGPDFCropBox);
     switch (cropType)
     {
         case FULL_PAGE:
             break;
         case LEFT_HALF:
-            pagerect.size.width /= 2;
+            pageRect.size.width /= 2;
             break;
         case RIGHT_HALF:
-            pagerect.size.width /= 2;
-            pagerect.origin.x += pagerect.size.width;
+            pageRect.size.width /= 2;
+            pageRect.origin.x += pageRect.size.width;
             break;
     }
 
     // affine transform to scale the PDF
-    CGFloat scale =             MIN(rect.size.width / pagerect.size.width, rect.size.height / pagerect.size.height);
-    CGFloat tx =                (rect.size.width - pagerect.size.width * scale) / 2.f - pagerect.origin.x * scale;
-    CGFloat ty =                (rect.size.height - pagerect.size.height * scale) / 2.f - pagerect.origin.y * scale;
+    CGFloat scale =             MIN(rect.size.width / pageRect.size.width, rect.size.height / pageRect.size.height);
+    CGFloat tx =                (rect.size.width - pageRect.size.width * scale) / 2.f - pageRect.origin.x * scale;
+    CGFloat ty =                (rect.size.height - pageRect.size.height * scale) / 2.f - pageRect.origin.y * scale;
     CGAffineTransform m =       CGAffineTransformMake(scale, 0, 0, scale, tx, ty);
     
     // draw black background for surroundings
@@ -70,9 +68,9 @@ CGRect convertToCGRect(NSRect inRect);
     // draw PDF page on white background (for PDF transparency)
     CGContextConcatCTM(myContext, m);
     CGContextSetRGBFillColor(myContext, 1, 1, 1, 1);
-    CGContextFillRect(myContext, pagerect);
-    CGContextClipToRect(myContext, pagerect);
-    CGContextDrawPDFPage(myContext, page);
+    CGContextFillRect(myContext, pageRect);
+    CGContextClipToRect(myContext, pageRect);
+    CGContextDrawPDFPage(myContext, pdfPage);
     CGContextRestoreGState(myContext);
 }
 
@@ -80,17 +78,13 @@ CGRect convertToCGRect(NSRect inRect);
 // 
 // -------------------------------------------------------------
 
-@synthesize document;
-
-@synthesize currentPageNbr;
-- (void)setCurrentPageNbr:(size_t)newPageNbr
+@synthesize pdfPage;
+- (void)setPdfPage:(CGPDFPageRef)newPage
 {
-    if (currentPageNbr == newPageNbr)
-        return;
-    
-    if (newPageNbr > 0 && newPageNbr <= CGPDFDocumentGetNumberOfPages([document pdfDocRef]))
+    if (pdfPage != newPage)
     {
-        currentPageNbr = newPageNbr;
+        CGPDFPageRelease(pdfPage);
+        pdfPage = CGPDFPageRetain(newPage);
         [self setNeedsDisplay:YES];
     }
 }

@@ -4,16 +4,16 @@
 
 + add a preview to the open dialog
 
-- auto-guess "filetype"
++ auto-guess "filetype"
 
 - preference to enable/disable "filetype" guessing
 
 - handle PDFs with an odd number of pages for interleaved mode
 
-- fix alert panel about odd number of pages for interleaved mode
-  mode chooser should fall back on something else that "interleaved" mode
++ fix alert panel about odd number of pages for interleaved mode
+  mode chooser should fall back on something else than "interleaved" mode
 
-- make slideshowModeChooser follow 'slideshowMode' in SSWindowController.m
++ make slideshowModeChooser follow 'slideshowMode' in SSWindowController.m
 
 + support drag and drop
 
@@ -28,3 +28,19 @@
 - resizing, make sure content view's width is a multiple of 2 + 1
 
 - cascade windows of multiple documents
+
++ move pageNbrs1 and pageNbrs2 to SSDocument.h ?
+  also the methods to build them, getEmbeddedNAVFile and parseNAVFileFromStr
+  ---> DONE differently:
+  - move getEmbeddedNAVFile and parseNAVFileFromStr to SSDocument
+  - store page numbers found in NAV file into SSDocument
+  - keep pageNbrs1 and pageNbrs2 into window controller
+
+- make aspect ratio threshold (2.39) a constant/preference and not a hard coded value
+
+- make Full-Screen menu item work
+  (link it to a responder calling enterFullScreenMode on the main window controller)
+
++ fix window title when drag and dropping pdf file on window (keeps old name)
+
+- display multiple notes together on one screen

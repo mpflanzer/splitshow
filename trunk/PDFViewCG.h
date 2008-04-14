@@ -19,12 +19,11 @@ typedef enum {
 
 @interface PDFViewCG : NSView
 {
-    SSDocument      * document;
-    size_t          currentPageNbr;
+    CGPDFPageRef    pdfPage;
     PDFViewCropType cropType;
 }
-@property(retain) NSDocument    * document;
-@property size_t                currentPageNbr;
-@property PDFViewCropType       cropType;
+
+@property CGPDFPageRef      pdfPage;
+@property PDFViewCropType   cropType;
 
 @end
