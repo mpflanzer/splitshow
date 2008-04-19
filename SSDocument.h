@@ -24,6 +24,6 @@
 - (size_t)numberOfPages;
 - (NSString *)getEmbeddedNAVFile;
 - (BOOL)loadNAVFile;
-+ (BOOL)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2;
++ (BOOL)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSArray **)pSlides1 slides2:(NSArray **)pSlides2;
 
 @end

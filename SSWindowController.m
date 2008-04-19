@@ -8,9 +8,18 @@
 
 #import "SSWindowController.h"
 #import "SSDocument.h"
+#import "NSScreen_Extension.h"
 
 
 @implementation SSWindowController
+
++ (void)initialize
+{
+    NSUserDefaults *defaults =  [NSUserDefaults standardUserDefaults];
+    NSDictionary *appDefaults = [NSDictionary dictionaryWithObject:@"YES"
+                                                            forKey:@"TestDefaults"];
+    [defaults registerDefaults:appDefaults];
+}
 
 // -------------------------------------------------------------
 // Overridding init implementations
@@ -20,17 +29,50 @@
 
 - (id)init
 {
-    self = [super initWithWindowNibName:@"SSDocument"];
-    if (self)
+    if ((self = [super initWithWindowNibName:@"SSDocument"]))
     {
         splitView =             nil;
         pdfViewCG1 =            nil;
         pdfViewCG2 =            nil;
         slideshowModeChooser =  nil;
-        pageNbrs1 =             [NSArray arrayWithObjects:nil];
-        pageNbrs2 =             [NSArray arrayWithObjects:nil];
+        pageNbrs1 =             nil;
+        pageNbrs2 =             nil;
         currentPageIdx =        0;
         slideshowMode =         SlideshowModeMirror;
+        screensSwapped =        NO;
+        screens =               [NSScreen screens];
+        
+        if ([screens count] == 0)
+        {
+            screen1 =   nil;
+            screen2 =   nil;
+        }
+        else if ([screens count] == 1)
+        {
+            // only one screen is present
+            screen1 =   [screens objectAtIndex:0];
+            screen2 =   nil;
+        }
+        else
+        {
+            // screen 1: try to get a non built-in display
+            // screen 2: try to get a built-in display or by default fall back on the display with the menu bar
+
+            NSMutableArray * builtinScreens =   [NSMutableArray arrayWithCapacity:1];
+            NSMutableArray * externalScreens =  [NSMutableArray arrayWithCapacity:1];
+            [NSScreen builtin:builtinScreens AndExternalScreens:externalScreens];
+            
+            if ([builtinScreens count] > 0 && [externalScreens count] > 0)
+            {
+                screen1 =   [externalScreens objectAtIndex:0];
+                screen2 =   [builtinScreens objectAtIndex:0];
+            }
+            else
+            {
+                screen1 =   [screens objectAtIndex:1];
+                screen2 =   [screens objectAtIndex:0]; // display with the menu bar
+            }
+        }
     }
     return self;
 }
@@ -51,13 +93,10 @@
     NSArray * draggableType =   nil;
 
     // try to auto-detect document type
-    
+    // set slideshow type and recompute page numbers accordingly
+
     [self setSlideshowMode:[self guessSlideshowMode]];
-    
-    // set slideshow mode and compute page numbers to display on each screen
-    
-    [self computePageNumbersAndCropBox];
-    
+
     // register PDF as an acceptable drag type
 
     draggableType = [NSArray arrayWithObject:NSURLPboardType];
@@ -68,42 +107,59 @@
 // Properties implementation
 // -------------------------------------------------------------
 
-@synthesize pageNbrs1;
+- (NSArray *)pageNbrs1
+{
+    return pageNbrs1;
+}
 - (void)setPageNbrs1:(NSArray *)newPageNbrs1
 {
-    //TODO: make sure [pageNbrs1 count] == [pageNbrs2 count]
-    if (pageNbrs1 != newPageNbrs1)
-    {
-        [pageNbrs1 release];
-        pageNbrs1 = [newPageNbrs1 copy];
-        [self setCurrentPageIdx:currentPageIdx]; // load current page
-    }
+    [pageNbrs1 autorelease];
+    pageNbrs1 = [newPageNbrs1 copy];
+    [self setCurrentPageIdx:currentPageIdx];    // load current page
 }
 
-@synthesize pageNbrs2;
+- (NSArray *)pageNbrs2
+{
+    return pageNbrs2;
+}
 - (void)setPageNbrs2:(NSArray *)newPageNbrs2
 {
-    //TODO: make sure [pageNbrs1 count] == [pageNbrs2 count]
-    if (pageNbrs2 != newPageNbrs2)
-    {
-        [pageNbrs2 release];
-        pageNbrs2 = [newPageNbrs2 copy];
-        [self setCurrentPageIdx:currentPageIdx]; // load current page
-    }
+    [pageNbrs2 autorelease];
+    pageNbrs2 = [newPageNbrs2 copy];
+    [self setCurrentPageIdx:currentPageIdx];    // load current page
 }
 
-@synthesize currentPageIdx;
+- (size_t)currentPageIdx
+{
+    return currentPageIdx;
+}
 - (void)setCurrentPageIdx:(size_t)newPageIdx
 {
     size_t pageNbr1, pageNbr2;
-    
-    if (newPageIdx < [pageNbrs1 count] && newPageIdx < [pageNbrs2 count])
+
+    if (pageNbrs1 == nil || pageNbrs2 == nil || [pageNbrs1 count] == 0 || [pageNbrs2 count] == 0)
     {
-        currentPageIdx = newPageIdx;
-        pageNbr1 = [[pageNbrs1 objectAtIndex:currentPageIdx] unsignedIntValue];
-        pageNbr2 = [[pageNbrs2 objectAtIndex:currentPageIdx] unsignedIntValue];
+        currentPageIdx = 0;
+        [pdfViewCG1 setPdfPage:NULL];
+        [pdfViewCG2 setPdfPage:NULL];
+        return;
+    }
+    else
+    {
+        currentPageIdx = MIN(newPageIdx, MIN([pageNbrs1 count], [pageNbrs2 count])-1);
+    }
+
+    pageNbr1 = [[pageNbrs1 objectAtIndex:currentPageIdx] unsignedIntValue];
+    pageNbr2 = [[pageNbrs2 objectAtIndex:currentPageIdx] unsignedIntValue];    
+    if (! screensSwapped)
+    {
         [pdfViewCG1 setPdfPage:CGPDFDocumentGetPage([[self document] pdfDocRef], pageNbr1)];
         [pdfViewCG2 setPdfPage:CGPDFDocumentGetPage([[self document] pdfDocRef], pageNbr2)];
+    }
+    else
+    {
+        [pdfViewCG1 setPdfPage:CGPDFDocumentGetPage([[self document] pdfDocRef], pageNbr2)];
+        [pdfViewCG2 setPdfPage:CGPDFDocumentGetPage([[self document] pdfDocRef], pageNbr1)];
     }
 }
 
@@ -114,21 +170,32 @@
     [self computePageNumbersAndCropBox];
 }
 
+@synthesize screensSwapped;
+- (void)setScreensSwapped:(BOOL)newScreensSwapped
+{
+    screensSwapped = newScreensSwapped;
+    [self computePageNumbersAndCropBox];
+}
+
+@synthesize screens;
+@synthesize screen1;
+@synthesize screen2;
+
 // -------------------------------------------------------------
-// 
+//
 // -------------------------------------------------------------
 
 - (SlideshowMode)guessSlideshowMode
 {
     CGRect          rect;
     CGPDFPageRef    page = NULL;
-    
+
     if ([[self document] numberOfPages] < 1)
         return SlideshowModeMirror;
-    
+
     page = CGPDFDocumentGetPage([[self document] pdfDocRef], 1);
     rect = CGPDFPageGetBoxRect(page, kCGPDFCropBox);
-    
+
     // consider 2.39:1 the widest commonly found aspect ratio of a single frame
     if ((rect.size.width / rect.size.height) >= 2.39)
         return SlideshowModeWidePage;
@@ -145,45 +212,51 @@
     NSMutableArray  * pages2 = nil;
 
     // build pages numbers according to slideshow mode
-    
+
     pageCount = [[self document] numberOfPages];
-    
+    pages1 =    [NSMutableArray arrayWithCapacity:pageCount];
+    pages2 =    [NSMutableArray arrayWithCapacity:pageCount];
+
     switch (slideshowMode)
     {
         case SlideshowModeMirror:
             [pdfViewCG1 setCropType:FULL_PAGE];
             [pdfViewCG2 setCropType:FULL_PAGE];
-            
-            pages1 = [NSMutableArray arrayWithCapacity:pageCount];
-            pages2 = [NSMutableArray arrayWithCapacity:pageCount];
+
             for (int i = 0; i < pageCount; i++)
             {
                 [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
                 [pages2 addObject:[NSNumber numberWithUnsignedInt:i+1]];
             }
             break;
-        
+
         case SlideshowModeWidePage:
-            [pdfViewCG1 setCropType:LEFT_HALF];
-            [pdfViewCG2 setCropType:RIGHT_HALF];
-            
-            pages1 = [NSMutableArray arrayWithCapacity:pageCount];
-            pages2 = [NSMutableArray arrayWithCapacity:pageCount];
+            if (! screensSwapped)
+            {
+                [pdfViewCG1 setCropType:LEFT_HALF];
+                [pdfViewCG2 setCropType:RIGHT_HALF];
+            }
+            else
+            {
+                [pdfViewCG1 setCropType:RIGHT_HALF];
+                [pdfViewCG2 setCropType:LEFT_HALF];
+            }
+
             for (int i = 0; i < pageCount; i++)
             {
                 [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
                 [pages2 addObject:[NSNumber numberWithUnsignedInt:i+1]];
             }
             break;
-            
+
         case SlideshowModeInterleaved:
             [pdfViewCG1 setCropType:FULL_PAGE];
             [pdfViewCG2 setCropType:FULL_PAGE];
-            
+
             if ([[self document] hasNAVFile])
             {
-                pages1 = [[[self document] navPageNbrSlides] mutableCopy];
-                pages2 = [[[self document] navPageNbrNotes]  mutableCopy];
+                [pages1 setArray:[[self document] navPageNbrSlides]];
+                [pages2 setArray:[[self document] navPageNbrNotes]];
             }
             else
             {
@@ -202,23 +275,19 @@
                     [self setSlideshowMode:SlideshowModeMirror];
                     return;
                 }
-                
+
                 // build arrays of interleaved page numbers
-                pages1 = [NSMutableArray arrayWithCapacity:pageCount];
-                pages2 = [NSMutableArray arrayWithCapacity:pageCount];
                 for (int i = 0; i < pageCount; i += 2)
                 {
                     [pages1 addObject:[NSNumber numberWithUnsignedInt:i+1]];
-                    [pages2 addObject:[NSNumber numberWithUnsignedInt:i+2]];                
+                    [pages2 addObject:[NSNumber numberWithUnsignedInt:i+2]];
                 }
             }
             break;
     }
-    
+
     [self setPageNbrs1:pages1];
     [self setPageNbrs2:pages2];
-    [pages1 release];
-    [pages2 release];
 }
 
 // -------------------------------------------------------------
@@ -229,10 +298,10 @@
 {
     NSPasteboard    * pboard;
     NSDragOperation sourceDragMask;
-    
+
     sourceDragMask =    [sender draggingSourceOperationMask];
     pboard =            [sender draggingPasteboard];
-    
+
     if ( [[pboard types] containsObject:NSURLPboardType] )
         if (sourceDragMask & NSDragOperationLink)
             return NSDragOperationLink;
@@ -245,10 +314,10 @@
     NSURL           * fileURL;
     NSDragOperation sourceDragMask;
     BOOL            ret;
-    
+
     sourceDragMask =    [sender draggingSourceOperationMask];
     pboard =            [sender draggingPasteboard];
-    
+
     if ( (ret = [[pboard types] containsObject:NSURLPboardType]) )
     {
         fileURL =       [NSURL URLFromPasteboard:pboard];
@@ -304,6 +373,10 @@
 - (void)goToNextPage
 {
     size_t nextPageIdx = currentPageIdx + 1;
+
+    if (pageNbrs1 == nil || pageNbrs2 == nil)
+        return;
+    
     if (nextPageIdx < [pageNbrs1 count] && nextPageIdx < [pageNbrs2 count])
         [self setCurrentPageIdx:nextPageIdx];
 }
@@ -331,6 +404,9 @@
 }
 - (void)goToLastPage
 {
+    if (pageNbrs1 == nil || pageNbrs2 == nil)
+        return;
+    
     [self setCurrentPageIdx:MAX([pageNbrs1 count], [pageNbrs2 count])-1];
 }
 
@@ -340,28 +416,57 @@
 
 - (void)enterFullScreenMode:(id)sender
 {
-    NSArray * screens = [NSScreen screens];
+    NSDictionary * options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:NSFullScreenModeAllScreens];
     
-    //TODO: fix when only one screen is present
-    [pdfViewCG1 enterFullScreenMode:[screens objectAtIndex:0] withOptions:nil];
-    [pdfViewCG2 enterFullScreenMode:[screens objectAtIndex:1] withOptions:nil];
-    [pdfViewCG1 setNextResponder:self];
-    [pdfViewCG2 setNextResponder:self];
+    // save current size before going full-screen
+
+    [pdfViewCG1 setSavedFrame:[pdfViewCG1 frame]];
+    [pdfViewCG2 setSavedFrame:[pdfViewCG2 frame]];
+
+    // go full-screen
     
-    NSLog(@"going full screen");
+    if (screen1 != nil)
+    {
+        [pdfViewCG1 enterFullScreenMode:screen1 withOptions:options];
+        [pdfViewCG1 setNextResponder:self];
+    }
+    if (screen2 != nil)
+    {
+        [pdfViewCG2 enterFullScreenMode:screen2 withOptions:options];
+        [pdfViewCG2 setNextResponder:self];
+    }
 }
 
 - (void)cancelOperation:(id)sender
 {
-    [self exitFullScreenMode];
+    // exit full-screen mode
+    
+    if ([pdfViewCG1 isInFullScreenMode])
+        [pdfViewCG1 exitFullScreenModeWithOptions:nil];
+    if ([pdfViewCG2 isInFullScreenMode])
+        [pdfViewCG2 exitFullScreenModeWithOptions:nil];
+
+    // recover original position and previous size, in case only one view went to full-screen mode
+    
+    [pdfViewCG1 retain];
+    [pdfViewCG2 retain];
+    
+    [pdfViewCG1 removeFromSuperview];
+    [pdfViewCG2 removeFromSuperview];
+    [pdfViewCG1 setFrame:[pdfViewCG1 savedFrame]];
+    [pdfViewCG2 setFrame:[pdfViewCG2 savedFrame]];
+    [splitView  addSubview:pdfViewCG1];
+    [splitView  addSubview:pdfViewCG2 positioned:NSWindowAbove relativeTo:pdfViewCG1];
+    [pdfViewCG1 setNeedsDisplay:YES];
+    [pdfViewCG2 setNeedsDisplay:YES];
+    [splitView  setNeedsDisplay:YES];
+    
+    [pdfViewCG1 release];
+    [pdfViewCG2 release];
 }
 
-- (void)exitFullScreenMode
-{
-    [pdfViewCG1 exitFullScreenModeWithOptions:nil];
-    [pdfViewCG2 exitFullScreenModeWithOptions:nil];
-}
-
+// -------------------------------------------------------------
+//
 // -------------------------------------------------------------
 
 /**
@@ -369,9 +474,9 @@
  */
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset
 {
-    NSRect rect = [sender bounds];
-    CGFloat halfSize = rect.size.width / 2.f;
-    if (proposedPosition < (halfSize * .95) || proposedPosition > (halfSize * 1.05))
+    NSRect rect =       [sender bounds];
+    CGFloat halfSize =  rect.size.width / 2.f;
+    if (fabs(proposedPosition - halfSize) > 8)
         return proposedPosition;
     return halfSize;
 }

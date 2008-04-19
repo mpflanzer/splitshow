@@ -11,9 +11,14 @@
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
 		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
 		D032E9FF0DAF9DBC00FFED5D /* SSDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D032E9FE0DAF9DBC00FFED5D /* SSDocument.m */; };
-		D032EA090DAFA00400FFED5D /* SSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D032EA080DAFA00400FFED5D /* SSWindowController.m */; };
 		D032EA0D0DAFA59400FFED5D /* SSDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D032EA0C0DAFA59400FFED5D /* SSDocument.xib */; };
 		D032EA8D0DAFAC4400FFED5D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */; };
+		D057BEC40DB7FB9B00D83CCC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D057BEC30DB7FB9B00D83CCC /* IOKit.framework */; };
+		D057BFCB0DB8AF0D00D83CCC /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
+		D057BFFC0DB8B7DA00D83CCC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */; };
+		D07680300DB66BB9005C23D8 /* NSScreen_Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */; };
+		D076803B0DB6709D005C23D8 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D076803A0DB6709D005C23D8 /* ApplicationServices.framework */; };
+		D083006E0DBA0FA600F3B21A /* SSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D032EA080DAFA00400FFED5D /* SSWindowController.m */; };
 		D0852D1E0DA26C4200D81D82 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		D0852DDE0DA2790200D81D82 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0852DDD0DA2790200D81D82 /* Quartz.framework */; };
 		D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C8D9110DA784A6009276E4 /* PDFViewCG.m */; };
@@ -36,6 +41,11 @@
 		D032EA080DAFA00400FFED5D /* SSWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSWindowController.m; sourceTree = "<group>"; };
 		D032EA0C0DAFA59400FFED5D /* SSDocument.xib */ = {isa = PBXFileReference; explicitFileType = file.xib; path = SSDocument.xib; sourceTree = "<group>"; };
 		D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		D057BEC30DB7FB9B00D83CCC /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		D076802E0DB66BB9005C23D8 /* NSScreen_Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScreen_Extension.h; sourceTree = "<group>"; };
+		D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSScreen_Extension.m; sourceTree = "<group>"; };
+		D076803A0DB6709D005C23D8 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		D0852DDD0DA2790200D81D82 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
 		D0C8D9100DA784A6009276E4 /* PDFViewCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewCG.h; sourceTree = "<group>"; };
 		D0C8D9110DA784A6009276E4 /* PDFViewCG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFViewCG.m; sourceTree = "<group>"; };
@@ -49,6 +59,10 @@
 				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
 				D0852D1E0DA26C4200D81D82 /* Foundation.framework in Frameworks */,
 				D0852DDE0DA2790200D81D82 /* Quartz.framework in Frameworks */,
+				D076803B0DB6709D005C23D8 /* ApplicationServices.framework in Frameworks */,
+				D057BEC40DB7FB9B00D83CCC /* IOKit.framework in Frameworks */,
+				D057BFCB0DB8AF0D00D83CCC /* AppKit.framework in Frameworks */,
+				D057BFFC0DB8B7DA00D83CCC /* CoreFoundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -64,6 +78,8 @@
 				D032E9FE0DAF9DBC00FFED5D /* SSDocument.m */,
 				D032EA070DAFA00400FFED5D /* SSWindowController.h */,
 				D032EA080DAFA00400FFED5D /* SSWindowController.m */,
+				D076802E0DB66BB9005C23D8 /* NSScreen_Extension.h */,
+				D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */,
 			);
 			name = Classes;
 			sourceTree = "<group>";
@@ -71,6 +87,10 @@
 		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */,
+				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
+				D057BEC30DB7FB9B00D83CCC /* IOKit.framework */,
+				D076803A0DB6709D005C23D8 /* ApplicationServices.framework */,
 				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
 				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
 				D0852DDD0DA2790200D81D82 /* Quartz.framework */,
@@ -81,7 +101,6 @@
 		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
 			isa = PBXGroup;
 			children = (
-				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
 				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
 			);
 			name = "Other Frameworks";
@@ -196,7 +215,8 @@
 				8D11072D0486CEB800E47090 /* main.m in Sources */,
 				D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */,
 				D032E9FF0DAF9DBC00FFED5D /* SSDocument.m in Sources */,
-				D032EA090DAFA00400FFED5D /* SSWindowController.m in Sources */,
+				D07680300DB66BB9005C23D8 /* NSScreen_Extension.m in Sources */,
+				D083006E0DBA0FA600F3B21A /* SSWindowController.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -222,7 +242,7 @@
 				COPY_PHASE_STRIP = NO;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_ENABLE_FIX_AND_CONTINUE = YES;
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_OPTIMIZATION_LEVEL = 0;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
@@ -238,7 +258,7 @@
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
-				GCC_ENABLE_OBJC_GC = supported;
+				GCC_ENABLE_OBJC_GC = unsupported;
 				GCC_MODEL_TUNING = G5;
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = PDFPresenter_Prefix.pch;

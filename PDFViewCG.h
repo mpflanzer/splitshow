@@ -21,9 +21,11 @@ typedef enum {
 {
     CGPDFPageRef    pdfPage;
     PDFViewCropType cropType;
+    NSRect          savedFrame;
 }
 
 @property CGPDFPageRef      pdfPage;
 @property PDFViewCropType   cropType;
+@property NSRect            savedFrame;
 
 @end
