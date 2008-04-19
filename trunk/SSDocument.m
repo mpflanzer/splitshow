@@ -21,8 +21,7 @@
 
 - (id)init
 {
-    self = [super init];
-    if (self)
+    if ((self = [super init]))
     {
         pdfDocRef =         NULL;
         hasNAVFile =        NO;
@@ -34,7 +33,9 @@
 
 - (void)dealloc
 {
-    CGPDFDocumentRelease(pdfDocRef);
+    [self setPdfDocRef:NULL];
+    [self setNavPageNbrSlides:nil];
+    [self setNavPageNbrNotes:nil];
     [super dealloc];
 }
 
@@ -107,6 +108,7 @@
     // save handle to PDF document
     
     [self setPdfDocRef:ref];
+    CGPDFDocumentRelease(ref);
     
     // load NAV file if found
     
@@ -115,11 +117,7 @@
     return YES;
 }
 
-- (CGPDFDocumentRef)pdfDocRef
-{
-    return pdfDocRef;
-}
-
+@synthesize pdfDocRef;
 - (void)setPdfDocRef:(CGPDFDocumentRef)newPdfDocRef
 {
     if (pdfDocRef != newPdfDocRef)
@@ -182,19 +180,13 @@
 
 - (BOOL)loadNAVFile
 {
-    BOOL            navFileParsed = NO;
-    size_t          pageCount =     0;
-    NSString        * navFileStr =  nil;
+    BOOL        navFileParsed =     NO;
+    size_t      pageCount =         0;
+    NSString    * navFileStr =      nil;
+    NSArray     * pageNbrsSlides =  nil;
+    NSArray     * pageNbrsNotes =   nil;
 
-    pageCount = CGPDFDocumentGetNumberOfPages(pdfDocRef);
-    if (navPageNbrSlides == nil)
-        navPageNbrSlides =  [NSMutableArray arrayWithCapacity:pageCount];
-    else
-        [navPageNbrSlides removeAllObjects];
-    if (navPageNbrNotes == nil)
-        navPageNbrNotes =   [NSMutableArray arrayWithCapacity:pageCount];
-    else
-        [navPageNbrNotes removeAllObjects];
+    pageCount =     CGPDFDocumentGetNumberOfPages(pdfDocRef);
     
     // check if NAV file is embedded
     
@@ -215,22 +207,35 @@
             NSStringEncoding encoding;
             navFileStr = [NSString stringWithContentsOfFile:navPath usedEncoding:&encoding error:NULL];
         }
-        [navPath release];
     }
+    
+    // parse NAV file
     
     if (navFileStr != nil)
+        navFileParsed = [SSDocument parseNAVFileFromStr:navFileStr slides1:&pageNbrsSlides slides2:&pageNbrsNotes];
+
+    if (navFileParsed)
     {
-        // parse NAV file
-        navFileParsed = [SSDocument parseNAVFileFromStr:navFileStr slides1:navPageNbrSlides slides2:navPageNbrNotes];
-        [navFileStr release];
+        [self setNavPageNbrSlides:pageNbrsSlides];
+        [self setNavPageNbrNotes:pageNbrsNotes];
     }
-    
+    else
+    {
+        [self setNavPageNbrSlides:nil];
+        [self setNavPageNbrNotes:nil];
+    }
     [self setHasNAVFile:navFileParsed];
+
     return [self hasNAVFile];
 }
 
 // -------------------------------------------------------------
 
+/**
+ * Get a the NAV file embedded in the PDF as a NSString.
+ * If the NAV file is not found, return nil.
+ * You do not own the returned string, so don't release it.
+ */
 - (NSString *)getEmbeddedNAVFile
 {
     size_t              count =         0;
@@ -241,10 +246,10 @@
     CGPDFDictionaryRef  efItemDict =    NULL;
     CGPDFArrayRef       efArray =       NULL;
     CGPDFStringRef      cgpdfFilename = NULL;
-    CFStringRef         cfFilename =    NULL;
-    CFStringRef         navContent =    NULL;
+    NSString            * emFilename =  NULL;
+    NSString            * navContent =  nil;
     CGPDFStreamRef      fileStream =    NULL;
-    CFDataRef           cfData =        NULL;
+    NSData              * cfData =      nil;
     CGPDFDataFormat     dataFormat;
     
     if (pdfDocRef == NULL)
@@ -261,23 +266,28 @@
     count = CGPDFArrayGetCount(efArray);
     for (size_t i = 0; i < count; i++)
     {
-        if (!CGPDFArrayGetDictionary(efArray, i, &fileSpecDict))
+        if (! CGPDFArrayGetDictionary(efArray, i, &fileSpecDict))
             continue;
         if (! CGPDFDictionaryGetString(fileSpecDict, "F", &cgpdfFilename))
             continue;
-        cfFilename = CGPDFStringCopyTextString(cgpdfFilename);
         
         // is this a ".nav" file?
-        if ([[(NSString *)cfFilename pathExtension] caseInsensitiveCompare:@"nav"] != NSOrderedSame)
+        emFilename = (NSString *)CGPDFStringCopyTextString(cgpdfFilename);
+        if ([[(NSString *)emFilename pathExtension] caseInsensitiveCompare:@"nav"] != NSOrderedSame)
+        {
+            [emFilename release];
             continue;
+        }
+        [emFilename release];
         
         if (! CGPDFDictionaryGetDictionary(fileSpecDict, "EF", &efItemDict))
             continue;
         if (! CGPDFDictionaryGetStream(efItemDict, "F", &fileStream))
             continue;
         
-        cfData = CGPDFStreamCopyData(fileStream, &dataFormat);
-        navContent = CFStringCreateFromExternalRepresentation(NULL, cfData, kCFStringEncodingUTF8);
+        cfData = (NSData *)CGPDFStreamCopyData(fileStream, &dataFormat);
+        navContent = [[[NSString alloc] initWithData:cfData encoding:NSUTF8StringEncoding] autorelease];
+        [cfData release];
         break;
     }
     
@@ -286,20 +296,31 @@
     return nil;
 }
 
-+ (BOOL)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSMutableArray *)slides1 slides2:(NSMutableArray *)slides2
+/**
+ * Parse a NAV file to get page numbers of slides and notes.
+ * navFileStr:  a string of the NAV file's content
+ * pSlides1:    on return, an array of page numbers for the slides (autoreleased)
+ * pSlides2:    on return, an array of page numbers for the notes (autoreleased)
+ *
+ * Note: on input, *pSlides1 and *pSlides2 should point to nil or to autoreleased objects.
+ */
++ (BOOL)parseNAVFileFromStr:(NSString *)navFileStr slides1:(NSArray **)pSlides1 slides2:(NSArray **)pSlides2
 {
     int             i, j, k, l;
     NSScanner       * theScanner;
     NSInteger       nbPages;
     NSInteger       first;
     NSInteger       last;
-    NSMutableArray  * firstFrames =   [NSMutableArray arrayWithCapacity:0];
-    NSMutableArray  * lastFrames =    [NSMutableArray arrayWithCapacity:0];
+    NSMutableArray  * firstFrames = nil;
+    NSMutableArray  * lastFrames =  nil;
+    NSMutableArray  * slides1 =     nil;
+    NSMutableArray  * slides2 =     nil;
     
     if (navFileStr == nil)
         return NO;
     
     // read the total number of pages
+    
     theScanner = [NSScanner scannerWithString:navFileStr];
     NSString * DOCUMENTPAGES = @"\\headcommand {\\beamer@documentpages {";
     
@@ -309,12 +330,19 @@
             [theScanner scanString:DOCUMENTPAGES intoString:NULL] &&
             [theScanner scanInteger:&nbPages])
         {
-            NSLog(@"Total number of pages: %d", nbPages);
             break;
         }
     }
     
+    // allocate arrays
+    
+    firstFrames =   [NSMutableArray arrayWithCapacity:nbPages];
+    lastFrames =    [NSMutableArray arrayWithCapacity:nbPages];
+    slides1 =       [NSMutableArray arrayWithCapacity:nbPages];
+    slides2 =       [NSMutableArray arrayWithCapacity:nbPages];    
+    
     // read page numbers of frames (as opposed to notes)
+
     theScanner = [NSScanner scannerWithString:navFileStr];
     NSString * FRAMEPAGES = @"\\headcommand {\\beamer@framepages {";
     
@@ -326,15 +354,15 @@
             [theScanner scanString:@"}{" intoString:NULL] &&
             [theScanner scanInteger:&last])
         {
-            NSLog(@"pages: %2d  %2d", first, last);
             [firstFrames addObject:[NSNumber numberWithUnsignedInt:first]];
-            [lastFrames addObject:[NSNumber numberWithUnsignedInt:last]];
+            [lastFrames  addObject:[NSNumber numberWithUnsignedInt:last]];
         }
     }
     // append total number of pages to the list of first pages
     [firstFrames addObject:[NSNumber numberWithInt:nbPages]];
     
     // generate indices of the pages to be displayed on each screen
+
     k = 0;
     for (i = 0; i < [firstFrames count]-1; i++)
     {
@@ -358,6 +386,9 @@
             }
         }
     }
+    
+    *pSlides1 = slides1;
+    *pSlides2 = slides2;
     return YES;
 }
 

@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "PDFViewCG.h"
+#import "NSScreen_Extension.h"
 
 
 typedef enum {
@@ -16,7 +17,8 @@ typedef enum {
     SlideshowModeWidePage       // wide pages with notes on the right half
 } SlideshowMode;
 
-@interface SSWindowController : NSWindowController {
+@interface SSWindowController : NSWindowController
+{
     IBOutlet NSSplitView    * splitView;
     IBOutlet PDFViewCG      * pdfViewCG1;
     IBOutlet PDFViewCG      * pdfViewCG2;
@@ -25,11 +27,21 @@ typedef enum {
     NSArray                 * pageNbrs2;
     size_t                  currentPageIdx;
     SlideshowMode           slideshowMode;
+    BOOL                    screensSwapped;
+    NSArray                 * screens;
+    NSScreen                * screen1;
+    NSScreen                * screen2;
+    NSRect dividerRect;
 }
-@property(copy) NSArray * pageNbrs1;
-@property(copy) NSArray * pageNbrs2;
-@property       size_t  currentPageIdx;
-@property SlideshowMode slideshowMode;
+
+@property(copy) NSArray     * pageNbrs1;
+@property(copy) NSArray     * pageNbrs2;
+@property       size_t      currentPageIdx;
+@property SlideshowMode     slideshowMode;
+@property BOOL              screensSwapped;
+@property(retain) NSArray   * screens;
+@property(retain) NSScreen  * screen1;
+@property(retain) NSScreen  * screen2;
 
 - (SlideshowMode)guessSlideshowMode;
 - (void)computePageNumbersAndCropBox;
@@ -47,7 +59,6 @@ typedef enum {
 - (void)goToFirstPage;
 - (void)enterFullScreenMode:(id)sender;
 - (void)cancelOperation:(id)sender;
-- (void)exitFullScreenMode;
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset;
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender;

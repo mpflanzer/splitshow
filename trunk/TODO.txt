@@ -44,3 +44,11 @@
 + fix window title when drag and dropping pdf file on window (keeps old name)
 
 - display multiple notes together on one screen
+
+- check displays availability and configuration
+
+- if necessary switch to extended desktop instead of mirroring
+
++ show list of displays
+
++ let user choose on which display to show which "slide"/"note"

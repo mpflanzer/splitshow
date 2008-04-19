@@ -18,24 +18,30 @@ CGRect convertToCGRect(NSRect inRect);
 
 @implementation PDFViewCG
 
-- (id)initWithFrame:(NSRect)frame {
-    self = [super initWithFrame:frame];
-    if (self)
+- (id)initWithFrame:(NSRect)frame
+{
+    if ((self = [super initWithFrame:frame]))
     {
-        pdfPage =   NULL;
-        cropType =  FULL_PAGE;
+        pdfPage =       NULL;
+        cropType =      FULL_PAGE;
     }
     return self;
 }
 
 - (void)dealloc
 {
-    CGPDFPageRelease(pdfPage);
+    pdfPage = NULL;     // do NOT release, not owned
     [super dealloc];
 }
 
 - (void)drawRect:(NSRect)rect
 {
+    if (! pdfPage)
+    {
+        //TODO: draw something?
+        return;
+    }
+    
     // get drawing context and PDF page
     CGContextRef myContext =    [[NSGraphicsContext currentContext]graphicsPort];
 
@@ -53,7 +59,7 @@ CGRect convertToCGRect(NSRect inRect);
             pageRect.origin.x += pageRect.size.width;
             break;
     }
-
+    
     // affine transform to scale the PDF
     CGFloat scale =             MIN(rect.size.width / pageRect.size.width, rect.size.height / pageRect.size.height);
     CGFloat tx =                (rect.size.width - pageRect.size.width * scale) / 2.f - pageRect.origin.x * scale;
@@ -83,8 +89,7 @@ CGRect convertToCGRect(NSRect inRect);
 {
     if (pdfPage != newPage)
     {
-        CGPDFPageRelease(pdfPage);
-        pdfPage = CGPDFPageRetain(newPage);
+        pdfPage = newPage;
         [self setNeedsDisplay:YES];
     }
 }
@@ -95,6 +100,8 @@ CGRect convertToCGRect(NSRect inRect);
     cropType = newCropType;
     [self setNeedsDisplay:YES];
 }
+
+@synthesize savedFrame;
 
 /**
  * Convert a NSRect into a CGRect
