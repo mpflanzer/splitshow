@@ -41,7 +41,7 @@
         slideshowMode =         SlideshowModeMirror;
         screensSwapped =        NO;
         screens =               [NSScreen screens];
-        
+
         if ([screens count] == 0)
         {
             screen1 =   nil;
@@ -61,7 +61,7 @@
             NSMutableArray * builtinScreens =   [NSMutableArray arrayWithCapacity:1];
             NSMutableArray * externalScreens =  [NSMutableArray arrayWithCapacity:1];
             [NSScreen builtin:builtinScreens AndExternalScreens:externalScreens];
-            
+
             if ([builtinScreens count] > 0 && [externalScreens count] > 0)
             {
                 screen1 =   [externalScreens objectAtIndex:0];
@@ -146,11 +146,11 @@
     }
     else
     {
-        currentPageIdx = MIN(newPageIdx, MIN([pageNbrs1 count], [pageNbrs2 count])-1);
+        currentPageIdx = MIN(newPageIdx, MIN([pageNbrs1 count], [pageNbrs2 count]) - 1);
     }
 
     pageNbr1 = [[pageNbrs1 objectAtIndex:currentPageIdx] unsignedIntValue];
-    pageNbr2 = [[pageNbrs2 objectAtIndex:currentPageIdx] unsignedIntValue];    
+    pageNbr2 = [[pageNbrs2 objectAtIndex:currentPageIdx] unsignedIntValue];
     if (! screensSwapped)
     {
         [pdfViewCG1 setPdfPage:CGPDFDocumentGetPage([[self document] pdfDocRef], pageNbr1)];
@@ -337,7 +337,7 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+   [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
 }
 
 // -------------------------------------------------------------
@@ -376,7 +376,7 @@
 
     if (pageNbrs1 == nil || pageNbrs2 == nil)
         return;
-    
+
     if (nextPageIdx < [pageNbrs1 count] && nextPageIdx < [pageNbrs2 count])
         [self setCurrentPageIdx:nextPageIdx];
 }
@@ -406,7 +406,7 @@
 {
     if (pageNbrs1 == nil || pageNbrs2 == nil)
         return;
-    
+
     [self setCurrentPageIdx:MAX([pageNbrs1 count], [pageNbrs2 count])-1];
 }
 
@@ -417,14 +417,14 @@
 - (void)enterFullScreenMode:(id)sender
 {
     NSDictionary * options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:NSFullScreenModeAllScreens];
-    
+
     // save current size before going full-screen
 
     [pdfViewCG1 setSavedFrame:[pdfViewCG1 frame]];
     [pdfViewCG2 setSavedFrame:[pdfViewCG2 frame]];
 
     // go full-screen
-    
+
     if (screen1 != nil)
     {
         [pdfViewCG1 enterFullScreenMode:screen1 withOptions:options];
@@ -440,17 +440,17 @@
 - (void)cancelOperation:(id)sender
 {
     // exit full-screen mode
-    
+
     if ([pdfViewCG1 isInFullScreenMode])
         [pdfViewCG1 exitFullScreenModeWithOptions:nil];
     if ([pdfViewCG2 isInFullScreenMode])
         [pdfViewCG2 exitFullScreenModeWithOptions:nil];
 
     // recover original position and previous size, in case only one view went to full-screen mode
-    
+
     [pdfViewCG1 retain];
     [pdfViewCG2 retain];
-    
+
     [pdfViewCG1 removeFromSuperview];
     [pdfViewCG2 removeFromSuperview];
     [pdfViewCG1 setFrame:[pdfViewCG1 savedFrame]];
@@ -460,7 +460,7 @@
     [pdfViewCG1 setNeedsDisplay:YES];
     [pdfViewCG2 setNeedsDisplay:YES];
     [splitView  setNeedsDisplay:YES];
-    
+
     [pdfViewCG1 release];
     [pdfViewCG2 release];
 }
