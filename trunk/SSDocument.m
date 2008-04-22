@@ -60,25 +60,25 @@
 //{
 //    // Insert code here to read your document from the given data of the specified type.  If the given outError != NULL, ensure that you set *outError when returning NO.
 //
-//    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead. 
-//    
+//    // You can also choose to override -readFromFileWrapper:ofType:error: or -readFromURL:ofType:error: instead.
+//
 //    // For applications targeted for Panther or earlier systems, you should use the deprecated API -loadDataRepresentation:ofType. In this case you can also choose to override -readFromFile:ofType: or -loadFileWrapperRepresentation:ofType: instead.
-//    
+//
 //    return YES;
 //}
 
 - (BOOL)readFromURL:(NSURL *)absoluteURL ofType:(NSString *)typeName error:(NSError **)outError
 {
     CGPDFDocumentRef ref = NULL;
-    
+
     // load PDF document
-    
+
     ref = CGPDFDocumentCreateWithURL( (CFURLRef)absoluteURL );
     if (ref == NULL)
         return NO;
-    
+
     // prompt for password to decrypt the document
-    
+
     if (CGPDFDocumentIsEncrypted(ref))
     {
         NSString * passwd = nil;
@@ -94,7 +94,7 @@
         }
         while (! CGPDFDocumentUnlockWithPassword(ref, [passwd UTF8String]));
     }
-    
+
     //TODO: check file type
     size_t pageCount = CGPDFDocumentGetNumberOfPages(ref);
     if (pageCount == 0)
@@ -104,16 +104,16 @@
         NSLog(@"PDF document needs at least one page!");
         return NO;
     }
-    
+
     // save handle to PDF document
-    
+
     [self setPdfDocRef:ref];
     CGPDFDocumentRelease(ref);
-    
+
     // load NAV file if found
-    
+
     [self loadNAVFile];
-    
+
     return YES;
 }
 
@@ -151,14 +151,14 @@
     NSAlert             * theAlert =    nil;
     NSSecureTextField   * passwdField = nil;
     NSString            * passwd =      nil;
-    
+
     // prepare password field as an accessory view
-    
+
     passwdField =   [[NSSecureTextField alloc] initWithFrame:NSMakeRect(0,0,300,20)];
     [passwdField sizeToFit];
     rect =          [passwdField frame];
     [passwdField setFrameSize:(NSSize){300,rect.size.height}];
-    
+
     // prepare the "alert"
 
     theAlert =      [NSAlert alertWithMessageText:@"PDF document protected."
@@ -171,7 +171,7 @@
     [[theAlert window] setInitialFirstResponder:passwdField];
 
     // read user input
-    
+
     ret =           [theAlert runModal];
     if (ret == NSAlertDefaultReturn)
         passwd =    [passwdField stringValue];
@@ -187,11 +187,11 @@
     NSArray     * pageNbrsNotes =   nil;
 
     pageCount =     CGPDFDocumentGetNumberOfPages(pdfDocRef);
-    
+
     // check if NAV file is embedded
-    
+
     navFileStr = [self getEmbeddedNAVFile];
-    
+
     // if not, check if NAV file is next to PDF file
 
     if (navFileStr == nil)
@@ -208,9 +208,9 @@
             navFileStr = [NSString stringWithContentsOfFile:navPath usedEncoding:&encoding error:NULL];
         }
     }
-    
+
     // parse NAV file
-    
+
     if (navFileStr != nil)
         navFileParsed = [SSDocument parseNAVFileFromStr:navFileStr slides1:&pageNbrsSlides slides2:&pageNbrsNotes];
 
@@ -251,10 +251,10 @@
     CGPDFStreamRef      fileStream =    NULL;
     NSData              * cfData =      nil;
     CGPDFDataFormat     dataFormat;
-    
+
     if (pdfDocRef == NULL)
         return nil;
-    
+
     catalog = CGPDFDocumentGetCatalog(pdfDocRef);
     if (! CGPDFDictionaryGetDictionary(catalog, "Names", &namesDict))
         return nil;
@@ -262,7 +262,7 @@
         return nil;
     if (! CGPDFDictionaryGetArray(efDict, "Names", &efArray))
         return nil;
-    
+
     count = CGPDFArrayGetCount(efArray);
     for (size_t i = 0; i < count; i++)
     {
@@ -270,7 +270,7 @@
             continue;
         if (! CGPDFDictionaryGetString(fileSpecDict, "F", &cgpdfFilename))
             continue;
-        
+
         // is this a ".nav" file?
         emFilename = (NSString *)CGPDFStringCopyTextString(cgpdfFilename);
         if ([[(NSString *)emFilename pathExtension] caseInsensitiveCompare:@"nav"] != NSOrderedSame)
@@ -279,18 +279,18 @@
             continue;
         }
         [emFilename release];
-        
+
         if (! CGPDFDictionaryGetDictionary(fileSpecDict, "EF", &efItemDict))
             continue;
         if (! CGPDFDictionaryGetStream(efItemDict, "F", &fileStream))
             continue;
-        
+
         cfData = (NSData *)CGPDFStreamCopyData(fileStream, &dataFormat);
         navContent = [[[NSString alloc] initWithData:cfData encoding:NSUTF8StringEncoding] autorelease];
         [cfData release];
         break;
     }
-    
+
     if (navContent != NULL)
         return (NSString *)navContent;
     return nil;
@@ -315,15 +315,15 @@
     NSMutableArray  * lastFrames =  nil;
     NSMutableArray  * slides1 =     nil;
     NSMutableArray  * slides2 =     nil;
-    
+
     if (navFileStr == nil)
         return NO;
-    
+
     // read the total number of pages
-    
+
     theScanner = [NSScanner scannerWithString:navFileStr];
     NSString * DOCUMENTPAGES = @"\\headcommand {\\beamer@documentpages {";
-    
+
     while ([theScanner isAtEnd] == NO)
     {
         if ([theScanner scanUpToString:DOCUMENTPAGES intoString:NULL] &&
@@ -333,19 +333,19 @@
             break;
         }
     }
-    
+
     // allocate arrays
-    
+
     firstFrames =   [NSMutableArray arrayWithCapacity:nbPages];
     lastFrames =    [NSMutableArray arrayWithCapacity:nbPages];
     slides1 =       [NSMutableArray arrayWithCapacity:nbPages];
-    slides2 =       [NSMutableArray arrayWithCapacity:nbPages];    
-    
+    slides2 =       [NSMutableArray arrayWithCapacity:nbPages];
+
     // read page numbers of frames (as opposed to notes)
 
     theScanner = [NSScanner scannerWithString:navFileStr];
     NSString * FRAMEPAGES = @"\\headcommand {\\beamer@framepages {";
-    
+
     while ([theScanner isAtEnd] == NO)
     {
         if ([theScanner scanUpToString:FRAMEPAGES intoString:NULL] &&
@@ -360,7 +360,7 @@
     }
     // append total number of pages to the list of first pages
     [firstFrames addObject:[NSNumber numberWithInt:nbPages]];
-    
+
     // generate indices of the pages to be displayed on each screen
 
     k = 0;
@@ -369,7 +369,7 @@
         for (j = [[firstFrames objectAtIndex:i] unsignedIntValue]; j <= [[lastFrames objectAtIndex:i] unsignedIntValue]; j++, k++)
         {
             int nbNotes = [[firstFrames objectAtIndex:i+1] unsignedIntValue] - [[lastFrames objectAtIndex:i] unsignedIntValue] - 1;
-            if (nbNotes == 0)
+            if (nbNotes <= 0)   // negative for the last page when it is not a note
             {
                 // no note, mirror slides
                 [slides1 addObject:[NSNumber numberWithUnsignedInt:j]];
@@ -386,7 +386,7 @@
             }
         }
     }
-    
+
     *pSlides1 = slides1;
     *pSlides2 = slides2;
     return YES;
