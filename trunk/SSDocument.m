@@ -79,7 +79,7 @@
 
     // prompt for password to decrypt the document
 
-    if (CGPDFDocumentIsEncrypted(ref))
+    if (CGPDFDocumentIsEncrypted(ref) && ! CGPDFDocumentIsUnlocked(ref))
     {
         NSString * passwd = nil;
         do
