@@ -54,7 +54,7 @@
 
 - (CGDirectDisplayID)displayID
 {
-    return [[[self deviceDescription] objectForKey:@"NSScreendNumber"] unsignedIntValue];
+    return [[[self deviceDescription] objectForKey:@"NSScreenNumber"] unsignedIntValue];
 }
 
 + (NSScreen *)screenWithNumber:(int)number
