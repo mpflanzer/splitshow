@@ -17,6 +17,11 @@ typedef enum {
     SlideshowModeWidePage       // wide pages with notes on the right half
 } SlideshowMode;
 
+void displayReconfigurationCallback(
+                                    CGDirectDisplayID display,
+                                    CGDisplayChangeSummaryFlags flags,
+                                    void *userInfo);
+
 @interface SSWindowController : NSWindowController
 {
     IBOutlet NSSplitView    * splitView;
@@ -44,6 +49,7 @@ typedef enum {
 @property(retain) NSScreen  * screen2;
 
 - (SlideshowMode)guessSlideshowMode;
+- (void)guessScreenAssignment;
 - (void)computePageNumbersAndCropBox;
 
 - (void)keyDown:(NSEvent *)theEvent;

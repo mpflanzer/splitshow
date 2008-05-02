@@ -40,39 +40,9 @@
         currentPageIdx =        0;
         slideshowMode =         SlideshowModeMirror;
         screensSwapped =        NO;
-        screens =               [NSScreen screens];
-
-        if ([screens count] == 0)
-        {
-            screen1 =   nil;
-            screen2 =   nil;
-        }
-        else if ([screens count] == 1)
-        {
-            // only one screen is present
-            screen1 =   [screens objectAtIndex:0];
-            screen2 =   nil;
-        }
-        else
-        {
-            // screen 1: try to get a non built-in display
-            // screen 2: try to get a built-in display or by default fall back on the display with the menu bar
-
-            NSMutableArray * builtinScreens =   [NSMutableArray arrayWithCapacity:1];
-            NSMutableArray * externalScreens =  [NSMutableArray arrayWithCapacity:1];
-            [NSScreen builtin:builtinScreens AndExternalScreens:externalScreens];
-
-            if ([builtinScreens count] > 0 && [externalScreens count] > 0)
-            {
-                screen1 =   [externalScreens objectAtIndex:0];
-                screen2 =   [builtinScreens objectAtIndex:0];
-            }
-            else
-            {
-                screen1 =   [screens objectAtIndex:1];
-                screen2 =   [screens objectAtIndex:0]; // display with the menu bar
-            }
-        }
+        screens =               nil;
+        screen1 =               nil;
+        screen2 =               nil;
     }
     return self;
 }
@@ -84,6 +54,12 @@
     return nil;
 }
 
+- (void)dealloc
+{
+    CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallback, self);
+    [super dealloc];
+}
+
 // -------------------------------------------------------------
 // Additional initialization once Nib is loaded
 // -------------------------------------------------------------
@@ -91,6 +67,12 @@
 - (void)windowDidLoad
 {
     NSArray * draggableType =   nil;
+
+    // discover screens and assign main / notes screen
+    [self guessScreenAssignment];
+
+    // get notified of plugged in / unplugged screens
+    CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallback, self);
 
     // try to auto-detect document type
     // set slideshow type and recompute page numbers accordingly
@@ -101,6 +83,47 @@
 
     draggableType = [NSArray arrayWithObject:NSURLPboardType];
     [[self window] registerForDraggedTypes:draggableType];
+}
+
+// -------------------------------------------------------------
+// Discover screens and guess best assignment
+// -------------------------------------------------------------
+- (void)guessScreenAssignment
+{
+    NSArray * myScreens = [NSScreen screens];
+    [self setScreens:myScreens];
+
+    if ([myScreens count] == 0)
+    {
+        [self setScreen1:nil];
+        [self setScreen2:nil];
+    }
+    else if ([myScreens count] == 1)
+    {
+        // only one screen is present
+        [self setScreen1:[myScreens objectAtIndex:0]];
+        [self setScreen2:nil];
+    }
+    else
+    {
+        // screen 1: try to get a non built-in display
+        // screen 2: try to get a built-in display or by default fall back on the display with the menu bar
+
+        NSMutableArray * builtinScreens =   [NSMutableArray arrayWithCapacity:1];
+        NSMutableArray * externalScreens =  [NSMutableArray arrayWithCapacity:1];
+        [NSScreen builtin:builtinScreens AndExternalScreens:externalScreens];
+
+        if ([builtinScreens count] > 0 && [externalScreens count] > 0)
+        {
+            [self setScreen1:[externalScreens objectAtIndex:0]];
+            [self setScreen2:[builtinScreens objectAtIndex:0]];
+        }
+        else
+        {
+            [self setScreen1:[screens objectAtIndex:1]];
+            [self setScreen2:[screens objectAtIndex:0]]; // display with the menu bar
+        }
+    }
 }
 
 // -------------------------------------------------------------
@@ -337,7 +360,37 @@
 
 - (void)keyDown:(NSEvent *)theEvent
 {
-   [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    NSLog(@"keyDown event");
+    if ([theEvent modifierFlags] & NSFunctionKeyMask)
+    {
+        // interpret 'Home' and 'End' function keys here
+        NSString * theFnKey = [theEvent charactersIgnoringModifiers];
+
+        if ([theFnKey length] != 1)
+            return;
+        else
+        {
+            NSLog(@"Function key pressed");
+            switch ([theFnKey characterAtIndex:0])
+            {
+                case NSHomeFunctionKey:
+                    [self goToFirstPage];
+                    break;
+                case NSEndFunctionKey:
+                    [self goToLastPage];
+                    break;
+                default:
+                    // interpret other keys the normal way
+                    [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+                    break;
+            }
+        }
+    }
+    else
+    {
+        // interpret other keys the normal way
+        [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
+    }
 }
 
 // -------------------------------------------------------------
@@ -348,7 +401,16 @@
 {
     [self goToPrevPage];
 }
+- (void)pageUp:(id)sender
+{
+    NSLog(@"pageUp");
+    [self goToPrevPage];
+}
 - (void)moveLeft:(id)sender
+{
+    [self goToPrevPage];
+}
+- (void)scrollPageUp:(id)sender
 {
     [self goToPrevPage];
 }
@@ -358,6 +420,37 @@
         [self setCurrentPageIdx:currentPageIdx-1];
 }
 
+
+- (BOOL)acceptsFirstResponder
+{
+    return YES;
+}
+- (void)moveBackward:(id)sender
+{
+    NSLog(@"moveBackward");
+}
+- (void)moveForward:(id)sender
+{
+    NSLog(@"moveForward");
+}
+- (void)moveToEndOfDocument:(id)sender
+{
+    NSLog(@"moveToEndOfDocument");
+}
+- (void)moveToBeginningOfLine:(id)sender
+{
+    NSLog(@"moveToBeginningOfLine");
+}
+- (void)moveToBeginningOfParagraph:(id)sender
+{
+    NSLog(@"moveToBeginningOfParagraph");
+}
+- (void)scrollLineUp:(id)sender
+{
+    NSLog(@"scrollLineUp");
+}
+
+
 // -------------------------------------------------------------
 // Events: go to next page
 // -------------------------------------------------------------
@@ -366,7 +459,16 @@
 {
     [self goToNextPage];
 }
+- (void)pageDown:(id)sender
+{
+    NSLog(@"pageDown");
+    [self goToNextPage];
+}
 - (void)moveRight:(id)sender
+{
+    [self goToNextPage];
+}
+- (void)scrollPageDown:(id)sender
 {
     [self goToNextPage];
 }
@@ -385,12 +487,9 @@
 // Events: go to first page
 // -------------------------------------------------------------
 
-- (void)pageUp:(id)sender
-{
-    [self goToFirstPage];
-}
 - (void)goToFirstPage
 {
+    NSLog(@"goToFirstPage");
     [self setCurrentPageIdx:0];
 }
 
@@ -398,12 +497,9 @@
 // Events: go to last page
 // -------------------------------------------------------------
 
-- (void)pageDown:(id)sender
-{
-    [self goToLastPage];
-}
 - (void)goToLastPage
 {
+    NSLog(@"goToLastPage");
     if (pageNbrs1 == nil || pageNbrs2 == nil)
         return;
 
@@ -470,7 +566,10 @@
 // -------------------------------------------------------------
 
 /**
- * Constraining split view to split evenly
+ * Constraining split view to split evenly.
+ *
+ * When the user resizes the split bar, if the position is within 8 pixels
+ * of the center position, snap to the center position.
  */
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset
 {
@@ -482,6 +581,25 @@
 }
 
 // -------------------------------------------------------------
+
+/**
+ * Callback upon modification of the displays
+ *
+ * Called when a display is connected / disconnected or reconfigured
+ * (resolution, placement, color profile, ... changed)
+ */
+void displayReconfigurationCallback(
+                                    CGDirectDisplayID display,
+                                    CGDisplayChangeSummaryFlags flags,
+                                    void *userInfo)
+{
+    NSLog(@"Display configuration callback");
+    if (flags & kCGDisplayAddFlag || flags & kCGDisplayRemoveFlag)
+    {
+        NSLog(@"    Added or removed display");
+        [(SSWindowController *)userInfo guessScreenAssignment];
+    }
+}
 
 // -------------------------------------------------------------
 

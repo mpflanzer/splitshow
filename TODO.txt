@@ -23,7 +23,7 @@
 
 + support encrypted PDF documents
 
-- page up / down does not work in full screen mode
++ page up / down does not work in full screen mode
 
 - resizing, make sure content view's width is a multiple of 2 + 1
 
@@ -38,14 +38,14 @@
 
 - make aspect ratio threshold (2.39) a constant/preference and not a hard coded value
 
-- make Full-Screen menu item work
++ make Full-Screen menu item work
   (link it to a responder calling enterFullScreenMode on the main window controller)
 
 + fix window title when drag and dropping pdf file on window (keeps old name)
 
 - display multiple notes together on one screen
 
-- check displays availability and configuration
++ check displays availability and configuration
 
 - if necessary switch to extended desktop instead of mirroring
 
