@@ -25,7 +25,7 @@
 
 + page up / down does not work in full screen mode
 
-- resizing, make sure content view's width is a multiple of 2 + 1
++ resizing, make sure content view's width is a multiple of 2 + 1
 
 - cascade windows of multiple documents
 

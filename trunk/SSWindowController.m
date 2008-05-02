@@ -403,7 +403,6 @@
 }
 - (void)pageUp:(id)sender
 {
-    NSLog(@"pageUp");
     [self goToPrevPage];
 }
 - (void)moveLeft:(id)sender
@@ -421,36 +420,6 @@
 }
 
 
-- (BOOL)acceptsFirstResponder
-{
-    return YES;
-}
-- (void)moveBackward:(id)sender
-{
-    NSLog(@"moveBackward");
-}
-- (void)moveForward:(id)sender
-{
-    NSLog(@"moveForward");
-}
-- (void)moveToEndOfDocument:(id)sender
-{
-    NSLog(@"moveToEndOfDocument");
-}
-- (void)moveToBeginningOfLine:(id)sender
-{
-    NSLog(@"moveToBeginningOfLine");
-}
-- (void)moveToBeginningOfParagraph:(id)sender
-{
-    NSLog(@"moveToBeginningOfParagraph");
-}
-- (void)scrollLineUp:(id)sender
-{
-    NSLog(@"scrollLineUp");
-}
-
-
 // -------------------------------------------------------------
 // Events: go to next page
 // -------------------------------------------------------------
@@ -461,7 +430,6 @@
 }
 - (void)pageDown:(id)sender
 {
-    NSLog(@"pageDown");
     [self goToNextPage];
 }
 - (void)moveRight:(id)sender
@@ -489,7 +457,6 @@
 
 - (void)goToFirstPage
 {
-    NSLog(@"goToFirstPage");
     [self setCurrentPageIdx:0];
 }
 
@@ -499,7 +466,6 @@
 
 - (void)goToLastPage
 {
-    NSLog(@"goToLastPage");
     if (pageNbrs1 == nil || pageNbrs2 == nil)
         return;
 
@@ -574,10 +540,23 @@
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset
 {
     NSRect rect =       [sender bounds];
-    CGFloat halfSize =  rect.size.width / 2.f;
+    CGFloat halfSize =  (rect.size.width-1) / 2.f;
     if (fabs(proposedPosition - halfSize) > 8)
         return proposedPosition;
     return halfSize;
+}
+
+/**
+ * Callbackp upon resize the window.
+ *
+ * Enforces the window window width to hold an odd number of pixel such that the
+ * left view and right views have the same size (there is a 1 pixel width separator).
+ */
+- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize
+{
+    if ((UInt32)proposedFrameSize.width % 2 == 0)
+        proposedFrameSize.width += 1;
+    return proposedFrameSize;
 }
 
 // -------------------------------------------------------------
@@ -593,12 +572,8 @@ void displayReconfigurationCallback(
                                     CGDisplayChangeSummaryFlags flags,
                                     void *userInfo)
 {
-    NSLog(@"Display configuration callback");
     if (flags & kCGDisplayAddFlag || flags & kCGDisplayRemoveFlag)
-    {
-        NSLog(@"    Added or removed display");
         [(SSWindowController *)userInfo guessScreenAssignment];
-    }
 }
 
 // -------------------------------------------------------------
