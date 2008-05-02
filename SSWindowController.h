@@ -66,6 +66,7 @@ void displayReconfigurationCallback(
 - (void)enterFullScreenMode:(id)sender;
 - (void)cancelOperation:(id)sender;
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset;
+- (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
 
 - (NSDragOperation)draggingEntered:(id <NSDraggingInfo>)sender;
 - (BOOL)performDragOperation:(id <NSDraggingInfo>)sender;
