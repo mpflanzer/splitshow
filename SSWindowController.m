@@ -501,13 +501,21 @@
 
 - (void)cancelOperation:(id)sender
 {
+    BOOL fullScreen1 = [pdfViewCG1 isInFullScreenMode];
+    BOOL fullScreen2 = [pdfViewCG2 isInFullScreenMode];
+
+    // return immediately if no screen is in full screen mode
+
+    if (! (fullScreen1 || fullScreen2))
+        return;
+
     // exit full-screen mode
 
-    if ([pdfViewCG1 isInFullScreenMode])
+    if (fullScreen1)
         [pdfViewCG1 exitFullScreenModeWithOptions:nil];
-    if ([pdfViewCG2 isInFullScreenMode])
+    if (fullScreen2)
         [pdfViewCG2 exitFullScreenModeWithOptions:nil];
-
+    
     // recover original position and previous size, in case only one view went to full-screen mode
 
     [pdfViewCG1 retain];
@@ -572,6 +580,23 @@ void displayReconfigurationCallback(
                                     CGDisplayChangeSummaryFlags flags,
                                     void *userInfo)
 {
+    //TODO: fix case when disconnecting a screen while in full-screen mode
+    if (flags & kCGDisplayBeginConfigurationFlag)
+    {
+        NSLog(@"Will change display config: %d, flags=%x", display, flags);
+        if (flags & kCGDisplayRemoveFlag)
+            NSLog(@"    will remove display");
+        if (flags & kCGDisplayAddFlag)
+            NSLog(@"    will add display");
+    }
+    if (! (flags & kCGDisplayBeginConfigurationFlag))
+    {
+        NSLog(@"Display config changed: %d, flags=%x", display, flags);
+        if (flags & kCGDisplayRemoveFlag)
+            NSLog(@"    display removed");
+        if (flags & kCGDisplayAddFlag)
+            NSLog(@"    display added");
+    }
     if (flags & kCGDisplayAddFlag || flags & kCGDisplayRemoveFlag)
         [(SSWindowController *)userInfo guessScreenAssignment];
 }

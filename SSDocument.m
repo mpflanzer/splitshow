@@ -358,9 +358,9 @@
             [lastFrames  addObject:[NSNumber numberWithUnsignedInt:last]];
         }
     }
-    // append total number of pages to the list of first pages
-    [firstFrames addObject:[NSNumber numberWithInt:nbPages]];
-
+    // append total number of pages +1 to the list of first pages
+    [firstFrames addObject:[NSNumber numberWithInt:nbPages+1]];
+    
     // generate indices of the pages to be displayed on each screen
 
     k = 0;
@@ -369,7 +369,8 @@
         for (j = [[firstFrames objectAtIndex:i] unsignedIntValue]; j <= [[lastFrames objectAtIndex:i] unsignedIntValue]; j++, k++)
         {
             int nbNotes = [[firstFrames objectAtIndex:i+1] unsignedIntValue] - [[lastFrames objectAtIndex:i] unsignedIntValue] - 1;
-            if (nbNotes <= 0)   // negative for the last page when it is not a note
+            assert(nbNotes >= 0);
+            if (nbNotes == 0)
             {
                 // no note, mirror slides
                 [slides1 addObject:[NSNumber numberWithUnsignedInt:j]];
