@@ -1,10 +1,24 @@
-//
-//  PDFViewCG.m
-//  PDFPresenter
-//
-//  Created by Christophe Tournery on 05/04/2008.
-//  Copyright 2008 __MyCompanyName__. All rights reserved.
-//
+/*
+ * Copyright (c) 2008 Christophe Tournery, Gunnar Schaefer
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
 
 #import "PDFViewCG.h"
 
@@ -41,7 +55,7 @@ CGRect convertToCGRect(NSRect inRect);
         //TODO: draw something?
         return;
     }
-    
+
     // get drawing context and PDF page
     CGContextRef myContext =    [[NSGraphicsContext currentContext]graphicsPort];
 
@@ -59,13 +73,13 @@ CGRect convertToCGRect(NSRect inRect);
             pageRect.origin.x += pageRect.size.width;
             break;
     }
-    
+
     // affine transform to scale the PDF
     CGFloat scale =             MIN(rect.size.width / pageRect.size.width, rect.size.height / pageRect.size.height);
     CGFloat tx =                (rect.size.width - pageRect.size.width * scale) / 2.f - pageRect.origin.x * scale;
     CGFloat ty =                (rect.size.height - pageRect.size.height * scale) / 2.f - pageRect.origin.y * scale;
     CGAffineTransform m =       CGAffineTransformMake(scale, 0, 0, scale, tx, ty);
-    
+
     // draw black background for surroundings
     CGContextSaveGState(myContext);
     CGContextSetRGBFillColor (myContext, 0, 0, 0, 1);
@@ -81,7 +95,7 @@ CGRect convertToCGRect(NSRect inRect);
 }
 
 // -------------------------------------------------------------
-// 
+//
 // -------------------------------------------------------------
 
 @synthesize pdfPage;

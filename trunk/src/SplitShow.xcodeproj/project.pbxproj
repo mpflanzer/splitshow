@@ -21,7 +21,9 @@
 		D083006E0DBA0FA600F3B21A /* SSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D032EA080DAFA00400FFED5D /* SSWindowController.m */; };
 		D0852D1E0DA26C4200D81D82 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
 		D0852DDE0DA2790200D81D82 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0852DDD0DA2790200D81D82 /* Quartz.framework */; };
+		D0C750800DEB0E1000A55E45 /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */; };
 		D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C8D9110DA784A6009276E4 /* PDFViewCG.m */; };
+		D0DD90FA0DEB11D800FA640A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D0DD90F90DEB11D800FA640A /* LICENSE */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -47,8 +49,11 @@
 		D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSScreen_Extension.m; sourceTree = "<group>"; };
 		D076803A0DB6709D005C23D8 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
 		D0852DDD0DA2790200D81D82 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
+		D09A10490DEB099C00285DD3 /* test_installer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "test_installer-Info.plist"; sourceTree = "<group>"; };
+		D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Credits.rtfd; sourceTree = "<group>"; };
 		D0C8D9100DA784A6009276E4 /* PDFViewCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewCG.h; sourceTree = "<group>"; };
 		D0C8D9110DA784A6009276E4 /* PDFViewCG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFViewCG.m; sourceTree = "<group>"; };
+		D0DD90F90DEB11D800FA640A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,6 +127,7 @@
 				29B97317FDCFA39411CA2CEA /* Resources */,
 				29B97323FDCFA39411CA2CEA /* Frameworks */,
 				19C28FACFE9D520D11CA2CBB /* Products */,
+				D09A10490DEB099C00285DD3 /* test_installer-Info.plist */,
 			);
 			name = PDFPresenter;
 			sourceTree = "<group>";
@@ -138,11 +144,13 @@
 		29B97317FDCFA39411CA2CEA /* Resources */ = {
 			isa = PBXGroup;
 			children = (
+				D0DD90F90DEB11D800FA640A /* LICENSE */,
 				D02CD6B40DB3D97900D81009 /* TODO */,
 				8D1107310486CEB800E47090 /* Info.plist */,
 				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
 				D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */,
 				D032EA0C0DAFA59400FFED5D /* SSDocument.xib */,
+				D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -202,6 +210,8 @@
 				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
 				D032EA0D0DAFA59400FFED5D /* SSDocument.xib in Resources */,
 				D032EA8D0DAFAC4400FFED5D /* MainMenu.xib in Resources */,
+				D0C750800DEB0E1000A55E45 /* Credits.rtfd in Resources */,
+				D0DD90FA0DEB11D800FA640A /* LICENSE in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
