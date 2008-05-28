@@ -408,6 +408,21 @@
 }
 
 // -------------------------------------------------------------
+// Events: scroll wheel: go to previous/next page
+// -------------------------------------------------------------
+
+- (void)scrollWheel:(NSEvent *)theEvent
+{
+    CGFloat deltaY =    [theEvent deltaY];
+    CGFloat thresh =    0.1f;
+    
+    if (deltaY > thresh)
+        [self goToPrevPage];
+    else if (deltaY < - thresh)
+        [self goToNextPage];
+}
+
+// -------------------------------------------------------------
 // Events: go to previous page
 // -------------------------------------------------------------
 

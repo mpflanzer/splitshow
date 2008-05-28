@@ -82,8 +82,8 @@ CGRect convertToCGRect(NSRect inRect);
 
     // draw black background for surroundings
     CGContextSaveGState(myContext);
-    CGContextSetRGBFillColor (myContext, 0, 0, 0, 1);
-    CGContextFillRect (myContext, convertToCGRect(rect));
+    CGContextSetRGBFillColor(myContext, 0, 0, 0, 1);
+    CGContextFillRect(myContext, convertToCGRect(rect));
 
     // draw PDF page on white background (for PDF transparency)
     CGContextConcatCTM(myContext, m);
