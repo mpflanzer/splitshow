@@ -1,0 +1,335 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 44;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
+		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
+		8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */; };
+		D032E9FF0DAF9DBC00FFED5D /* SSDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = D032E9FE0DAF9DBC00FFED5D /* SSDocument.m */; };
+		D032EA0D0DAFA59400FFED5D /* SSDocument.xib in Resources */ = {isa = PBXBuildFile; fileRef = D032EA0C0DAFA59400FFED5D /* SSDocument.xib */; };
+		D032EA8D0DAFAC4400FFED5D /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */; };
+		D057BEC40DB7FB9B00D83CCC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D057BEC30DB7FB9B00D83CCC /* IOKit.framework */; };
+		D057BFCB0DB8AF0D00D83CCC /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
+		D057BFFC0DB8B7DA00D83CCC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */; };
+		D07680300DB66BB9005C23D8 /* NSScreen_Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */; };
+		D076803B0DB6709D005C23D8 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D076803A0DB6709D005C23D8 /* ApplicationServices.framework */; };
+		D083006E0DBA0FA600F3B21A /* SSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D032EA080DAFA00400FFED5D /* SSWindowController.m */; };
+		D0852D1E0DA26C4200D81D82 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97325FDCFA39411CA2CEA /* Foundation.framework */; };
+		D0852DDE0DA2790200D81D82 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D0852DDD0DA2790200D81D82 /* Quartz.framework */; };
+		D0C750800DEB0E1000A55E45 /* Credits.rtfd in Resources */ = {isa = PBXBuildFile; fileRef = D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */; };
+		D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */ = {isa = PBXBuildFile; fileRef = D0C8D9110DA784A6009276E4 /* PDFViewCG.m */; };
+		D0DD90FA0DEB11D800FA640A /* LICENSE in Resources */ = {isa = PBXBuildFile; fileRef = D0DD90F90DEB11D800FA640A /* LICENSE */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
+		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
+		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
+		32CA4F630368D1EE00C91783 /* SplitShow_Prefix.pch */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitShow_Prefix.pch; sourceTree = "<group>"; };
+		8D1107310486CEB800E47090 /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D1107320486CEB800E47090 /* SplitShow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplitShow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		D02CD6B40DB3D97900D81009 /* TODO */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = TODO; sourceTree = "<group>"; };
+		D032E9FD0DAF9DBC00FFED5D /* SSDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSDocument.h; sourceTree = "<group>"; };
+		D032E9FE0DAF9DBC00FFED5D /* SSDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSDocument.m; sourceTree = "<group>"; };
+		D032EA070DAFA00400FFED5D /* SSWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SSWindowController.h; sourceTree = "<group>"; };
+		D032EA080DAFA00400FFED5D /* SSWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SSWindowController.m; sourceTree = "<group>"; };
+		D032EA0C0DAFA59400FFED5D /* SSDocument.xib */ = {isa = PBXFileReference; explicitFileType = file.xib; path = SSDocument.xib; sourceTree = "<group>"; };
+		D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = MainMenu.xib; sourceTree = "<group>"; };
+		D057BEC30DB7FB9B00D83CCC /* IOKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = IOKit.framework; path = /System/Library/Frameworks/IOKit.framework; sourceTree = "<absolute>"; };
+		D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = /System/Library/Frameworks/CoreFoundation.framework; sourceTree = "<absolute>"; };
+		D076802E0DB66BB9005C23D8 /* NSScreen_Extension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScreen_Extension.h; sourceTree = "<group>"; };
+		D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSScreen_Extension.m; sourceTree = "<group>"; };
+		D076803A0DB6709D005C23D8 /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = /System/Library/Frameworks/ApplicationServices.framework; sourceTree = "<absolute>"; };
+		D0852DDD0DA2790200D81D82 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = /System/Library/Frameworks/Quartz.framework; sourceTree = "<absolute>"; };
+		D09A10490DEB099C00285DD3 /* test_installer-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "test_installer-Info.plist"; sourceTree = "<group>"; };
+		D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = Credits.rtfd; sourceTree = "<group>"; };
+		D0C8D9100DA784A6009276E4 /* PDFViewCG.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFViewCG.h; sourceTree = "<group>"; };
+		D0C8D9110DA784A6009276E4 /* PDFViewCG.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFViewCG.m; sourceTree = "<group>"; };
+		D0DD90F90DEB11D800FA640A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		8D11072E0486CEB800E47090 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072F0486CEB800E47090 /* Cocoa.framework in Frameworks */,
+				D0852D1E0DA26C4200D81D82 /* Foundation.framework in Frameworks */,
+				D0852DDE0DA2790200D81D82 /* Quartz.framework in Frameworks */,
+				D076803B0DB6709D005C23D8 /* ApplicationServices.framework in Frameworks */,
+				D057BEC40DB7FB9B00D83CCC /* IOKit.framework in Frameworks */,
+				D057BFCB0DB8AF0D00D83CCC /* AppKit.framework in Frameworks */,
+				D057BFFC0DB8B7DA00D83CCC /* CoreFoundation.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		080E96DDFE201D6D7F000001 /* Classes */ = {
+			isa = PBXGroup;
+			children = (
+				D0C8D9100DA784A6009276E4 /* PDFViewCG.h */,
+				D0C8D9110DA784A6009276E4 /* PDFViewCG.m */,
+				D032E9FD0DAF9DBC00FFED5D /* SSDocument.h */,
+				D032E9FE0DAF9DBC00FFED5D /* SSDocument.m */,
+				D032EA070DAFA00400FFED5D /* SSWindowController.h */,
+				D032EA080DAFA00400FFED5D /* SSWindowController.m */,
+				D076802E0DB66BB9005C23D8 /* NSScreen_Extension.h */,
+				D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */,
+			);
+			name = Classes;
+			sourceTree = "<group>";
+		};
+		1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */,
+				29B97324FDCFA39411CA2CEA /* AppKit.framework */,
+				D057BEC30DB7FB9B00D83CCC /* IOKit.framework */,
+				D076803A0DB6709D005C23D8 /* ApplicationServices.framework */,
+				1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */,
+				29B97325FDCFA39411CA2CEA /* Foundation.framework */,
+				D0852DDD0DA2790200D81D82 /* Quartz.framework */,
+			);
+			name = "Linked Frameworks";
+			sourceTree = "<group>";
+		};
+		1058C7A2FEA54F0111CA2CBB /* Other Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				13E42FB307B3F0F600E4EEF1 /* CoreData.framework */,
+			);
+			name = "Other Frameworks";
+			sourceTree = "<group>";
+		};
+		19C28FACFE9D520D11CA2CBB /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				8D1107320486CEB800E47090 /* SplitShow.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		29B97314FDCFA39411CA2CEA /* PDFPresenter */ = {
+			isa = PBXGroup;
+			children = (
+				080E96DDFE201D6D7F000001 /* Classes */,
+				29B97315FDCFA39411CA2CEA /* Other Sources */,
+				29B97317FDCFA39411CA2CEA /* Resources */,
+				29B97323FDCFA39411CA2CEA /* Frameworks */,
+				19C28FACFE9D520D11CA2CBB /* Products */,
+				D09A10490DEB099C00285DD3 /* test_installer-Info.plist */,
+			);
+			name = PDFPresenter;
+			sourceTree = "<group>";
+		};
+		29B97315FDCFA39411CA2CEA /* Other Sources */ = {
+			isa = PBXGroup;
+			children = (
+				32CA4F630368D1EE00C91783 /* SplitShow_Prefix.pch */,
+				29B97316FDCFA39411CA2CEA /* main.m */,
+			);
+			name = "Other Sources";
+			sourceTree = "<group>";
+		};
+		29B97317FDCFA39411CA2CEA /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				D0DD90F90DEB11D800FA640A /* LICENSE */,
+				D02CD6B40DB3D97900D81009 /* TODO */,
+				8D1107310486CEB800E47090 /* Info.plist */,
+				089C165CFE840E0CC02AAC07 /* InfoPlist.strings */,
+				D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */,
+				D032EA0C0DAFA59400FFED5D /* SSDocument.xib */,
+				D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */,
+			);
+			name = Resources;
+			sourceTree = "<group>";
+		};
+		29B97323FDCFA39411CA2CEA /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				1058C7A0FEA54F0111CA2CBB /* Linked Frameworks */,
+				1058C7A2FEA54F0111CA2CBB /* Other Frameworks */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		8D1107260486CEB800E47090 /* SplitShow */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "SplitShow" */;
+			buildPhases = (
+				8D1107290486CEB800E47090 /* Resources */,
+				8D11072C0486CEB800E47090 /* Sources */,
+				8D11072E0486CEB800E47090 /* Frameworks */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = SplitShow;
+			productInstallPath = "$(HOME)/Applications";
+			productName = PDFPresenter;
+			productReference = 8D1107320486CEB800E47090 /* SplitShow.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		29B97313FDCFA39411CA2CEA /* Project object */ = {
+			isa = PBXProject;
+			buildConfigurationList = C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SplitShow" */;
+			compatibilityVersion = "Xcode 3.0";
+			hasScannedForEncodings = 1;
+			mainGroup = 29B97314FDCFA39411CA2CEA /* PDFPresenter */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				8D1107260486CEB800E47090 /* SplitShow */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		8D1107290486CEB800E47090 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */,
+				D032EA0D0DAFA59400FFED5D /* SSDocument.xib in Resources */,
+				D032EA8D0DAFAC4400FFED5D /* MainMenu.xib in Resources */,
+				D0C750800DEB0E1000A55E45 /* Credits.rtfd in Resources */,
+				D0DD90FA0DEB11D800FA640A /* LICENSE in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		8D11072C0486CEB800E47090 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8D11072D0486CEB800E47090 /* main.m in Sources */,
+				D0C8D9120DA784A6009276E4 /* PDFViewCG.m in Sources */,
+				D032E9FF0DAF9DBC00FFED5D /* SSDocument.m in Sources */,
+				D07680300DB66BB9005C23D8 /* NSScreen_Extension.m in Sources */,
+				D083006E0DBA0FA600F3B21A /* SSWindowController.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		089C165CFE840E0CC02AAC07 /* InfoPlist.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				089C165DFE840E0CC02AAC07 /* English */,
+			);
+			name = InfoPlist.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
+
+/* Begin XCBuildConfiguration section */
+		C01FCF4B08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				COPY_PHASE_STRIP = NO;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_ENABLE_FIX_AND_CONTINUE = YES;
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_MODEL_TUNING = G5;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = SplitShow_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = SplitShow;
+			};
+			name = Debug;
+		};
+		C01FCF4C08A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				GCC_ENABLE_OBJC_GC = unsupported;
+				GCC_MODEL_TUNING = G5;
+				GCC_PRECOMPILE_PREFIX_HEADER = YES;
+				GCC_PREFIX_HEADER = SplitShow_Prefix.pch;
+				INFOPLIST_FILE = Info.plist;
+				INSTALL_PATH = "$(HOME)/Applications";
+				PRODUCT_NAME = SplitShow;
+			};
+			name = Release;
+		};
+		C01FCF4F08A954540054247B /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ONLY_ACTIVE_ARCH_PRE_XCODE_3_1)";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_ENABLE_OBJC_GC = supported;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				ONLY_ACTIVE_ARCH_PRE_XCODE_3_1 = "$(NATIVE_ARCH)";
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Debug;
+		};
+		C01FCF5008A954540054247B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1)";
+				ARCHS_STANDARD_32_BIT_PRE_XCODE_3_1 = "ppc i386";
+				GCC_C_LANGUAGE_STANDARD = c99;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				PREBINDING = NO;
+				SDKROOT = "$(DEVELOPER_SDK_DIR)/MacOSX10.5.sdk";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		C01FCF4A08A954540054247B /* Build configuration list for PBXNativeTarget "SplitShow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4B08A954540054247B /* Debug */,
+				C01FCF4C08A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		C01FCF4E08A954540054247B /* Build configuration list for PBXProject "SplitShow" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				C01FCF4F08A954540054247B /* Debug */,
+				C01FCF5008A954540054247B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 29B97313FDCFA39411CA2CEA /* Project object */;
+}
