@@ -1,0 +1,12 @@
+import os
+
+source = 'SplitShowExample.tex'
+
+env = Environment(ENV = os.environ)
+env.Append(BUILDERS = {'PDFOpen': Builder(action = 'open -a SplitShow $SOURCE', src_suffix = '.pdf')})
+
+pdf = env.PDF(source)
+env.PDFOpen(pdf)
+
+# clean out beamer-specific files
+Clean(pdf, [source.rsplit('.',1)[0] + ext for ext in Split('.nav .out .snm .toc')])
