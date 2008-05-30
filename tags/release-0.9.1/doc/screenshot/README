@@ -1,0 +1,10 @@
+Instruction to build the screen shot:
+
+1- build and open the PDF example file with 'scons'
+2- In 'Mirror Pages' mode:
+   take a screenshot of the window (Command-Shift-4, then space bar),
+   save is as 'shot_mirror.png'
+3- In 'Interleaved Pages' mode:
+   take a screenshot of the window (Command-Shift-4, then space bar),
+   save is as 'shot_interleaved.png'
+4- run 'make_composite.sh'

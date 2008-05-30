@@ -1,0 +1,80 @@
+\documentclass[usepdftitle=true,14pt]{beamer}
+
+\usetheme[compress]{Lausanne}
+
+
+% optional:
+% the .nav file can be either embedded into the PDF or next to it
+\usepackage{embedfile}
+\IfFileExists{\jobname.nav}{\embedfile{\jobname.nav}}{}
+
+% again, optional:
+% just to keep things together
+\embedfile{\jobname.tex}
+\embedfile{beamerthemeLausanne.sty}
+\embedfile{SplitShowIcon.png}
+
+
+\setbeameroption{show notes}
+
+%\usepackage{pgfpages}
+%\setbeameroption{show notes on second screen}
+
+
+\title{What is SplitShow?}
+
+\author[Christophe \& Gunnar]{Christophe Tournery and Gunnar Schaefer}
+
+\titlegraphic{\includegraphics{SplitShowIcon.png}}
+
+
+\begin{document}
+
+
+\begin{frame}
+    \titlepage
+\end{frame}
+
+\note[itemize]{
+    \item The audience sees the slides, but you see your notes.
+    \bigskip
+    \item Or, if your don't have notes, you can use mirror mode.
+}
+
+
+\begin{frame}{Another Slide}
+    \begin{itemize}
+        \item Here is another slide.
+        \item This one doesn't have a note.
+        \item Slides without a note, are always shown on both displays.
+    \end{itemize}
+\end{frame}
+
+
+\begin{frame}{Slides vs.{} Notes}
+    Your slides can be in one of three modes:
+    \begin{itemize}
+        \item Just slides, no notes
+        \item Slides and notes interleaved
+        \item Superwide pages: slides and notes side-by-side
+    \end{itemize}
+\end{frame}
+
+\note[itemize]{
+    \item Just slides, no notes
+    \begin{itemize}
+        \item For presentations without any notes
+    \end{itemize}
+    \item Slides and notes interleaved
+    \begin{itemize}
+        \item BEAMER's .nav file is used to determine if a particular page is a slide or a note.
+        \item The .nav file can be either embedded into the PDF (like it is in this one) or next to it in the same directory
+    \end{itemize}
+    \item Superwide pages: slides and notes side-by-side
+    \begin{itemize}
+        \item For this mode, include the \texttt{\footnotesize pgfpages} package and change the BEAMER option ``\texttt{\footnotesize show notes}'' to ``\texttt{\footnotesize show notes on second screen}''.
+    \end{itemize}
+}
+
+
+\end{document}
