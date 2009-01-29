@@ -528,6 +528,14 @@
     }
 }
 
+- (BOOL)isFullScreen
+{
+    BOOL fullScreen1 = [pdfViewCG1 isInFullScreenMode];
+    BOOL fullScreen2 = [pdfViewCG2 isInFullScreenMode];
+    
+    return (fullScreen1 || fullScreen2) ? YES : NO;
+}
+
 - (void)cancelOperation:(id)sender
 {
     BOOL fullScreen1 = [pdfViewCG1 isInFullScreenMode];

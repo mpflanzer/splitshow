@@ -78,6 +78,7 @@ void displayReconfigurationCallback(
 - (void)goToLastPage;
 - (void)goToFirstPage;
 - (void)enterFullScreenMode:(id)sender;
+- (BOOL)isFullScreen;
 - (void)cancelOperation:(id)sender;
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset;
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
