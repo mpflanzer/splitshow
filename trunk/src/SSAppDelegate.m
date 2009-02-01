@@ -6,6 +6,27 @@
 //  Copyright 2009 pumptheory.com. All rights reserved.
 //
 
+/* 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
 #import "SSAppDelegate.h"
 
 
@@ -38,11 +59,13 @@
 
 // monopolise remote when we are frontmost
 
-- (void)applicationWillBecomeActive:(NSNotification *)aNotification {
+- (void)applicationWillBecomeActive:(NSNotification *)aNotification
+{
     [remoteControl startListening: self];
 }
 
-- (void)applicationWillResignActive:(NSNotification *)aNotification {
+- (void)applicationWillResignActive:(NSNotification *)aNotification
+{
     [remoteControl stopListening: self];
 }
 
@@ -69,6 +92,7 @@
             [controller goToPrevPage];
             break;
         case kRemoteButtonRight:
+        case kRemoteButtonPlay:
             [controller goToNextPage];
             break;
         case kRemoteButtonLeft_Hold:
@@ -77,12 +101,12 @@
         case kRemoteButtonRight_Hold:
             [controller goToLastPage];
             break;
-        case kRemoteButtonPlay:
+        case kRemoteButtonMenu:
             if ([controller isFullScreen])
                 [controller cancelOperation:nil];
             else
                 [controller enterFullScreenMode:nil];
-        case kRemoteButtonPlay_Hold:
+        case kRemoteButtonMenu_Hold:
             [controller setScreensSwapped: [controller screensSwapped] ? NO : YES];
             break;
         default:
