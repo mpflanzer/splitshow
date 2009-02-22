@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		14F4EFF00F51F4A100AE1E62 /* S2.icns in Resources */ = {isa = PBXBuildFile; fileRef = 14F4EFEF0F51F4A100AE1E62 /* S2.icns */; };
 		64508E060F31C03400680A65 /* AppleRemote.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E050F31C03400680A65 /* AppleRemote.m */; };
 		64508E090F31C04200680A65 /* KeyspanFrontRowControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E080F31C04200680A65 /* KeyspanFrontRowControl.m */; };
 		64508E0C0F31C05100680A65 /* GlobalKeyboardDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E0A0F31C05100680A65 /* GlobalKeyboardDevice.m */; };
@@ -39,6 +40,8 @@
 		089C165DFE840E0CC02AAC07 /* English */ = {isa = PBXFileReference; fileEncoding = 10; lastKnownFileType = text.plist.strings; name = English; path = English.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		1058C7A1FEA54F0111CA2CBB /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = /System/Library/Frameworks/Cocoa.framework; sourceTree = "<absolute>"; };
 		13E42FB307B3F0F600E4EEF1 /* CoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreData.framework; path = /System/Library/Frameworks/CoreData.framework; sourceTree = "<absolute>"; };
+		14F4EFEF0F51F4A100AE1E62 /* S2.icns */ = {isa = PBXFileReference; lastKnownFileType = image.icns; path = S2.icns; sourceTree = "<group>"; };
+		14F4EFF10F51F4B500AE1E62 /* S2.svgz */ = {isa = PBXFileReference; lastKnownFileType = file; path = S2.svgz; sourceTree = "<group>"; };
 		29B97316FDCFA39411CA2CEA /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		29B97324FDCFA39411CA2CEA /* AppKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AppKit.framework; path = /System/Library/Frameworks/AppKit.framework; sourceTree = "<absolute>"; };
 		29B97325FDCFA39411CA2CEA /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = /System/Library/Frameworks/Foundation.framework; sourceTree = "<absolute>"; };
@@ -180,6 +183,8 @@
 				D032EA8C0DAFAC4400FFED5D /* MainMenu.xib */,
 				D032EA0C0DAFA59400FFED5D /* SSDocument.xib */,
 				D0C7507F0DEB0E1000A55E45 /* Credits.rtfd */,
+				14F4EFEF0F51F4A100AE1E62 /* S2.icns */,
+				14F4EFF10F51F4B500AE1E62 /* S2.svgz */,
 			);
 			name = Resources;
 			sourceTree = "<group>";
@@ -286,6 +291,7 @@
 				D032EA8D0DAFAC4400FFED5D /* MainMenu.xib in Resources */,
 				D0C750800DEB0E1000A55E45 /* Credits.rtfd in Resources */,
 				D0DD90FA0DEB11D800FA640A /* LICENSE in Resources */,
+				14F4EFF00F51F4A100AE1E62 /* S2.icns in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
