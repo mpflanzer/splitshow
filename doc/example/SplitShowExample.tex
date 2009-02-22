@@ -1,18 +1,16 @@
-\documentclass[usepdftitle=true,14pt]{beamer}
+\documentclass[14pt]{beamer}
 
 \usetheme[compress]{Lausanne}
 
 
-% optional:
-% the .nav file can be either embedded into the PDF or next to it
+% optional: the .nav file can be either embedded into the PDF or next to it
 \usepackage{embedfile}
 \IfFileExists{\jobname.nav}{\embedfile{\jobname.nav}}{}
 
-% again, optional:
-% just to keep things together
+% again, optional: just to keep things together
 \embedfile{\jobname.tex}
 \embedfile{beamerthemeLausanne.sty}
-\embedfile{SplitShowIcon.png}
+\embedfile{S2.pdf}
 
 
 \setbeameroption{show notes}
@@ -25,7 +23,7 @@
 
 \author[Christophe \& Gunnar]{Christophe Tournery and Gunnar Schaefer}
 
-\titlegraphic{\includegraphics{SplitShowIcon.png}}
+\titlegraphic{\includegraphics[width=0.15\linewidth]{S2.pdf}}
 
 
 \begin{document}

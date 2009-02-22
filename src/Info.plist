@@ -34,7 +34,7 @@
 	<key>CFBundleExecutable</key>
 	<string>${EXECUTABLE_NAME}</string>
 	<key>CFBundleIconFile</key>
-	<string></string>
+	<string>S2</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.googlecode.splitshow</string>
 	<key>CFBundleInfoDictionaryVersion</key>
