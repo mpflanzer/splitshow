@@ -15,7 +15,6 @@
 		64508E140F31C07200680A65 /* RemoteControl.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E110F31C07200680A65 /* RemoteControl.m */; };
 		64508E150F31C07200680A65 /* HIDRemoteControlDevice.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E120F31C07200680A65 /* HIDRemoteControlDevice.m */; };
 		64508E180F31C07D00680A65 /* MultiClickRemoteBehavior.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E160F31C07D00680A65 /* MultiClickRemoteBehavior.m */; };
-		64508E1B0F31C09A00680A65 /* SSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E1A0F31C09A00680A65 /* SSAppDelegate.m */; };
 		64508E360F31C3DB00680A65 /* Carbon.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 64508E350F31C3DB00680A65 /* Carbon.framework */; };
 		8D11072B0486CEB800E47090 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 089C165CFE840E0CC02AAC07 /* InfoPlist.strings */; };
 		8D11072D0486CEB800E47090 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 29B97316FDCFA39411CA2CEA /* main.m */; settings = {ATTRIBUTES = (); }; };
@@ -26,6 +25,7 @@
 		D057BEC40DB7FB9B00D83CCC /* IOKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D057BEC30DB7FB9B00D83CCC /* IOKit.framework */; };
 		D057BFCB0DB8AF0D00D83CCC /* AppKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 29B97324FDCFA39411CA2CEA /* AppKit.framework */; };
 		D057BFFC0DB8B7DA00D83CCC /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D057BFFB0DB8B7DA00D83CCC /* CoreFoundation.framework */; };
+		D06B8C8A0F75243A0017D5C4 /* SSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 64508E1A0F31C09A00680A65 /* SSAppDelegate.m */; };
 		D07680300DB66BB9005C23D8 /* NSScreen_Extension.m in Sources */ = {isa = PBXBuildFile; fileRef = D076802F0DB66BB9005C23D8 /* NSScreen_Extension.m */; };
 		D076803B0DB6709D005C23D8 /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D076803A0DB6709D005C23D8 /* ApplicationServices.framework */; };
 		D083006E0DBA0FA600F3B21A /* SSWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = D032EA080DAFA00400FFED5D /* SSWindowController.m */; };
@@ -314,7 +314,7 @@
 				64508E140F31C07200680A65 /* RemoteControl.m in Sources */,
 				64508E150F31C07200680A65 /* HIDRemoteControlDevice.m in Sources */,
 				64508E180F31C07D00680A65 /* MultiClickRemoteBehavior.m in Sources */,
-				64508E1B0F31C09A00680A65 /* SSAppDelegate.m in Sources */,
+				D06B8C8A0F75243A0017D5C4 /* SSAppDelegate.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

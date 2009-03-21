@@ -48,7 +48,6 @@
         splitView =             nil;
         pdfViewCG1 =            nil;
         pdfViewCG2 =            nil;
-        slideshowModeChooser =  nil;
         pageNbrs1 =             nil;
         pageNbrs2 =             nil;
         currentPageIdx =        0;
@@ -57,6 +56,12 @@
         screens =               nil;
         screen1 =               nil;
         screen2 =               nil;
+        fsWinCtrl1 =            nil;
+        fsWinCtrl2 =            nil;
+
+        // full-screen specific
+        fullScreen =            NO;
+        displayID =             0;
     }
     return self;
 }
@@ -150,8 +155,9 @@
 }
 - (void)setPageNbrs1:(NSArray *)newPageNbrs1
 {
-    [pageNbrs1 autorelease];
-    pageNbrs1 = [newPageNbrs1 copy];
+    [newPageNbrs1 retain];
+    [pageNbrs1 release];
+    pageNbrs1 = newPageNbrs1;
     [self setCurrentPageIdx:currentPageIdx];    // load current page
 }
 
@@ -161,8 +167,9 @@
 }
 - (void)setPageNbrs2:(NSArray *)newPageNbrs2
 {
-    [pageNbrs2 autorelease];
-    pageNbrs2 = [newPageNbrs2 copy];
+    [newPageNbrs2 retain];
+    [pageNbrs2 release];
+    pageNbrs2 = newPageNbrs2;
     [self setCurrentPageIdx:currentPageIdx];    // load current page
 }
 
@@ -177,8 +184,8 @@
     if (pageNbrs1 == nil || pageNbrs2 == nil || [pageNbrs1 count] == 0 || [pageNbrs2 count] == 0)
     {
         currentPageIdx = 0;
-        [pdfViewCG1 setPdfPage:NULL];
-        [pdfViewCG2 setPdfPage:NULL];
+        [pdfViewCG1 setPdfPage:nil];
+        [pdfViewCG2 setPdfPage:nil];
         return;
     }
     else
@@ -217,6 +224,8 @@
 @synthesize screens;
 @synthesize screen1;
 @synthesize screen2;
+@synthesize fullScreen;
+@synthesize displayID;
 
 // -------------------------------------------------------------
 //
@@ -380,6 +389,8 @@
         // interpret 'Home' and 'End' function keys here
         NSString * theFnKey = [theEvent charactersIgnoringModifiers];
 
+        NSLog(@"keyDown event - caught");
+
         if ([theFnKey length] != 1)
             return;
         else
@@ -402,6 +413,7 @@
     }
     else
     {
+        NSLog(@"unhandled key event, passing to interpretKeyEvents");
         // interpret other keys the normal way
         [self interpretKeyEvents:[NSArray arrayWithObject:theEvent]];
     }
@@ -415,7 +427,7 @@
 {
     CGFloat deltaY =    [theEvent deltaY];
     CGFloat thresh =    0.1f;
-    
+
     if (deltaY > thresh)
         [self goToPrevPage];
     else if (deltaY < - thresh)
@@ -507,24 +519,115 @@
 
 - (void)enterFullScreenMode:(id)sender
 {
-    NSDictionary * options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:NSFullScreenModeAllScreens];
+//    NSDictionary * options = [NSDictionary dictionaryWithObject:[NSNumber numberWithBool:NO] forKey:NSFullScreenModeAllScreens];
+//
+//    // save current size before going full-screen
+//
+//    [pdfViewCG1 setSavedFrame:[pdfViewCG1 frame]];
+//    [pdfViewCG2 setSavedFrame:[pdfViewCG2 frame]];
+//
+//    // go full-screen
+//
+//    if (screen1 != nil)
+//    {
+//        [pdfViewCG1 enterFullScreenMode:screen1 withOptions:options];
+//        [pdfViewCG1 setNextResponder:self];
+//    }
+//    if (screen2 != nil)
+//    {
+//        [pdfViewCG2 enterFullScreenMode:screen2 withOptions:options];
+//        [pdfViewCG2 setNextResponder:self];
+//    }
 
-    // save current size before going full-screen
-
-    [pdfViewCG1 setSavedFrame:[pdfViewCG1 frame]];
-    [pdfViewCG2 setSavedFrame:[pdfViewCG2 frame]];
-
-    // go full-screen
+    NSWindow            *fsWin1;
+    NSWindow            *fsWin2;
+    PDFViewCG           *fsView1;
+    PDFViewCG           *fsView2;
+    NSDictionary        *screenInfo;
+    NSNumber            *screenID;
+    CGDirectDisplayID   _displayID;
+    CGDisplayErr        err;
 
     if (screen1 != nil)
     {
-        [pdfViewCG1 enterFullScreenMode:screen1 withOptions:options];
-        [pdfViewCG1 setNextResponder:self];
+        // Get the screen information and capture the screen
+        screenInfo =    [screen1    deviceDescription];
+        screenID =      [screenInfo objectForKey:@"NSScreenNumber"];
+        _displayID =    (CGDirectDisplayID)[screenID longValue];
+        err =           CGDisplayCapture(_displayID);
+
+        if (err == CGDisplayNoErr)
+        {
+            // Create the full-screen window and controller
+            fsWin1 = [[NSWindow alloc] initWithContentRect:[screen1 frame]
+                                                 styleMask:NSBorderlessWindowMask
+                                                   backing:NSBackingStoreBuffered
+                                                     defer:NO
+                                                    screen:screen1];
+            fsWinCtrl1 = [[SSWindowController alloc] init];
+            [fsWinCtrl1 setWindow:fsWin1];
+            [fsWinCtrl1 setFullScreen:YES];
+            [fsWinCtrl1 setDisplayID:_displayID];
+
+            // Establish the window attributes.
+            [fsWin1     setReleasedWhenClosed:YES];
+            [fsWin1     setDisplaysWhenScreenProfileChanges:YES];
+
+            // Create the custom views and add them to the fullscreen windows
+            fsView1 =   [[PDFViewCG alloc] initWithFrame:[screen1 frame]];
+            [fsView1    setPdfPage:[pdfViewCG1 pdfPage]];
+            [fsView1    setCropType:[pdfViewCG1 cropType]];
+            [fsWin1     setContentView:fsView1];
+            [fsView1    setNeedsDisplay:YES];
+            [fsView1    release];
+
+            // The window has to be above the level of the shield window
+            [fsWin1     setLevel:CGShieldingWindowLevel()];
+
+            // Show the window
+            [fsWin1     makeKeyAndOrderFront:fsWinCtrl1];
+        }
     }
+
     if (screen2 != nil)
     {
-        [pdfViewCG2 enterFullScreenMode:screen2 withOptions:options];
-        [pdfViewCG2 setNextResponder:self];
+        // Get the screen information and capture the screen
+        screenInfo =    [screen1    deviceDescription];
+        screenID =      [screenInfo objectForKey:@"NSScreenNumber"];
+        _displayID =    (CGDirectDisplayID)[screenID longValue];
+        err =           CGDisplayCapture(_displayID);
+
+        if (err == CGDisplayNoErr)
+        {
+            // Create the full-screen window and controller
+            fsWin2 = [[NSWindow alloc] initWithContentRect:[screen2 frame]
+                                                 styleMask:NSBorderlessWindowMask
+                                                   backing:NSBackingStoreBuffered
+                                                     defer:NO
+                                                    screen:screen2];
+            fsWinCtrl2 = [[SSWindowController alloc] init];
+            [fsWinCtrl2 setWindow:fsWin2];
+            [fsWinCtrl1 setFullScreen:YES];
+            [fsWinCtrl1 setDisplayID:_displayID];
+
+            // Establish the window attributes.
+            [fsWin2     setReleasedWhenClosed:YES];
+            [fsWin2     setDisplaysWhenScreenProfileChanges:YES];
+
+            // Create the custom views and add them to the fullscreen windows
+            fsView2 =   [[PDFViewCG alloc] initWithFrame:[screen2 frame]];
+            [fsView2    setPdfPage:[pdfViewCG2 pdfPage]];
+            [fsView2    setCropType:[pdfViewCG2 cropType]];
+            [fsWin2     setContentView:fsView2];
+            [fsView2    setNeedsDisplay:YES];
+            [fsView2    release];
+
+            // The window has to be above the level of the shield window
+            [fsWin2     setLevel:CGShieldingWindowLevel()];
+
+            // Show the window
+            [fsWin2     makeKeyAndOrderFront:fsWinCtrl2];
+        }
     }
 }
 
@@ -532,44 +635,31 @@
 {
     BOOL fullScreen1 = [pdfViewCG1 isInFullScreenMode];
     BOOL fullScreen2 = [pdfViewCG2 isInFullScreenMode];
-    
+
     return (fullScreen1 || fullScreen2) ? YES : NO;
 }
 
-- (void)cancelOperation:(id)sender
+
+- (void)cancel:(id)sender
 {
-    BOOL fullScreen1 = [pdfViewCG1 isInFullScreenMode];
-    BOOL fullScreen2 = [pdfViewCG2 isInFullScreenMode];
-
-    // return immediately if no screen is in full screen mode
-
-    if (! (fullScreen1 || fullScreen2))
-        return;
-
-    // exit full-screen mode
-
-    if (fullScreen1)
-        [pdfViewCG1 exitFullScreenModeWithOptions:nil];
-    if (fullScreen2)
-        [pdfViewCG2 exitFullScreenModeWithOptions:nil];
-    
-    // recover original position and previous size, in case only one view went to full-screen mode
-
-    [pdfViewCG1 retain];
-    [pdfViewCG2 retain];
-
-    [pdfViewCG1 removeFromSuperview];
-    [pdfViewCG2 removeFromSuperview];
-    [pdfViewCG1 setFrame:[pdfViewCG1 savedFrame]];
-    [pdfViewCG2 setFrame:[pdfViewCG2 savedFrame]];
-    [splitView  addSubview:pdfViewCG1];
-    [splitView  addSubview:pdfViewCG2 positioned:NSWindowAbove relativeTo:pdfViewCG1];
-    [pdfViewCG1 setNeedsDisplay:YES];
-    [pdfViewCG2 setNeedsDisplay:YES];
-    [splitView  setNeedsDisplay:YES];
-
-    [pdfViewCG1 release];
-    [pdfViewCG2 release];
+    if (! [self fullScreen])
+    {
+        [fsWinCtrl1 cancel:self];
+        [fsWinCtrl2 cancel:self];
+        [fsWinCtrl1 release];
+        [fsWinCtrl2 release];
+        fsWinCtrl1 = nil;
+        fsWinCtrl2 = nil;
+    }
+    else
+    {
+        // release the captured display
+        CGDisplayErr err = CGDisplayRelease(displayID);
+        if (err == CGDisplayNoErr)
+        {
+            [[self window] close];
+        }
+    }
 }
 
 // -------------------------------------------------------------
