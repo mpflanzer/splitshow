@@ -41,7 +41,6 @@ void displayReconfigurationCallback(
     IBOutlet NSSplitView    * splitView;
     IBOutlet PDFViewCG      * pdfViewCG1;
     IBOutlet PDFViewCG      * pdfViewCG2;
-    IBOutlet NSPopUpButton  * slideshowModeChooser;
     NSArray                 * pageNbrs1;
     NSArray                 * pageNbrs2;
     size_t                  currentPageIdx;
@@ -50,17 +49,25 @@ void displayReconfigurationCallback(
     NSArray                 * screens;
     NSScreen                * screen1;
     NSScreen                * screen2;
-    NSRect dividerRect;
+    NSRect                  dividerRect;
+    SSWindowController      *fsWinCtrl1;
+    SSWindowController      *fsWinCtrl2;
+
+    // full-screen specific
+    BOOL                    fullScreen;
+    CGDirectDisplayID       displayID;
 }
 
-@property(copy) NSArray     * pageNbrs1;
-@property(copy) NSArray     * pageNbrs2;
-@property       size_t      currentPageIdx;
+@property(retain) NSArray   * pageNbrs1;
+@property(retain) NSArray   * pageNbrs2;
+@property size_t            currentPageIdx;
 @property SlideshowMode     slideshowMode;
 @property BOOL              screensSwapped;
 @property(retain) NSArray   * screens;
 @property(retain) NSScreen  * screen1;
 @property(retain) NSScreen  * screen2;
+@property BOOL              fullScreen;
+@property CGDirectDisplayID displayID;
 
 - (SlideshowMode)guessSlideshowMode;
 - (void)guessScreenAssignment;
@@ -79,7 +86,7 @@ void displayReconfigurationCallback(
 - (void)goToFirstPage;
 - (void)enterFullScreenMode:(id)sender;
 - (BOOL)isFullScreen;
-- (void)cancelOperation:(id)sender;
+- (void)cancel:(id)sender;
 - (CGFloat)splitView:(NSSplitView *)sender constrainSplitPosition:(CGFloat)proposedPosition ofSubviewAt:(NSInteger)offset;
 - (NSSize)windowWillResize:(NSWindow *)window toSize:(NSSize)proposedFrameSize;
 
