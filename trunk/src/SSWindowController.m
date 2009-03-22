@@ -20,6 +20,7 @@
  * THE SOFTWARE.
  */
 
+#import <Carbon/Carbon.h>
 #import "SSWindowController.h"
 #import "SSDocument.h"
 #import "NSScreen_Extension.h"
@@ -539,100 +540,79 @@
 //        [pdfViewCG2 setNextResponder:self];
 //    }
 
-    NSWindow            *fsWin1;
-    NSWindow            *fsWin2;
-    PDFViewCG           *fsView1;
-    PDFViewCG           *fsView2;
-    NSDictionary        *screenInfo;
-    NSNumber            *screenID;
-    CGDirectDisplayID   _displayID;
-    CGDisplayErr        err;
+    NSWindow    *fsWin1;
+    NSWindow    *fsWin2;
+    PDFViewCG   *fsView1;
+    PDFViewCG   *fsView2;
 
     if (screen1 != nil)
     {
-        // Get the screen information and capture the screen
-        screenInfo =    [screen1    deviceDescription];
-        screenID =      [screenInfo objectForKey:@"NSScreenNumber"];
-        _displayID =    (CGDirectDisplayID)[screenID longValue];
-        err =           CGDisplayCapture(_displayID);
+        // Create the full-screen window and controller
+        fsWin1 = [[NSWindow alloc] initWithContentRect:[screen1 frame]
+                                             styleMask:NSBorderlessWindowMask
+                                               backing:NSBackingStoreBuffered
+                                                 defer:NO
+                                                screen:screen1];
+        fsWinCtrl1 = [[SSWindowController alloc] init];
+        [fsWinCtrl1 setWindow:fsWin1];
+        [fsWinCtrl1 setFullScreen:YES];
 
-        if (err == CGDisplayNoErr)
-        {
-            // Create the full-screen window and controller
-            fsWin1 = [[NSWindow alloc] initWithContentRect:[screen1 frame]
-                                                 styleMask:NSBorderlessWindowMask
-                                                   backing:NSBackingStoreBuffered
-                                                     defer:NO
-                                                    screen:screen1];
-            fsWinCtrl1 = [[SSWindowController alloc] init];
-            [fsWinCtrl1 setWindow:fsWin1];
-            [fsWinCtrl1 setFullScreen:YES];
-            [fsWinCtrl1 setDisplayID:_displayID];
+        // Establish the window attributes.
+        [fsWin1     setReleasedWhenClosed:YES];
+        [fsWin1     setDisplaysWhenScreenProfileChanges:YES];
 
-            // Establish the window attributes.
-            [fsWin1     setReleasedWhenClosed:YES];
-            [fsWin1     setDisplaysWhenScreenProfileChanges:YES];
+        // Create the custom views and add them to the fullscreen windows
+        fsView1 =   [[PDFViewCG alloc] initWithFrame:[screen1 frame]];
+        [fsView1    setPdfPage:[pdfViewCG1 pdfPage]];
+        [fsView1    setCropType:[pdfViewCG1 cropType]];
+        [fsWin1     setContentView:fsView1];
+        [fsView1    setNeedsDisplay:YES];
+        [fsView1    release];
 
-            // Create the custom views and add them to the fullscreen windows
-            fsView1 =   [[PDFViewCG alloc] initWithFrame:[screen1 frame]];
-            [fsView1    setPdfPage:[pdfViewCG1 pdfPage]];
-            [fsView1    setCropType:[pdfViewCG1 cropType]];
-            [fsWin1     setContentView:fsView1];
-            [fsView1    setNeedsDisplay:YES];
-            [fsView1    release];
+        // Increase the window level and enter kiosk mode
+        [fsWin1     setLevel:NSMainMenuWindowLevel];
+        SetSystemUIMode(kUIModeAllSuppressed, kUIOptionDisableAppleMenu);
 
-            // The window has to be above the level of the shield window
-            [fsWin1     setLevel:CGShieldingWindowLevel()];
-
-            // Show the window
-            [fsWin1     makeKeyAndOrderFront:fsWinCtrl1];
-        }
+        // Show the window
+        [fsWin1     makeKeyAndOrderFront:fsWinCtrl1];
     }
 
     if (screen2 != nil)
     {
-        // Get the screen information and capture the screen
-        screenInfo =    [screen1    deviceDescription];
-        screenID =      [screenInfo objectForKey:@"NSScreenNumber"];
-        _displayID =    (CGDirectDisplayID)[screenID longValue];
-        err =           CGDisplayCapture(_displayID);
+        // Create the full-screen window and controller
+        fsWin2 = [[NSWindow alloc] initWithContentRect:[screen2 frame]
+                                             styleMask:NSBorderlessWindowMask
+                                               backing:NSBackingStoreBuffered
+                                                 defer:NO
+                                                screen:screen2];
+        fsWinCtrl2 = [[SSWindowController alloc] init];
+        [fsWinCtrl2 setWindow:fsWin2];
+        [fsWinCtrl1 setFullScreen:YES];
 
-        if (err == CGDisplayNoErr)
-        {
-            // Create the full-screen window and controller
-            fsWin2 = [[NSWindow alloc] initWithContentRect:[screen2 frame]
-                                                 styleMask:NSBorderlessWindowMask
-                                                   backing:NSBackingStoreBuffered
-                                                     defer:NO
-                                                    screen:screen2];
-            fsWinCtrl2 = [[SSWindowController alloc] init];
-            [fsWinCtrl2 setWindow:fsWin2];
-            [fsWinCtrl1 setFullScreen:YES];
-            [fsWinCtrl1 setDisplayID:_displayID];
+        // Establish the window attributes.
+        [fsWin2     setReleasedWhenClosed:YES];
+        [fsWin2     setDisplaysWhenScreenProfileChanges:YES];
 
-            // Establish the window attributes.
-            [fsWin2     setReleasedWhenClosed:YES];
-            [fsWin2     setDisplaysWhenScreenProfileChanges:YES];
+        // Create the custom views and add them to the fullscreen windows
+        fsView2 =   [[PDFViewCG alloc] initWithFrame:[screen2 frame]];
+        [fsView2    setPdfPage:[pdfViewCG2 pdfPage]];
+        [fsView2    setCropType:[pdfViewCG2 cropType]];
+        [fsWin2     setContentView:fsView2];
+        [fsView2    setNeedsDisplay:YES];
+        [fsView2    release];
 
-            // Create the custom views and add them to the fullscreen windows
-            fsView2 =   [[PDFViewCG alloc] initWithFrame:[screen2 frame]];
-            [fsView2    setPdfPage:[pdfViewCG2 pdfPage]];
-            [fsView2    setCropType:[pdfViewCG2 cropType]];
-            [fsWin2     setContentView:fsView2];
-            [fsView2    setNeedsDisplay:YES];
-            [fsView2    release];
+        // Increase the window level and enter kiosk mode
+        [fsWin1     setLevel:NSMainMenuWindowLevel];
+        SetSystemUIMode(kUIModeAllSuppressed, kUIOptionDisableAppleMenu);
 
-            // The window has to be above the level of the shield window
-            [fsWin2     setLevel:CGShieldingWindowLevel()];
-
-            // Show the window
-            [fsWin2     makeKeyAndOrderFront:fsWinCtrl2];
-        }
+        // Show the window
+        [fsWin2     makeKeyAndOrderFront:fsWinCtrl2];
     }
 }
 
 - (BOOL)isFullScreen
 {
+    //FIXME: broken since we don't use [pdfViewCG1 enterFullScreenMode] anymore
     BOOL fullScreen1 = [pdfViewCG1 isInFullScreenMode];
     BOOL fullScreen2 = [pdfViewCG2 isInFullScreenMode];
 
@@ -653,12 +633,8 @@
     }
     else
     {
-        // release the captured display
-        CGDisplayErr err = CGDisplayRelease(displayID);
-        if (err == CGDisplayNoErr)
-        {
-            [[self window] close];
-        }
+        // Close the window and leave kiosk mode
+        [[self window] close];
     }
 }
 
@@ -707,6 +683,8 @@ void displayReconfigurationCallback(
                                     CGDisplayChangeSummaryFlags flags,
                                     void *userInfo)
 {
+    NSLog(@"[SSWindowController displayReconfigurationCallback]");
+
     //TODO: fix case when disconnecting a screen while in full-screen mode
     if (flags & kCGDisplayBeginConfigurationFlag)
     {
