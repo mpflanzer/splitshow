@@ -8,6 +8,13 @@
 
 #import <Cocoa/Cocoa.h>
 
+typedef enum : NSUInteger
+{
+    BeamerPresentationLayoutInterleaved,
+    BeamerPresentationLayoutMirror,
+    BeamerPresentationLayoutSplit,
+} BeamerPresentationLayout;
+
 @interface PreviewController : NSViewController
 
 @end
