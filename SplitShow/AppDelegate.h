@@ -10,6 +10,10 @@
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
+@property NSMutableSet *windowControllers;
+
+- (IBAction)openDocument:(id)sender;
+- (void)windowWillClose:(NSNotification*)notification;
 
 @end
 

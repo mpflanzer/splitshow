@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" initialViewController="B8D-0N-5wS">
+<document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="7702"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -649,7 +650,7 @@
         <!--Window Controller-->
         <scene sceneID="R2V-B0-nI4">
             <objects>
-                <windowController id="B8D-0N-5wS" sceneMemberID="viewController">
+                <windowController storyboardIdentifier="PreviewWindowController" id="B8D-0N-5wS" customClass="PreviewWindowController" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
                         <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
@@ -671,6 +672,23 @@
                     <view key="view" id="m2S-Jp-Qdl">
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <subviews>
+                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" ambiguous="YES" misplaced="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pTX-C0-uzD">
+                                <rect key="frame" x="0.0" y="0.0" width="240" height="270"/>
+                            </pdfView>
+                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" ambiguous="YES" misplaced="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JXL-DX-Nri">
+                                <rect key="frame" x="240" y="0.0" width="240" height="270"/>
+                            </pdfView>
+                        </subviews>
+                        <constraints>
+                            <constraint firstItem="pTX-C0-uzD" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2LC-fK-OrU"/>
+                            <constraint firstItem="JXL-DX-Nri" firstAttribute="leading" secondItem="pTX-C0-uzD" secondAttribute="trailing" id="Lmw-Hc-ohG"/>
+                            <constraint firstItem="pTX-C0-uzD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="UQ5-t1-Syx"/>
+                            <constraint firstAttribute="bottom" secondItem="pTX-C0-uzD" secondAttribute="bottom" id="aBh-ZA-TOO"/>
+                            <constraint firstAttribute="trailing" secondItem="JXL-DX-Nri" secondAttribute="trailing" id="brt-Ak-UiV"/>
+                            <constraint firstItem="JXL-DX-Nri" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="foN-C5-Neg"/>
+                            <constraint firstAttribute="bottom" secondItem="JXL-DX-Nri" secondAttribute="bottom" id="ybG-HN-Kea"/>
+                        </constraints>
                     </view>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
