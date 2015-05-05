@@ -17,6 +17,12 @@
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
     self.windowControllers = [NSMutableSet set];
+    self.openDialog = [NSOpenPanel openPanel];
+
+    [self.openDialog setCanChooseDirectories:NO];
+    [self.openDialog setCanCreateDirectories:NO];
+    [self.openDialog setAllowedFileTypes:@[@"pdf"]];
+    [self.openDialog setAllowsMultipleSelection:YES];
 
     // React to closing windows to release the window controllers
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:nil];
@@ -24,25 +30,38 @@
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-
-    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (void)openDocument:(id)sender
 {
-    NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
-    NSWindowController *windowController = [storyBoard instantiateControllerWithIdentifier:@"PreviewWindowController"];
-    [windowController showWindow:self];
+    [self.openDialog beginWithCompletionHandler:^(NSInteger result) {
+        if(result == NSFileHandlingPanelOKButton)
+        {
+            NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
+            PreviewWindowController *windowController;
+            NSError *error;
 
-    [self.windowControllers addObject:windowController];
+            for(NSURL *file in [self.openDialog URLs])
+            {
+                windowController = [storyBoard instantiateControllerWithIdentifier:@"PreviewWindowController"];
+
+                if([windowController readFromURL:file error:&error])
+                {
+                    [self.windowControllers addObject:windowController];
+                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:windowController];
+                }
+            }
+        }
+    }];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
 {
     // Remove reference to window controller if window closes
-    NSWindow *window = notification.object;
+    PreviewWindowController *windowController = notification.object;
 
-    [self.windowControllers removeObject:window.windowController];
+    [self.windowControllers removeObject:windowController];
+    [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:windowController];
 }
 
 @end

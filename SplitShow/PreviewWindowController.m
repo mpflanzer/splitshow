@@ -16,8 +16,17 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
-    
-    // Implement this method to handle any initialization after your window controller's window has been loaded from its nib file.
+
+    self.presentation = nil;
+
+    [self showWindow:self];
+}
+
+- (BOOL)readFromURL:(NSURL *)file error:(NSError *__autoreleasing *)error
+{
+    self.presentation = [[BeamerDocument alloc] initWithURL:file];
+
+    return (self.presentation != nil);
 }
 
 @end

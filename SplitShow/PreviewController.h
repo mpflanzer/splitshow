@@ -10,6 +10,5 @@
 
 @interface PreviewController : NSViewController
 
-
 @end
 

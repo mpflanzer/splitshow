@@ -7,10 +7,12 @@
 //
 
 #import <Cocoa/Cocoa.h>
+#import "PreviewWindowController.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
 @property NSMutableSet *windowControllers;
+@property NSOpenPanel *openDialog;
 
 - (IBAction)openDocument:(id)sender;
 - (void)windowWillClose:(NSNotification*)notification;
