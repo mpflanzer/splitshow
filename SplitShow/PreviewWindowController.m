@@ -20,6 +20,7 @@
     self.presentation = nil;
     ((PreviewController*)self.contentViewController).previewWindowController = self;
 
+    [self becomeFirstResponder];
     [self showWindow:self];
 }
 
@@ -33,6 +34,31 @@
     }
 
     return (self.presentation != nil);
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    [self interpretKeyEvents:@[theEvent]];
+}
+
+-(void)moveUp:(id)sender
+{
+    [(PreviewController*)self.contentViewController prevSlide];
+}
+
+- (void)moveLeft:(id)sender
+{
+    [(PreviewController*)self.contentViewController prevSlide];
+}
+
+- (void)moveDown:(id)sender
+{
+    [(PreviewController*)self.contentViewController nextSlide];
+}
+
+-(void)moveRight:(id)sender
+{
+    [(PreviewController*)self.contentViewController nextSlide];
 }
 
 @end

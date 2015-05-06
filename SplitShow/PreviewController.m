@@ -11,6 +11,7 @@
 @interface PreviewController ()
 
 @property NSInteger currentSlideIndex;
+@property NSInteger currentSlideCount;
 @property NSDictionary *currentSlideLayout;
 
 - (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(BeamerPresentationMode)layout;
@@ -19,6 +20,8 @@
 - (NSInteger)getNoteIndexForSlideIndex:(NSInteger)index;
 - (NSInteger)getContentIndex;
 - (NSInteger)getNotesIndex;
+- (void)showPreview;
+- (void)showPageAtIndex:(NSInteger)index withCrop:(BeamerPageCrop)crop onView:(BeamerView*)view;
 
 @end
 
@@ -42,7 +45,13 @@
     self.currentSlideIndex = 0;
     self.presentationMode = [self getPresentationModeForSlideMode:self.previewWindowController.presentation.slideMode];
     self.currentSlideLayout = [self.previewWindowController.presentation getSlideLayoutForSlideMode:self.previewWindowController.presentation.slideMode];
+    self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
 
+    [self showPreview];
+}
+
+- (void)showPreview
+{
     switch(self.presentationMode)
     {
         case BeamerPresentationLayoutSplit:
@@ -78,6 +87,26 @@
     }
 
     [view showPage:page croppedTo:cropBounds];
+}
+
+- (void)prevSlide
+{
+    if(self.currentSlideIndex > 0)
+    {
+        --self.currentSlideIndex;
+
+        [self showPreview];
+    }
+}
+
+- (void)nextSlide
+{
+    if(self.currentSlideIndex < self.currentSlideCount - 1)
+    {
+        ++self.currentSlideIndex;
+
+        [self showPreview];
+    }
 }
 
 - (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(BeamerPresentationMode)layout
@@ -119,7 +148,7 @@
 - (NSInteger)getContentIndexForSlideIndex:(NSInteger)index
 {
     NSArray *contentSlideIndices = self.currentSlideLayout[@"content"];
-    index = MIN(index, contentSlideIndices.count - 1);
+    index = MAX(0, MIN(index, contentSlideIndices.count - 1));
 
     return [contentSlideIndices[index] integerValue];
 }
@@ -132,12 +161,20 @@
 //TODO: Mirror if no note is available
 - (NSInteger)getNoteIndexForSlideIndex:(NSInteger)index
 {
+    index = MAX(0, index);
+
     NSArray *noteSlideIndices = self.currentSlideLayout[@"notes"];
     NSInteger contentIndex = [self getContentIndexForSlideIndex:index];
 
     for(index = 0; index < noteSlideIndices.count && [noteSlideIndices[index] integerValue] < contentIndex; ++index)
     {
         // Skip all note slide previous to the current content slide
+    }
+
+    //TODO: Remove quickfix!
+    if(index == noteSlideIndices.count)
+    {
+        return [noteSlideIndices[index - 1] integerValue];
     }
 
     return [noteSlideIndices[index] integerValue];

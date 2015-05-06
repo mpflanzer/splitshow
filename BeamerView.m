@@ -22,9 +22,10 @@
     return self;
 }
 
-- (void)keyDown:(NSEvent *)theEvent
+// Deactivate user interaction
+- (BOOL)canBecomeKeyView
 {
-    // Deactivate user interaction
+    return NO;
 }
 
 - (void)showPage:(BeamerPage *)page croppedTo:(NSRect)crop

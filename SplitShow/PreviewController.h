@@ -29,7 +29,8 @@ typedef enum : NSUInteger
 @property BeamerPresentationMode presentationMode;
 
 - (void)loadPreview;
-- (void)showPageAtIndex:(NSInteger)index withCrop:(BeamerPageCrop)crop onView:(BeamerView*)view;
+- (void)prevSlide;
+- (void)nextSlide;
 
 @end
 
