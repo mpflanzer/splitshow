@@ -22,6 +22,8 @@ typedef enum : NSUInteger
 
 @property(readonly) BeamerDocumentSlideMode slideMode;
 
+- (NSString*)title;
+
 - (NSDictionary*)getSlideLayoutForSlideMode:(BeamerDocumentSlideMode)mode;
 
 @end

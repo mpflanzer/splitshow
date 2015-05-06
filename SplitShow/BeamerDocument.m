@@ -40,6 +40,18 @@
     return [BeamerPage class];
 }
 
+- (NSString *)title
+{
+    if(self.documentAttributes[PDFDocumentTitleAttribute] != nil)
+    {
+        return self.documentAttributes[PDFDocumentTitleAttribute];
+    }
+    else
+    {
+        return self.documentURL.lastPathComponent;
+    }
+}
+
 - (void)setupSlideLayout
 {
     if(self.pageCount > 0)

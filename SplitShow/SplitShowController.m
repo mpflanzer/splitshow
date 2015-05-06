@@ -72,6 +72,8 @@
 
     if(self.presentation != nil && self.presentation.pageCount > 0)
     {
+        [self.window setTitle:[self.presentation title]];
+
         [self addObserver:self forKeyPath:@"presentationMode" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
         [self addObserver:self forKeyPath:@"mainDisplay" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
         [self addObserver:self forKeyPath:@"helperDisplay" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
