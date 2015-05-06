@@ -673,23 +673,28 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" ambiguous="YES" misplaced="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pTX-C0-uzD">
+                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pTX-C0-uzD" customClass="BeamerView">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="270"/>
                             </pdfView>
-                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" ambiguous="YES" misplaced="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JXL-DX-Nri">
+                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JXL-DX-Nri" customClass="BeamerView">
                                 <rect key="frame" x="240" y="0.0" width="240" height="270"/>
                             </pdfView>
                         </subviews>
                         <constraints>
-                            <constraint firstItem="pTX-C0-uzD" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="2LC-fK-OrU"/>
-                            <constraint firstItem="JXL-DX-Nri" firstAttribute="leading" secondItem="pTX-C0-uzD" secondAttribute="trailing" id="Lmw-Hc-ohG"/>
-                            <constraint firstItem="pTX-C0-uzD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="UQ5-t1-Syx"/>
-                            <constraint firstAttribute="bottom" secondItem="pTX-C0-uzD" secondAttribute="bottom" id="aBh-ZA-TOO"/>
-                            <constraint firstAttribute="trailing" secondItem="JXL-DX-Nri" secondAttribute="trailing" id="brt-Ak-UiV"/>
-                            <constraint firstItem="JXL-DX-Nri" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="foN-C5-Neg"/>
-                            <constraint firstAttribute="bottom" secondItem="JXL-DX-Nri" secondAttribute="bottom" id="ybG-HN-Kea"/>
+                            <constraint firstAttribute="bottom" secondItem="JXL-DX-Nri" secondAttribute="bottom" id="2qc-JI-2EP"/>
+                            <constraint firstItem="JXL-DX-Nri" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="462-yS-9Ad"/>
+                            <constraint firstItem="pTX-C0-uzD" firstAttribute="width" secondItem="JXL-DX-Nri" secondAttribute="width" id="GoE-3c-aX4"/>
+                            <constraint firstItem="pTX-C0-uzD" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="o0b-11-aP8"/>
+                            <constraint firstItem="JXL-DX-Nri" firstAttribute="leading" secondItem="pTX-C0-uzD" secondAttribute="trailing" id="qNM-xc-fYG"/>
+                            <constraint firstItem="pTX-C0-uzD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="tcD-gT-iBG"/>
+                            <constraint firstAttribute="bottom" secondItem="pTX-C0-uzD" secondAttribute="bottom" id="y3j-hI-lnb"/>
+                            <constraint firstAttribute="trailing" secondItem="JXL-DX-Nri" secondAttribute="trailing" id="zud-ae-1LU"/>
                         </constraints>
                     </view>
+                    <connections>
+                        <outlet property="contentPreview" destination="pTX-C0-uzD" id="QvE-rL-m8P"/>
+                        <outlet property="notesPreview" destination="JXL-DX-Nri" id="JXJ-1D-7k5"/>
+                    </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>

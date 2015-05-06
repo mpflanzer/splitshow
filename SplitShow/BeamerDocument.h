@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
+#import "BeamerPage.h"
 
 typedef enum : NSUInteger
 {
@@ -18,6 +19,8 @@ typedef enum : NSUInteger
 } BeamerDocumentSlideMode;
 
 @interface BeamerDocument : PDFDocument
+
+@property(readonly) BeamerDocumentSlideMode slideMode;
 
 - (NSDictionary*)getSlideLayoutForSlideMode:(BeamerDocumentSlideMode)mode;
 

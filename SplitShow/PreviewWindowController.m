@@ -18,6 +18,7 @@
     [super windowDidLoad];
 
     self.presentation = nil;
+    ((PreviewController*)self.contentViewController).previewWindowController = self;
 
     [self showWindow:self];
 }
@@ -25,6 +26,11 @@
 - (BOOL)readFromURL:(NSURL *)file error:(NSError *__autoreleasing *)error
 {
     self.presentation = [[BeamerDocument alloc] initWithURL:file];
+
+    if(self.presentation != nil && self.presentation.pageCount > 0)
+    {
+        [(PreviewController*)self.contentViewController loadPreview];
+    }
 
     return (self.presentation != nil);
 }

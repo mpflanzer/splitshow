@@ -10,7 +10,7 @@
 
 @interface BeamerDocument ()
 
-@property BeamerDocumentSlideMode slideMode;
+@property(readwrite) BeamerDocumentSlideMode slideMode;
 @property NSArray *contentSlides;
 @property NSArray *noteSlides;
 
@@ -33,6 +33,11 @@
     }
 
     return self;
+}
+
+- (Class)pageClass
+{
+    return [BeamerPage class];
 }
 
 - (void)setupSlideLayout
