@@ -38,8 +38,8 @@
 - (NSInteger)getNotesIndexForSlidesIndex:(NSInteger)index;
 - (NSInteger)getNotesIndex;
 
-- (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(BeamerPresentationMode)layout;
-- (BeamerPresentationMode)getPresentationModeForSlideMode:(BeamerDocumentSlideMode)mode;
+- (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(NSInteger)layout;
+- (NSInteger)getPresentationModeForSlideMode:(BeamerDocumentSlideMode)mode;
 
 @end
 
@@ -47,6 +47,19 @@
 
 - (void)windowDidLoad {
     [super windowDidLoad];
+
+    self.presentationModes = @[@"Interleaved", @"Split", @"Mirror"];
+
+    NSMutableArray *displays = [NSMutableArray array];
+
+    for(NSScreen *screen in [NSScreen screens])
+    {
+        [displays addObject:[screen name]];
+    }
+
+    self.displays = displays;
+    self.mainDisplay = 0;
+    self.mainDisplay = 1;
 
     self.previewController = (PreviewController*)self.contentViewController;
 
@@ -59,7 +72,9 @@
 
     if(self.presentation != nil && self.presentation.pageCount > 0)
     {
-        [self startPresentation];
+        [self addObserver:self forKeyPath:@"presentationMode" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
+        [self addObserver:self forKeyPath:@"mainDisplay" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
+        [self addObserver:self forKeyPath:@"helperDisplay" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
     }
 
     return (self.presentation != nil);
@@ -99,7 +114,7 @@
 
 
 
-    fullScreen = [[NSScreen screens] objectAtIndex:1];
+    fullScreen = [[NSScreen screens] objectAtIndex:self.mainDisplay];
     fullScreenBounds = fullScreen.frame;
     fullScreenBounds.origin = CGPointZero;
     fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
@@ -121,7 +136,7 @@
 
     [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController}];
 
-    fullScreen = [[NSScreen screens] objectAtIndex:0];
+    fullScreen = [[NSScreen screens] objectAtIndex:self.helperDisplay];
     fullScreenBounds = fullScreen.frame;
     fullScreenBounds.origin = CGPointZero;
     fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
@@ -169,10 +184,10 @@
 
 - (void)startPresentation
 {
-    self.currentSlideIndex = 0;
-    self.presentationMode = [self getPresentationModeForSlideMode:self.presentation.slideMode];
-    self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:self.presentation.slideMode];
-    self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
+    if(self.presentation == nil)
+    {
+        return;
+    }
 
     [self updateBeamerViews];
 }
@@ -312,7 +327,19 @@
     return [self getNotesIndexForSlidesIndex:self.currentSlideIndex];
 }
 
-- (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(BeamerPresentationMode)layout
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary *)change context:(void *)context
+{
+    if([@"presentationMode" isEqualToString:keyPath])
+    {
+        self.currentSlideIndex = 0;
+        self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:self.presentation.slideMode];
+        self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
+
+        [self startPresentation];
+    }
+}
+
+- (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(NSInteger)layout
 {
     switch(layout)
     {
@@ -330,7 +357,7 @@
     }
 }
 
-- (BeamerPresentationMode)getPresentationModeForSlideMode:(BeamerDocumentSlideMode)mode
+- (NSInteger)getPresentationModeForSlideMode:(BeamerDocumentSlideMode)mode
 {
     switch(mode)
     {

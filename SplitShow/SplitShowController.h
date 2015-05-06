@@ -9,22 +9,24 @@
 #import <Cocoa/Cocoa.h>
 #import "PreviewController.h"
 #import "BeamerDocument.h"
+#import "NSScreen_NameExtension.h"
 
 #define BeamerViewControllerNotificationChangeSlide @"BeamerViewControllerNotificationChangeSlide"
 #define BeamerViewControllerNotificationGroupAll -1
 #define BeamerViewControllerNotificationGroupContent 0
 #define BeamerViewControllerNotificationGroupNotes 1
 
-typedef enum : NSUInteger
-{
-    BeamerPresentationLayoutInterleaved,
-    BeamerPresentationLayoutMirror,
-    BeamerPresentationLayoutSplit,
-} BeamerPresentationMode;
+#define BeamerPresentationLayoutInterleaved 0
+#define BeamerPresentationLayoutSplit 1
+#define BeamerPresentationLayoutMirror 2
 
 @interface SplitShowController : NSWindowController
 
-@property BeamerPresentationMode presentationMode;
+@property NSArray *displays;
+@property NSInteger mainDisplay;
+@property NSInteger helperDisplay;
+@property NSArray *presentationModes;
+@property NSInteger presentationMode;
 
 - (BOOL)readFromURL:(NSURL*)file error:(NSError*__autoreleasing *)error;
 

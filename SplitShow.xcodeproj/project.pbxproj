@@ -22,6 +22,7 @@
 		8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BBB91AFA29BD00697E31 /* empty.pdf */; };
 		8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC852861AFA59DC00955035 /* BeamerViewController.m */; };
 		8EC852981AFAA48700955035 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EC852961AFAA48700955035 /* Localizable.strings */; };
+		8EC8529B1AFAC52F00955035 /* NSScreen_NameExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -61,6 +62,8 @@
 		8EC852851AFA59DC00955035 /* BeamerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerViewController.h; sourceTree = "<group>"; };
 		8EC852861AFA59DC00955035 /* BeamerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerViewController.m; sourceTree = "<group>"; };
 		8EC852971AFAA48700955035 /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = SplitShow/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8EC852991AFAC52F00955035 /* NSScreen_NameExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScreen_NameExtension.h; sourceTree = "<group>"; };
+		8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSScreen_NameExtension.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -111,6 +114,8 @@
 				8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */,
 				8E21BBB01AF8E8FE00697E31 /* SplitShowController.h */,
 				8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */,
+				8EC852991AFAC52F00955035 /* NSScreen_NameExtension.h */,
+				8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */,
 				8E21BBB31AF9379A00697E31 /* BeamerView.h */,
 				8E21BBB41AF9379A00697E31 /* BeamerView.m */,
 				8E21BBB61AF9822D00697E31 /* BeamerPage.h */,
@@ -267,6 +272,7 @@
 				8E21BB8E1AF8DF4B00697E31 /* PreviewController.m in Sources */,
 				8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */,
 				8E21BB8B1AF8DF4B00697E31 /* main.m in Sources */,
+				8EC8529B1AFAC52F00955035 /* NSScreen_NameExtension.m in Sources */,
 				8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */,
 				8E21BBAF1AF8E0A500697E31 /* BeamerDocument.m in Sources */,
 				8E21BBB51AF9379A00697E31 /* BeamerView.m in Sources */,
