@@ -378,10 +378,6 @@
     {
         [self exitFullScreen];
     }
-    else
-    {
-        [super cancelOperation:sender];
-    }
 }
 
 -(void)moveUp:(id)sender
