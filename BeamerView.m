@@ -10,13 +10,16 @@
 
 @implementation BeamerView
 
-- (instancetype)initWithCoder:(NSCoder *)coder
+- (instancetype)initWithFrame:(NSRect)frameRect
 {
-    self = [super initWithCoder:coder];
+    self = [super initWithFrame:frameRect];
 
     if(self)
     {
-        self.document = [[PDFDocument alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"empty" withExtension:@"pdf"]];
+        [self setBackgroundColor:[NSColor colorWithCalibratedWhite:0.0 alpha:1.0]];
+        self.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
+        [self setDisplayMode:kPDFDisplaySinglePage];
+        [self setAutoScales:YES];
     }
 
     return self;
@@ -26,15 +29,6 @@
 - (BOOL)canBecomeKeyView
 {
     return NO;
-}
-
-- (void)showPage:(BeamerPage *)page croppedTo:(NSRect)crop
-{
-    [self.document removePageAtIndex:0];
-    PDFPage *newPage = [page copy];
-    [newPage setBounds:crop forBox:kPDFDisplayBoxMediaBox];
-    [self.document insertPage:newPage atIndex:0];
-    [self layoutDocumentView];
 }
 
 @end

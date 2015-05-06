@@ -2,7 +2,6 @@
 <document type="com.apple.InterfaceBuilder3.Cocoa.Storyboard.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="7702"/>
     </dependencies>
     <scenes>
         <!--Application-->
@@ -584,6 +583,17 @@
                                 <modifierMask key="keyEquivalentModifierMask"/>
                                 <menu key="submenu" title="View" id="HyV-fh-RgO">
                                     <items>
+                                        <menuItem title="Enter Full Screen" keyEquivalent="f" id="lkj-BG-IrW">
+                                            <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
+                                            <connections>
+                                                <action selector="enterFullScreen:" target="Ady-hI-5gd" id="37W-oe-nsF"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Leave Full Screen" keyEquivalent="F" id="wmj-RS-5Li">
+                                            <connections>
+                                                <action selector="leaveFullScreen:" target="Ady-hI-5gd" id="cBB-XX-02p"/>
+                                            </connections>
+                                        </menuItem>
                                         <menuItem title="Show Toolbar" keyEquivalent="t" id="snW-S8-Cw5">
                                             <modifierMask key="keyEquivalentModifierMask" option="YES" command="YES"/>
                                             <connections>
@@ -673,27 +683,27 @@
                         <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
-                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pTX-C0-uzD" customClass="BeamerView">
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="BsN-aH-bQZ">
                                 <rect key="frame" x="0.0" y="0.0" width="240" height="270"/>
-                            </pdfView>
-                            <pdfView autoresizesSubviews="NO" wantsLayer="YES" displayMode="singlePage" displaysPageBreaks="NO" autoScales="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JXL-DX-Nri" customClass="BeamerView">
+                            </customView>
+                            <customView translatesAutoresizingMaskIntoConstraints="NO" id="Njj-ZA-XCE">
                                 <rect key="frame" x="240" y="0.0" width="240" height="270"/>
-                            </pdfView>
+                            </customView>
                         </subviews>
                         <constraints>
-                            <constraint firstAttribute="bottom" secondItem="JXL-DX-Nri" secondAttribute="bottom" id="2qc-JI-2EP"/>
-                            <constraint firstItem="JXL-DX-Nri" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="462-yS-9Ad"/>
-                            <constraint firstItem="pTX-C0-uzD" firstAttribute="width" secondItem="JXL-DX-Nri" secondAttribute="width" id="GoE-3c-aX4"/>
-                            <constraint firstItem="pTX-C0-uzD" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="o0b-11-aP8"/>
-                            <constraint firstItem="JXL-DX-Nri" firstAttribute="leading" secondItem="pTX-C0-uzD" secondAttribute="trailing" id="qNM-xc-fYG"/>
-                            <constraint firstItem="pTX-C0-uzD" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="tcD-gT-iBG"/>
-                            <constraint firstAttribute="bottom" secondItem="pTX-C0-uzD" secondAttribute="bottom" id="y3j-hI-lnb"/>
-                            <constraint firstAttribute="trailing" secondItem="JXL-DX-Nri" secondAttribute="trailing" id="zud-ae-1LU"/>
+                            <constraint firstItem="BsN-aH-bQZ" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="9jI-lR-2LE"/>
+                            <constraint firstAttribute="trailing" secondItem="Njj-ZA-XCE" secondAttribute="trailing" id="EsT-Zu-for"/>
+                            <constraint firstItem="BsN-aH-bQZ" firstAttribute="leading" secondItem="m2S-Jp-Qdl" secondAttribute="leading" id="Fti-u6-qVw"/>
+                            <constraint firstItem="Njj-ZA-XCE" firstAttribute="leading" secondItem="BsN-aH-bQZ" secondAttribute="trailing" id="JQk-7I-d0Q"/>
+                            <constraint firstItem="Njj-ZA-XCE" firstAttribute="width" secondItem="BsN-aH-bQZ" secondAttribute="width" id="Uyy-lG-dtn"/>
+                            <constraint firstAttribute="bottom" secondItem="Njj-ZA-XCE" secondAttribute="bottom" id="WTA-h9-NFe"/>
+                            <constraint firstAttribute="bottom" secondItem="BsN-aH-bQZ" secondAttribute="bottom" id="YjK-Ah-cou"/>
+                            <constraint firstItem="Njj-ZA-XCE" firstAttribute="top" secondItem="m2S-Jp-Qdl" secondAttribute="top" id="lVC-E8-Lwc"/>
                         </constraints>
                     </view>
                     <connections>
-                        <outlet property="contentPreview" destination="pTX-C0-uzD" id="QvE-rL-m8P"/>
-                        <outlet property="notesPreview" destination="JXL-DX-Nri" id="JXJ-1D-7k5"/>
+                        <outlet property="contentPreview" destination="BsN-aH-bQZ" id="ZO6-l9-O6e"/>
+                        <outlet property="notesPreview" destination="Njj-ZA-XCE" id="lJd-kh-kJl"/>
                     </connections>
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>

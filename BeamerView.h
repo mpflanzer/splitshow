@@ -7,11 +7,7 @@
 //
 
 #import <Quartz/Quartz.h>
-#import "BeamerDocument.h"
-#import "BeamerPage.h"
 
 @interface BeamerView : PDFView
-
-- (void)showPage:(BeamerPage*)page croppedTo:(NSRect)crop;
 
 @end
