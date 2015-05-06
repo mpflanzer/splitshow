@@ -21,6 +21,7 @@
 		8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB71AF9822D00697E31 /* BeamerPage.m */; };
 		8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BBB91AFA29BD00697E31 /* empty.pdf */; };
 		8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC852861AFA59DC00955035 /* BeamerViewController.m */; };
+		8EC852981AFAA48700955035 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EC852961AFAA48700955035 /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -59,6 +60,7 @@
 		8E21BBB91AFA29BD00697E31 /* empty.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = empty.pdf; sourceTree = "<group>"; };
 		8EC852851AFA59DC00955035 /* BeamerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerViewController.h; sourceTree = "<group>"; };
 		8EC852861AFA59DC00955035 /* BeamerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerViewController.m; sourceTree = "<group>"; };
+		8EC852971AFAA48700955035 /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = SplitShow/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -127,6 +129,7 @@
 		8E21BB851AF8DF4B00697E31 /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
+				8EC852961AFAA48700955035 /* Localizable.strings */,
 				8E21BBB91AFA29BD00697E31 /* empty.pdf */,
 				8E21BB861AF8DF4B00697E31 /* Info.plist */,
 				8E21BB8A1AF8DF4B00697E31 /* main.m */,
@@ -240,6 +243,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E21BB901AF8DF4B00697E31 /* Images.xcassets in Resources */,
+				8EC852981AFAA48700955035 /* Localizable.strings in Resources */,
 				8E21BB931AF8DF4B00697E31 /* Main.storyboard in Resources */,
 				8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */,
 			);
@@ -295,6 +299,15 @@
 				8E21BB921AF8DF4B00697E31 /* Base */,
 			);
 			name = Main.storyboard;
+			sourceTree = "<group>";
+		};
+		8EC852961AFAA48700955035 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8EC852971AFAA48700955035 /* Base */,
+			);
+			name = Localizable.strings;
+			path = ..;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

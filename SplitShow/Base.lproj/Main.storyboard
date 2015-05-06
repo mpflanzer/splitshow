@@ -586,12 +586,7 @@
                                         <menuItem title="Enter Full Screen" keyEquivalent="f" id="lkj-BG-IrW">
                                             <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                             <connections>
-                                                <action selector="enterFullScreen:" target="Ady-hI-5gd" id="37W-oe-nsF"/>
-                                            </connections>
-                                        </menuItem>
-                                        <menuItem title="Leave Full Screen" keyEquivalent="F" id="wmj-RS-5Li">
-                                            <connections>
-                                                <action selector="leaveFullScreen:" target="Ady-hI-5gd" id="cBB-XX-02p"/>
+                                                <action selector="toggleCustomFullScreen:" target="Ady-hI-5gd" id="s72-bX-SjY"/>
                                             </connections>
                                         </menuItem>
                                         <menuItem title="Show Toolbar" keyEquivalent="t" id="snW-S8-Cw5">

@@ -18,6 +18,9 @@
 @property NSInteger currentSlideCount;
 @property NSDictionary *currentSlideLayout;
 
+- (void)enterFullScreen;
+- (void)exitFullScreen;
+
 - (void)startPresentation;
 
 - (void)presentPrevSlide;
@@ -62,10 +65,26 @@
     return (self.presentation != nil);
 }
 
-- (IBAction)enterFullScreen:(id)sender
+- (BOOL)isFullScreen
 {
-    // Check whether already in full screen mode
-    if(self.fullScreens != nil)
+    return (self.fullScreens != nil);
+}
+
+- (IBAction)toggleCustomFullScreen:(id)sender
+{
+    if([self isFullScreen] == YES)
+    {
+        [self exitFullScreen];
+    }
+    else
+    {
+        [self enterFullScreen];
+    }
+}
+
+- (void)enterFullScreen
+{
+    if([self isFullScreen] == YES)
     {
         return;
     }
@@ -129,10 +148,9 @@
     [self startPresentation];
 }
 
-- (IBAction)leaveFullScreen:(id)sender
+- (void)exitFullScreen
 {
-    // Check whether in full screen mode
-    if(self.fullScreens == nil)
+    if([self isFullScreen] == NO)
     {
         return;
     }
@@ -330,9 +348,40 @@
     }
 }
 
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if(menuItem.action == @selector(toggleCustomFullScreen:))
+    {
+        if([self isFullScreen] == YES)
+        {
+            menuItem.title = NSLocalizedString(@"exitFullScreen", nil);
+        }
+        else
+        {
+            menuItem.title = NSLocalizedString(@"enterFullScreen", nil);
+        }
+
+        return YES;
+    }
+
+    return [super validateMenuItem:menuItem];
+}
+
 - (void)keyDown:(NSEvent *)theEvent
 {
     [self interpretKeyEvents:@[theEvent]];
+}
+
+- (void)cancel:(id)sender
+{
+    if([self isFullScreen] == YES)
+    {
+        [self exitFullScreen];
+    }
+    else
+    {
+        [super cancelOperation:sender];
+    }
 }
 
 -(void)moveUp:(id)sender

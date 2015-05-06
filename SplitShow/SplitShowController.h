@@ -28,7 +28,8 @@ typedef enum : NSUInteger
 
 - (BOOL)readFromURL:(NSURL*)file error:(NSError*__autoreleasing *)error;
 
-- (IBAction)enterFullScreen:(id)sender;
-- (IBAction)leaveFullScreen:(id)sender;
+- (void)cancel:(id)sender;
+- (BOOL)isFullScreen;
+- (IBAction)toggleCustomFullScreen:(id)sender;
 
 @end

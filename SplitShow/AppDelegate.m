@@ -55,23 +55,13 @@
     }];
 }
 
-//- (void)enterFullscreen:(id)sender
-//{
-//    [[self.windowControllers anyObject] enterFullscreen:sender];
-//}
-//
-//- (void)leaveFullscreen:(id)sender
-//{
-//    [[self.windowControllers anyObject] leaveFullscreen:sender];
-//}
-
 - (void)windowWillClose:(NSNotification *)notification
 {
     // Remove reference to window controller if window closes
     SplitShowController *windowController = notification.object;
 
-    [self.windowControllers removeObject:windowController];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:windowController];
+    [self.windowControllers removeObject:windowController];
 }
 
 @end
