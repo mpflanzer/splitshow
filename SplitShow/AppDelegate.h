@@ -7,7 +7,7 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PreviewWindowController.h"
+#import "SplitShowController.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 

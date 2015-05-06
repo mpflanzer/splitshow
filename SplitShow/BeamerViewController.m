@@ -31,12 +31,12 @@
     return self;
 }
 
-- (void)registerController:(PreviewWindowController *)controller
+- (void)registerController:(SplitShowController *)controller
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(changeView:) name:nil object:controller];
 }
 
-- (void)unregisterController:(PreviewWindowController *)controller
+- (void)unregisterController:(SplitShowController *)controller
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self name:nil object:controller];
 }

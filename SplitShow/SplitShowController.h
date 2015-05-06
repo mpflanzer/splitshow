@@ -22,7 +22,7 @@ typedef enum : NSUInteger
     BeamerPresentationLayoutSplit,
 } BeamerPresentationMode;
 
-@interface PreviewWindowController : NSWindowController
+@interface SplitShowController : NSWindowController
 
 @property BeamerPresentationMode presentationMode;
 

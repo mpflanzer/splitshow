@@ -7,10 +7,10 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "PreviewWindowController.h"
+#import "SplitShowController.h"
 #import "BeamerView.h"
 
-@class PreviewWindowController;
+@class SplitShowController;
 
 @interface BeamerViewController : NSViewController
 
@@ -19,8 +19,8 @@
 
 - (instancetype)initWithFrame:(NSRect)frame;
 
-- (void)registerController:(PreviewWindowController*)controller;
-- (void)unregisterController:(PreviewWindowController*)controller;
+- (void)registerController:(SplitShowController*)controller;
+- (void)unregisterController:(SplitShowController*)controller;
 
 - (void)changeView:(NSNotification*)notification;
 

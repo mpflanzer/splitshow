@@ -6,11 +6,9 @@
 //
 //
 
-#import "PreviewWindowController.h"
+#import "SplitShowController.h"
 
-@interface PreviewWindowController ()
-
-@property NSWindow *win1;
+@interface SplitShowController ()
 
 @property PreviewController *previewController;
 @property NSSet *fullScreens;
@@ -42,7 +40,7 @@
 
 @end
 
-@implementation PreviewWindowController
+@implementation SplitShowController
 
 - (void)windowDidLoad {
     [super windowDidLoad];

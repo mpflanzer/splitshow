@@ -16,7 +16,7 @@
 		8E21BBAA1AF8DFA800697E31 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E21BBA91AF8DFA800697E31 /* Cocoa.framework */; };
 		8E21BBAC1AF8DFAF00697E31 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E21BBAB1AF8DFAF00697E31 /* Quartz.framework */; };
 		8E21BBAF1AF8E0A500697E31 /* BeamerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBAE1AF8E0A500697E31 /* BeamerDocument.m */; };
-		8E21BBB21AF8E8FE00697E31 /* PreviewWindowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB11AF8E8FE00697E31 /* PreviewWindowController.m */; };
+		8E21BBB21AF8E8FE00697E31 /* SplitShowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */; };
 		8E21BBB51AF9379A00697E31 /* BeamerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB41AF9379A00697E31 /* BeamerView.m */; };
 		8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB71AF9822D00697E31 /* BeamerPage.m */; };
 		8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BBB91AFA29BD00697E31 /* empty.pdf */; };
@@ -50,10 +50,10 @@
 		8E21BBAB1AF8DFAF00697E31 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
 		8E21BBAD1AF8E0A500697E31 /* BeamerDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerDocument.h; sourceTree = "<group>"; };
 		8E21BBAE1AF8E0A500697E31 /* BeamerDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerDocument.m; sourceTree = "<group>"; };
-		8E21BBB01AF8E8FE00697E31 /* PreviewWindowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewWindowController.h; sourceTree = "<group>"; };
-		8E21BBB11AF8E8FE00697E31 /* PreviewWindowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewWindowController.m; sourceTree = "<group>"; };
-		8E21BBB31AF9379A00697E31 /* BeamerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = BeamerView.h; path = ../BeamerView.h; sourceTree = "<group>"; };
-		8E21BBB41AF9379A00697E31 /* BeamerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = BeamerView.m; path = ../BeamerView.m; sourceTree = "<group>"; };
+		8E21BBB01AF8E8FE00697E31 /* SplitShowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitShowController.h; sourceTree = "<group>"; };
+		8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitShowController.m; sourceTree = "<group>"; };
+		8E21BBB31AF9379A00697E31 /* BeamerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerView.h; sourceTree = "<group>"; };
+		8E21BBB41AF9379A00697E31 /* BeamerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerView.m; sourceTree = "<group>"; };
 		8E21BBB61AF9822D00697E31 /* BeamerPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerPage.h; sourceTree = "<group>"; };
 		8E21BBB71AF9822D00697E31 /* BeamerPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerPage.m; sourceTree = "<group>"; };
 		8E21BBB91AFA29BD00697E31 /* empty.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = empty.pdf; sourceTree = "<group>"; };
@@ -107,8 +107,8 @@
 				8E21BB881AF8DF4B00697E31 /* AppDelegate.m */,
 				8E21BB8C1AF8DF4B00697E31 /* PreviewController.h */,
 				8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */,
-				8E21BBB01AF8E8FE00697E31 /* PreviewWindowController.h */,
-				8E21BBB11AF8E8FE00697E31 /* PreviewWindowController.m */,
+				8E21BBB01AF8E8FE00697E31 /* SplitShowController.h */,
+				8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */,
 				8E21BBB31AF9379A00697E31 /* BeamerView.h */,
 				8E21BBB41AF9379A00697E31 /* BeamerView.m */,
 				8E21BBB61AF9822D00697E31 /* BeamerPage.h */,
@@ -259,7 +259,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E21BBB21AF8E8FE00697E31 /* PreviewWindowController.m in Sources */,
+				8E21BBB21AF8E8FE00697E31 /* SplitShowController.m in Sources */,
 				8E21BB8E1AF8DF4B00697E31 /* PreviewController.m in Sources */,
 				8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */,
 				8E21BB8B1AF8DF4B00697E31 /* main.m in Sources */,

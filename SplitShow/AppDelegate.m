@@ -38,7 +38,7 @@
         if(result == NSFileHandlingPanelOKButton)
         {
             NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
-            PreviewWindowController *windowController;
+            SplitShowController *windowController;
             NSError *error;
 
             for(NSURL *file in [self.openDialog URLs])
@@ -68,7 +68,7 @@
 - (void)windowWillClose:(NSNotification *)notification
 {
     // Remove reference to window controller if window closes
-    PreviewWindowController *windowController = notification.object;
+    SplitShowController *windowController = notification.object;
 
     [self.windowControllers removeObject:windowController];
     [[NSNotificationCenter defaultCenter] removeObserver:self name:NSWindowWillCloseNotification object:windowController];
