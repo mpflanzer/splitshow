@@ -25,8 +25,7 @@
     return self;
 }
 
-// Deactivate user interaction
-- (BOOL)canBecomeKeyView
+- (BOOL)becomeFirstResponder
 {
     return NO;
 }
