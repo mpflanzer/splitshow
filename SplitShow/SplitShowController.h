@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "PreviewController.h"
 #import "BeamerDocument.h"
+#import "BeamerTimerController.h"
 #import "NSScreen_NameExtension.h"
 
 #define BeamerViewControllerNotificationChangeSlide @"BeamerViewControllerNotificationChangeSlide"

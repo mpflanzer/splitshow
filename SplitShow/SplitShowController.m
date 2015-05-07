@@ -168,11 +168,15 @@
         [fullScreenWindow setOpaque:YES];
         [fullScreenWindow setHidesOnDeactivate:YES];
         [fullScreenWindow setContentView:fullScreenViewController.beamerView];
+
+        BeamerTimerController *timerController = [[BeamerTimerController alloc] init];
+        [fullScreenViewController.beamerView addSubview:timerController.timerView];
+
         [fullScreenWindow orderFrontRegardless];
 
         fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
 
-        [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController}];
+        [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController, @"timerController" : timerController}];
     }
 
     self.fullScreens = fullScreens;

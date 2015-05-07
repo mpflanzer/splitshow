@@ -23,6 +23,9 @@
 		8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC852861AFA59DC00955035 /* BeamerViewController.m */; };
 		8EC852981AFAA48700955035 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EC852961AFAA48700955035 /* Localizable.strings */; };
 		8EC8529B1AFAC52F00955035 /* NSScreen_NameExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */; };
+		8EC8529E1AFB8F7E00955035 /* BeamerTimerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC8529D1AFB8F7E00955035 /* BeamerTimerController.m */; };
+		8EC852A01AFB902700955035 /* BeamerTimerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EC8529F1AFB902700955035 /* BeamerTimerView.xib */; };
+		8EC852A31AFB905100955035 /* BeamerTimerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC852A21AFB905100955035 /* BeamerTimerView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,6 +67,11 @@
 		8EC852971AFAA48700955035 /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = SplitShow/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8EC852991AFAC52F00955035 /* NSScreen_NameExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScreen_NameExtension.h; sourceTree = "<group>"; };
 		8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSScreen_NameExtension.m; sourceTree = "<group>"; };
+		8EC8529C1AFB8F7E00955035 /* BeamerTimerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerTimerController.h; sourceTree = "<group>"; };
+		8EC8529D1AFB8F7E00955035 /* BeamerTimerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerTimerController.m; sourceTree = "<group>"; };
+		8EC8529F1AFB902700955035 /* BeamerTimerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeamerTimerView.xib; sourceTree = "<group>"; };
+		8EC852A11AFB905100955035 /* BeamerTimerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerTimerView.h; sourceTree = "<group>"; };
+		8EC852A21AFB905100955035 /* BeamerTimerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerTimerView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -122,10 +130,15 @@
 				8E21BBB71AF9822D00697E31 /* BeamerPage.m */,
 				8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */,
 				8E21BB911AF8DF4B00697E31 /* Main.storyboard */,
+				8EC8529F1AFB902700955035 /* BeamerTimerView.xib */,
+				8EC852A11AFB905100955035 /* BeamerTimerView.h */,
+				8EC852A21AFB905100955035 /* BeamerTimerView.m */,
 				8EC852851AFA59DC00955035 /* BeamerViewController.h */,
 				8EC852861AFA59DC00955035 /* BeamerViewController.m */,
 				8E21BBAD1AF8E0A500697E31 /* BeamerDocument.h */,
 				8E21BBAE1AF8E0A500697E31 /* BeamerDocument.m */,
+				8EC8529C1AFB8F7E00955035 /* BeamerTimerController.h */,
+				8EC8529D1AFB8F7E00955035 /* BeamerTimerController.m */,
 				8E21BB851AF8DF4B00697E31 /* Supporting Files */,
 			);
 			path = SplitShow;
@@ -251,6 +264,7 @@
 				8EC852981AFAA48700955035 /* Localizable.strings in Resources */,
 				8E21BB931AF8DF4B00697E31 /* Main.storyboard in Resources */,
 				8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */,
+				8EC852A01AFB902700955035 /* BeamerTimerView.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -269,8 +283,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E21BBB21AF8E8FE00697E31 /* SplitShowController.m in Sources */,
+				8EC8529E1AFB8F7E00955035 /* BeamerTimerController.m in Sources */,
 				8E21BB8E1AF8DF4B00697E31 /* PreviewController.m in Sources */,
 				8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */,
+				8EC852A31AFB905100955035 /* BeamerTimerView.m in Sources */,
 				8E21BB8B1AF8DF4B00697E31 /* main.m in Sources */,
 				8EC8529B1AFAC52F00955035 /* NSScreen_NameExtension.m in Sources */,
 				8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */,
