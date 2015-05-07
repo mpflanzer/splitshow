@@ -652,8 +652,8 @@
                 <windowController storyboardIdentifier="PreviewWindowController" id="B8D-0N-5wS" customClass="SplitShowController" sceneMemberID="viewController">
                     <window key="window" title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="IQv-IB-iLA">
                         <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-                        <windowPositionMask key="initialPositionMask" topStrut="YES" bottomStrut="YES"/>
-                        <rect key="contentRect" x="384" y="214" width="994" height="680"/>
+                        <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+                        <rect key="contentRect" x="384" y="225" width="994" height="537"/>
                         <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1027"/>
                         <toolbar key="toolbar" implicitIdentifier="39364DE3-DF52-4E28-9134-5466265AC8C1" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="X25-Rl-YbG">
                             <allowedToolbarItems>
@@ -662,23 +662,17 @@
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="100" height="28"/>
                                     <size key="maxSize" width="184" height="28"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="b1u-8D-eLf">
+                                    <popUpButton key="view" verticalHuggingPriority="750" id="b1u-8D-eLf" userLabel="presentationModeButton">
                                         <rect key="frame" x="0.0" y="14" width="180" height="28"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="SIc-aS-feB" id="f1i-aM-NKP">
+                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f1i-aM-NKP">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="xdt-gX-DBm">
-                                                <items>
-                                                    <menuItem title="Item 1" state="on" id="SIc-aS-feB"/>
-                                                    <menuItem title="Item 2" id="6MX-3w-eQP"/>
-                                                    <menuItem title="Item 3" id="Y3i-LZ-YQZ"/>
-                                                </items>
-                                            </menu>
+                                            <menu key="menu" id="xdt-gX-DBm"/>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="B8D-0N-5wS" name="contentValues" keyPath="self.presentationModes" id="EIP-3p-NBJ"/>
                                             <binding destination="B8D-0N-5wS" name="selectedIndex" keyPath="self.presentationMode" previousBinding="EIP-3p-NBJ" id="lch-3L-pzx"/>
+                                            <binding destination="B8D-0N-5wS" name="contentValues" keyPath="self.presentationModes" id="EIP-3p-NBJ"/>
                                         </connections>
                                     </popUpButton>
                                 </toolbarItem>
@@ -703,23 +697,18 @@
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="100" height="28"/>
                                     <size key="maxSize" width="180" height="28"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="NTD-9b-w7w">
+                                    <popUpButton key="view" verticalHuggingPriority="750" id="NTD-9b-w7w" userLabel="mainDisplayButton">
                                         <rect key="frame" x="0.0" y="14" width="180" height="28"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="RR4-Pz-QNl" id="ew8-Eb-XY3">
+                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="ew8-Eb-XY3">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="1QT-3m-nGu">
-                                                <items>
-                                                    <menuItem title="Item 1" state="on" id="RR4-Pz-QNl"/>
-                                                    <menuItem title="Item 2" id="ZuA-pu-m5M"/>
-                                                    <menuItem title="Item 3" id="AvM-Bn-gl8"/>
-                                                </items>
-                                            </menu>
+                                            <menu key="menu" id="1QT-3m-nGu"/>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="B8D-0N-5wS" name="contentValues" keyPath="self.displays" id="gYO-3H-KX2"/>
-                                            <binding destination="B8D-0N-5wS" name="selectedIndex" keyPath="self.mainDisplay" previousBinding="gYO-3H-KX2" id="bBb-a3-FHK"/>
+                                            <binding destination="B8D-0N-5wS" name="content" keyPath="self.displayController.arrangedObjects" id="04Y-wH-xsl"/>
+                                            <binding destination="B8D-0N-5wS" name="contentValues" keyPath="self.displayController.arrangedObjects.name" previousBinding="04Y-wH-xsl" id="jtd-aH-hif"/>
+                                            <binding destination="B8D-0N-5wS" name="selectedIndex" keyPath="self.mainDisplay" previousBinding="jtd-aH-hif" id="ZYs-9V-vdU"/>
                                         </connections>
                                     </popUpButton>
                                 </toolbarItem>
@@ -727,23 +716,18 @@
                                     <nil key="toolTip"/>
                                     <size key="minSize" width="100" height="28"/>
                                     <size key="maxSize" width="180" height="28"/>
-                                    <popUpButton key="view" verticalHuggingPriority="750" id="at5-s3-iia">
+                                    <popUpButton key="view" verticalHuggingPriority="750" id="at5-s3-iia" userLabel="helperDisplayButton">
                                         <rect key="frame" x="39" y="14" width="180" height="28"/>
                                         <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                                        <popUpButtonCell key="cell" type="roundTextured" title="Item 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" selectedItem="uYB-d1-19K" id="d8w-Hq-iBp">
+                                        <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="d8w-Hq-iBp">
                                             <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                             <font key="font" metaFont="menu"/>
-                                            <menu key="menu" id="oSX-Vj-03B">
-                                                <items>
-                                                    <menuItem title="Item 1" state="on" id="uYB-d1-19K"/>
-                                                    <menuItem title="Item 2" id="nkg-90-LFM"/>
-                                                    <menuItem title="Item 3" id="7Rm-3d-ICD"/>
-                                                </items>
-                                            </menu>
+                                            <menu key="menu" id="oSX-Vj-03B"/>
                                         </popUpButtonCell>
                                         <connections>
-                                            <binding destination="B8D-0N-5wS" name="contentValues" keyPath="self.displays" id="EfG-FW-cCo"/>
-                                            <binding destination="B8D-0N-5wS" name="selectedIndex" keyPath="self.helperDisplay" previousBinding="EfG-FW-cCo" id="MhS-Nk-RuX"/>
+                                            <binding destination="B8D-0N-5wS" name="content" keyPath="self.displayController.arrangedObjects" id="FFH-4Y-2rE"/>
+                                            <binding destination="B8D-0N-5wS" name="contentValues" keyPath="self.displayController.arrangedObjects.name" previousBinding="FFH-4Y-2rE" id="tj9-l8-61h"/>
+                                            <binding destination="B8D-0N-5wS" name="selectedIndex" keyPath="self.helperDisplay" previousBinding="tj9-l8-61h" id="0Ow-TK-kPr"/>
                                         </connections>
                                     </popUpButton>
                                 </toolbarItem>
@@ -763,27 +747,29 @@
                         </toolbar>
                     </window>
                     <connections>
+                        <outlet property="helperDisplayButton" destination="at5-s3-iia" id="jm1-Fu-jP5"/>
+                        <outlet property="mainDisplayButton" destination="NTD-9b-w7w" id="4xq-fl-e7R"/>
                         <segue destination="XfG-lQ-9wD" kind="relationship" relationship="window.shadowedContentViewController" id="cq2-FE-JQM"/>
                     </connections>
                 </windowController>
                 <customObject id="Oky-zY-oP4" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
                 <userDefaultsController representsSharedInstance="YES" id="mJO-Jm-u6C"/>
             </objects>
-            <point key="canvasLocation" x="332" y="512"/>
+            <point key="canvasLocation" x="332" y="440.5"/>
         </scene>
         <!--Preview Controller-->
         <scene sceneID="hIz-AP-VOD">
             <objects>
                 <viewController id="XfG-lQ-9wD" customClass="PreviewController" sceneMemberID="viewController">
                     <view key="view" id="m2S-Jp-Qdl">
-                        <rect key="frame" x="0.0" y="0.0" width="1014" height="646"/>
+                        <rect key="frame" x="0.0" y="0.0" width="1014" height="516"/>
                         <autoresizingMask key="autoresizingMask"/>
                         <subviews>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="BsN-aH-bQZ">
-                                <rect key="frame" x="0.0" y="0.0" width="507" height="646"/>
+                                <rect key="frame" x="0.0" y="0.0" width="507" height="516"/>
                             </customView>
                             <customView translatesAutoresizingMaskIntoConstraints="NO" id="Njj-ZA-XCE">
-                                <rect key="frame" x="507" y="0.0" width="507" height="646"/>
+                                <rect key="frame" x="507" y="0.0" width="507" height="516"/>
                             </customView>
                         </subviews>
                         <constraints>
@@ -804,7 +790,7 @@
                 </viewController>
                 <customObject id="rPt-NT-nkU" userLabel="First Responder" customClass="NSResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="1572" y="537"/>
+            <point key="canvasLocation" x="332" y="1322"/>
         </scene>
     </scenes>
 </document>

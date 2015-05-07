@@ -11,7 +11,8 @@
 
 @interface NSScreen (NameExtension)
 
+@property (readonly) NSString *name;
+
 - (CGDirectDisplayID)displayID;
-- (NSString*)name;
 
 @end

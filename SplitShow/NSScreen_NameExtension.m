@@ -23,7 +23,7 @@
 {
     io_service_t        displayPort;
     CFIndex             count;
-    NSString            * screenName =  nil;
+    NSString            *screenName =  nil;
     CFDictionaryRef     infoDict =      NULL;
     CFDictionaryRef     nameDict =      NULL;
 

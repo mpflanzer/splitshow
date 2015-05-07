@@ -20,11 +20,17 @@
 #define BeamerPresentationLayoutSplit 1
 #define BeamerPresentationLayoutMirror 2
 
+#define BeamerDisplayNoDisplay 0
+
 @interface SplitShowController : NSWindowController
 
-@property NSArray *displays;
+@property NSArrayController *displayController;
 @property NSInteger mainDisplay;
 @property NSInteger helperDisplay;
+
+@property IBOutlet NSPopUpButton *mainDisplayButton;
+@property IBOutlet NSPopUpButton *helperDisplayButton;
+
 @property NSArray *presentationModes;
 @property NSInteger presentationMode;
 

@@ -10,7 +10,8 @@
 
 @interface SplitShowController ()
 
-@property PreviewController *previewController;
+@property NSMutableArray *displays;
+
 @property NSSet *fullScreens;
 
 @property BeamerDocument *presentation;
@@ -41,6 +42,8 @@
 - (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(NSInteger)layout;
 - (NSInteger)getPresentationModeForSlideMode:(BeamerDocumentSlideMode)mode;
 
+- (void)displaysChanged:(NSNotification*)notification;
+
 @end
 
 @implementation SplitShowController
@@ -50,18 +53,24 @@
 
     self.presentationModes = @[@"Interleaved", @"Split", @"Mirror"];
 
-    NSMutableArray *displays = [NSMutableArray array];
+    self.displays = [NSMutableArray arrayWithArray:[NSScreen screens]];
+    [self.displays insertObject:[NSNull null] atIndex:BeamerDisplayNoDisplay];
 
-    for(NSScreen *screen in [NSScreen screens])
-    {
-        [displays addObject:[screen name]];
-    }
+    self.displayController = [[NSArrayController alloc] initWithContent:self.displays];
 
-    self.displays = displays;
-    self.mainDisplay = 0;
-    self.mainDisplay = 1;
+    [self.mainDisplayButton setAutoenablesItems:NO];
+    [self.helperDisplayButton setAutoenablesItems:NO];
 
-    self.previewController = (PreviewController*)self.contentViewController;
+    //TODO: Make a more sophisticated guess
+//    self.mainDisplay = 1;
+//    self.helperDisplay = 2;
+
+    //TODO: When to remove the observer?
+    [self addObserver:self forKeyPath:@"mainDisplay" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
+    [self addObserver:self forKeyPath:@"helperDisplay" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
+    [self addObserver:self forKeyPath:@"presentationMode" options:(NSKeyValueObservingOptionNew) context:NULL];
+
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(displaysChanged:) name:NSApplicationDidChangeScreenParametersNotification object:nil];
 
     [self showWindow:self];
 }
@@ -74,9 +83,11 @@
     {
         [self.window setTitle:[self.presentation title]];
 
-        [self addObserver:self forKeyPath:@"presentationMode" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
-        [self addObserver:self forKeyPath:@"mainDisplay" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
-        [self addObserver:self forKeyPath:@"helperDisplay" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionInitial) context:NULL];
+        self.currentSlideIndex = 0;
+        self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:self.presentation.slideMode];
+        self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
+
+        [self startPresentation];
     }
 
     return (self.presentation != nil);
@@ -114,51 +125,55 @@
     NSScreen *fullScreen;
     NSRect fullScreenBounds;
 
+    if(self.mainDisplay != BeamerDisplayNoDisplay)
+    {
+        fullScreen = [[NSScreen screens] objectAtIndex:self.mainDisplay - 1];
+        fullScreenBounds = fullScreen.frame;
+        fullScreenBounds.origin = CGPointZero;
+        fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
+        fullScreenViewController.group = BeamerViewControllerNotificationGroupContent;
+        [fullScreenViewController registerController:nil];
+        fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
+                                                       styleMask:NSBorderlessWindowMask
+                                                         backing:NSBackingStoreBuffered
+                                                           defer:YES
+                                                          screen:fullScreen];
 
+        [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
+        [fullScreenWindow setOpaque:YES];
+        [fullScreenWindow setHidesOnDeactivate:YES];
+        [fullScreenWindow setContentView:fullScreenViewController.beamerView];
+        [fullScreenWindow orderFrontRegardless];
 
-    fullScreen = [[NSScreen screens] objectAtIndex:self.mainDisplay];
-    fullScreenBounds = fullScreen.frame;
-    fullScreenBounds.origin = CGPointZero;
-    fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
-    fullScreenViewController.group = BeamerViewControllerNotificationGroupContent;
-    [fullScreenViewController registerController:nil];
-    fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
-                                                   styleMask:NSBorderlessWindowMask
-                                                     backing:NSBackingStoreBuffered
-                                                       defer:YES
-                                                      screen:fullScreen];
+        fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
 
-    [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
-    [fullScreenWindow setOpaque:YES];
-    [fullScreenWindow setHidesOnDeactivate:YES];
-    [fullScreenWindow setContentView:fullScreenViewController.beamerView];
-    [fullScreenWindow orderFrontRegardless];
+        [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController}];
+    }
 
-    fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
+    if(self.helperDisplay != BeamerDisplayNoDisplay)
+    {
+        fullScreen = [[NSScreen screens] objectAtIndex:self.helperDisplay - 1];
+        fullScreenBounds = fullScreen.frame;
+        fullScreenBounds.origin = CGPointZero;
+        fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
+        fullScreenViewController.group = BeamerViewControllerNotificationGroupNotes;
+        [fullScreenViewController registerController:nil];
+        fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
+                                                       styleMask:NSBorderlessWindowMask
+                                                         backing:NSBackingStoreBuffered
+                                                           defer:YES
+                                                          screen:fullScreen];
 
-    [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController}];
+        [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
+        [fullScreenWindow setOpaque:YES];
+        [fullScreenWindow setHidesOnDeactivate:YES];
+        [fullScreenWindow setContentView:fullScreenViewController.beamerView];
+        [fullScreenWindow orderFrontRegardless];
 
-    fullScreen = [[NSScreen screens] objectAtIndex:self.helperDisplay];
-    fullScreenBounds = fullScreen.frame;
-    fullScreenBounds.origin = CGPointZero;
-    fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
-    fullScreenViewController.group = BeamerViewControllerNotificationGroupNotes;
-    [fullScreenViewController registerController:nil];
-    fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
-                                                   styleMask:NSBorderlessWindowMask
-                                                     backing:NSBackingStoreBuffered
-                                                       defer:YES
-                                                      screen:fullScreen];
+        fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
 
-    [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
-    [fullScreenWindow setOpaque:YES];
-    [fullScreenWindow setHidesOnDeactivate:YES];
-    [fullScreenWindow setContentView:fullScreenViewController.beamerView];
-    [fullScreenWindow orderFrontRegardless];
-
-    fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
-
-    [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController}];
+        [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController}];
+    }
 
     self.fullScreens = fullScreens;
 
@@ -339,6 +354,40 @@
 
         [self startPresentation];
     }
+    else if([@"mainDisplay" isEqualToString:keyPath])
+    {
+        NSNumber *oldValue = change[NSKeyValueChangeOldKey];
+        NSNumber *newValue = change[NSKeyValueChangeNewKey];
+
+        // Enable now unselected option for other display
+        if(oldValue != nil && oldValue.integerValue != BeamerDisplayNoDisplay && oldValue.integerValue < [self.displayController.arrangedObjects count])
+        {
+            [[self.helperDisplayButton itemAtIndex:oldValue.integerValue] setEnabled:YES];
+        }
+
+        // Disable now selected option for other display
+        if(newValue != nil && newValue.integerValue != BeamerDisplayNoDisplay && newValue.integerValue < [self.displayController.arrangedObjects count])
+        {
+            [[self.helperDisplayButton itemAtIndex:newValue.integerValue] setEnabled:NO];
+        }
+    }
+    else if([@"helperDisplay" isEqualToString:keyPath])
+    {
+        NSNumber *oldValue = change[NSKeyValueChangeOldKey];
+        NSNumber *newValue = change[NSKeyValueChangeNewKey];
+
+        // Enable now unselected option for other display
+        if(oldValue != nil && oldValue.integerValue != BeamerDisplayNoDisplay && oldValue.integerValue < [self.displayController.arrangedObjects count])
+        {
+            [[self.mainDisplayButton itemAtIndex:oldValue.integerValue] setEnabled:YES];
+        }
+
+        // Disable now selected option for other display
+        if(newValue != nil && newValue.integerValue != BeamerDisplayNoDisplay && newValue.integerValue < [self.displayController.arrangedObjects count])
+        {
+            [[self.mainDisplayButton itemAtIndex:newValue.integerValue] setEnabled:NO];
+        }
+    }
 }
 
 - (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(NSInteger)layout
@@ -427,6 +476,16 @@
 -(void)moveRight:(id)sender
 {
     [self presentNextSlide];
+}
+
+- (void)displaysChanged:(NSNotification *)notification
+{
+    [self exitFullScreen];
+    self.mainDisplay = BeamerDisplayNoDisplay;
+    self.helperDisplay = BeamerDisplayNoDisplay;
+    [self.displayController removeObjects:self.displayController.arrangedObjects];
+    [self.displayController addObject:[NSNull null]];
+    [self.displayController addObjects:[NSScreen screens]];
 }
 
 @end
