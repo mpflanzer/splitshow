@@ -11,8 +11,6 @@
 @interface BeamerDocument ()
 
 @property(readwrite) BeamerDocumentSlideMode slideMode;
-@property NSArray *contentSlides;
-@property NSArray *noteSlides;
 
 - (void)setupSlideLayout;
 - (NSString*)readNAVFile;
@@ -56,20 +54,18 @@
 {
     if(self.pageCount > 0)
     {
-        NSDictionary *slides;
         PDFPage *firstPage = [self pageAtIndex:0];
         NSRect pageBounds = [firstPage boundsForBox:kPDFDisplayBoxMediaBox];
 
         // Consider 2.39:1 the widest commonly found aspect ratio of a single frame
         if((pageBounds.size.width / pageBounds.size.height) > 2.39)
         {
-            slides = [self getSlideLayoutForSlideMode:self.slideMode];
             self.slideMode = BeamerDocumentSlideModeSplit;
         }
         else
         {
             // Try interleaved mode
-            slides = [self getSlideLayoutForSlideMode:BeamerDocumentSlideModeInterleaved];
+            NSDictionary *slides = [self getSlideLayoutForSlideMode:BeamerDocumentSlideModeInterleaved];
 
             if([slides[@"content"] count] > 0 || [slides[@"notes"] count] > 0)
             {
@@ -78,19 +74,13 @@
             else
             {
                 // If no nav file is found assume no notes
-                slides = [self getSlideLayoutForSlideMode:BeamerDocumentSlideModeNoNotes];
                 self.slideMode = BeamerDocumentSlideModeNoNotes;
             }
         }
-
-        self.contentSlides = slides[@"content"];
-        self.noteSlides = slides[@"notes"];
     }
     else
     {
         self.slideMode = BeamerDocumentSlideModeUnknown;
-        self.contentSlides = [NSArray array];
-        self.noteSlides = [NSArray array];
     }
 }
 

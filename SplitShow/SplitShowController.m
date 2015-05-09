@@ -22,7 +22,7 @@
 - (void)enterFullScreen;
 - (void)exitFullScreen;
 
-- (void)startPresentation;
+- (void)reloadPresentation;
 
 - (void)presentPrevSlide;
 - (void)presentNextSlide;
@@ -83,11 +83,7 @@
     {
         [self.window setTitle:[self.presentation title]];
 
-        self.currentSlideIndex = 0;
-        self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:self.presentation.slideMode];
-        self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
-
-        [self startPresentation];
+        self.presentationMode  = [self getPresentationModeForSlideMode:self.presentation.slideMode];
     }
 
     return (self.presentation != nil);
@@ -181,7 +177,7 @@
 
     self.fullScreens = fullScreens;
 
-    [self startPresentation];
+    [self updateBeamerViews];
 }
 
 - (void)exitFullScreen
@@ -203,12 +199,18 @@
     self.fullScreens = nil;
 }
 
-- (void)startPresentation
+- (void)reloadPresentation
 {
     if(self.presentation == nil)
     {
         return;
     }
+
+    BeamerDocumentSlideMode slideMode = [self getSlideModeForPresentationMode:self.presentationMode];
+
+    self.currentSlideIndex = 0;
+    self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:slideMode];
+    self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
 
     [self updateBeamerViews];
 }
@@ -352,11 +354,7 @@
 {
     if([@"presentationMode" isEqualToString:keyPath])
     {
-        self.currentSlideIndex = 0;
-        self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:self.presentation.slideMode];
-        self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
-
-        [self startPresentation];
+        [self reloadPresentation];
     }
     else if([@"mainDisplay" isEqualToString:keyPath])
     {
