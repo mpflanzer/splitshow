@@ -175,9 +175,13 @@
         [fullScreens addObject:@{@"windowController" : fullScreenWindowController, @"viewController" : fullScreenViewController, @"timerController" : timerController}];
     }
 
-    self.fullScreens = fullScreens;
+    // Prevent pseudo fullscreen if no display is selected
+    if(fullScreens.count != 0)
+    {
+        self.fullScreens = fullScreens;
 
-    [self updateBeamerViews];
+        [self updateBeamerViews];
+    }
 }
 
 - (void)exitFullScreen
