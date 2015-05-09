@@ -474,6 +474,11 @@
     }
 }
 
+- (void)pageUp:(id)sender
+{
+    [self presentPrevSlide];
+}
+
 -(void)moveUp:(id)sender
 {
     [self presentPrevSlide];
@@ -482,6 +487,11 @@
 - (void)moveLeft:(id)sender
 {
     [self presentPrevSlide];
+}
+
+- (void)pageDown:(id)sender
+{
+    [self presentNextSlide];
 }
 
 - (void)moveDown:(id)sender
