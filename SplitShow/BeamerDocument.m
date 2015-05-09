@@ -272,7 +272,14 @@
                 ++currentFrameIndex;
             }
         }
-        
+
+        // Add notes after last slide
+        while(currentFrameIndex < self.pageCount)
+        {
+            [noteFrames addObject:@(currentFrameIndex)];
+            ++currentFrameIndex;
+        }
+
         return @{@"content" : contentFrames, @"notes" : noteFrames};
     }
     else

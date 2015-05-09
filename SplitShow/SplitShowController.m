@@ -249,7 +249,12 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent}];
 
             // Notify note views
-            slide = [self getSlideAtIndex:[self getNotesIndex] withCrop:BeamerPageCropRight];
+            NSInteger notesIndex = [self getNotesIndex];
+
+            if(notesIndex != -1)
+            {
+                slide = [self getSlideAtIndex:notesIndex withCrop:BeamerPageCropRight];
+            }
 
             [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes}];
 
@@ -264,8 +269,13 @@
             [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent}];
 
             // Notify note views
-            slide = [self getSlideAtIndex:[self getNotesIndex] withCrop:BeamerPageCropNone];
+            NSInteger notesIndex = [self getNotesIndex];
 
+            if(notesIndex != -1)
+            {
+                slide = [self getSlideAtIndex:notesIndex withCrop:BeamerPageCropNone];
+            }
+            
             [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes}];
             
             break;
@@ -323,26 +333,30 @@
     return [self getContentIndexForSlidesIndex:self.currentSlideIndex];
 }
 
-//TODO: Mirror if no note is available
 - (NSInteger)getNotesIndexForSlidesIndex:(NSInteger)index
 {
     index = MAX(0, index);
 
     NSArray *noteSlideIndices = self.currentSlideLayout[@"notes"];
     NSInteger contentIndex = [self getContentIndexForSlidesIndex:index];
+    NSInteger nextContentIndex = [self getContentIndexForSlidesIndex:index+1];
 
     for(index = 0; index < noteSlideIndices.count && [noteSlideIndices[index] integerValue] < contentIndex; ++index)
     {
         // Skip all note slide previous to the current content slide
     }
 
-    //TODO: Remove quickfix!
-    if(index == noteSlideIndices.count)
+    // If there is no note for the last slide or ...
+    // ... if there are no notes between to slides ...
+    if(index == noteSlideIndices.count || ([noteSlideIndices[index] integerValue] > nextContentIndex && contentIndex != nextContentIndex))
     {
-        return [noteSlideIndices[index - 1] integerValue];
+        // ... return -1 to signalise mirror
+        return -1;
     }
-
-    return [noteSlideIndices[index] integerValue];
+    else
+    {
+        return [noteSlideIndices[index] integerValue];
+    }
 }
 
 - (NSInteger)getNotesIndex
