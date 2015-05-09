@@ -33,19 +33,13 @@
     {
         self.timerMode = BeamerTimerModeForward;
 
-        NSArray *views;
-
-        if([[NSBundle mainBundle] loadNibNamed:@"BeamerTimerView" owner:self topLevelObjects:&views])
+        if([[NSBundle mainBundle] loadNibNamed:@"BeamerTimerView" owner:self topLevelObjects:nil])
         {
-            if(views.count > 0)
-            {
-                self.timerView = views[0];
                 [self.timerView.startStopButton setTarget:self];
                 [self.timerView.startStopButton setAction:@selector(toggleTimerButton:)];
 
                 [self.timerView.resetButton setTarget:self];
                 [self.timerView.resetButton setAction:@selector(resetTimer)];
-            }
         }
 
         [self initTimer:0];

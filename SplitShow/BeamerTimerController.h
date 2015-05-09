@@ -16,7 +16,7 @@ typedef enum : NSUInteger {
 
 @interface BeamerTimerController : NSObject
 
-@property BeamerTimerView *timerView;
+@property IBOutlet BeamerTimerView *timerView;
 
 @property BeamerTimerMode timerMode;
 
