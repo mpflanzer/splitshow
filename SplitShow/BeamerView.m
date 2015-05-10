@@ -19,6 +19,7 @@
         [self setBackgroundColor:[NSColor colorWithCalibratedWhite:0.0 alpha:1.0]];
         self.autoresizingMask = NSViewWidthSizable | NSViewHeightSizable;
         [self setDisplayMode:kPDFDisplaySinglePage];
+        [self setDisplaysPageBreaks:NO];
         [self setAutoScales:YES];
     }
 
