@@ -22,7 +22,7 @@
 - (void)enterFullScreen;
 - (void)exitFullScreen;
 
-- (void)reloadPresentation;
+- (void)restartPresentation;
 
 - (void)presentPrevSlide;
 - (void)presentNextSlide;
@@ -203,7 +203,7 @@
     self.fullScreens = nil;
 }
 
-- (void)reloadPresentation
+- (void)restartPresentation
 {
     if(self.presentation == nil)
     {
@@ -217,6 +217,11 @@
     self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
 
     [self updateBeamerViews];
+}
+
+- (void)reloadPresentation:(id)sender
+{
+    [self readFromURL:self.presentation.documentURL error:nil];
 }
 
 - (void)presentPrevSlide
@@ -372,7 +377,7 @@
 {
     if([@"presentationMode" isEqualToString:keyPath])
     {
-        [self reloadPresentation];
+        [self restartPresentation];
     }
     else if([@"mainDisplay" isEqualToString:keyPath])
     {
@@ -460,6 +465,10 @@
         }
 
         return YES;
+    }
+    else if(menuItem.action == @selector(reloadPresentation:))
+    {
+        return (self.presentation != nil);
     }
 
     return [super validateMenuItem:menuItem];

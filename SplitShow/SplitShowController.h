@@ -41,4 +41,6 @@
 - (BOOL)isFullScreen;
 - (IBAction)toggleCustomFullScreen:(id)sender;
 
+- (IBAction)reloadPresentation:(id)sender;
+
 @end
