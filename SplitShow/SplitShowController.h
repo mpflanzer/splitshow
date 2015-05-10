@@ -20,6 +20,7 @@
 #define BeamerPresentationLayoutInterleaved 0
 #define BeamerPresentationLayoutSplit 1
 #define BeamerPresentationLayoutMirror 2
+#define BeamerPresentationLayoutMirrorSplit 3
 
 #define BeamerDisplayNoDisplay 0
 

@@ -51,7 +51,7 @@
 - (void)windowDidLoad {
     [super windowDidLoad];
 
-    self.presentationModes = @[@"Interleaved", @"Split", @"Mirror"];
+    self.presentationModes = @[@"Interleaved", @"Split", @"Mirror", @"Mirror split"];
 
     self.displays = [NSMutableArray arrayWithArray:[NSScreen screens]];
     [self.displays insertObject:[NSNull null] atIndex:BeamerDisplayNoDisplay];
@@ -299,6 +299,19 @@
 
             break;
         }
+
+        case BeamerPresentationLayoutMirrorSplit:
+        {
+            // Notify content views
+            slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropLeft];
+
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent}];
+
+            // Notify note views
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes}];
+            
+            break;
+        }
     }
 }
 
@@ -426,6 +439,9 @@
             return BeamerDocumentSlideModeNoNotes;
 
         case BeamerPresentationLayoutSplit:
+            return BeamerDocumentSlideModeSplit;
+
+        case BeamerPresentationLayoutMirrorSplit:
             return BeamerDocumentSlideModeSplit;
 
         default:
