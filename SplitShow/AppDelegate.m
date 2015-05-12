@@ -23,9 +23,6 @@
     [self.openDialog setCanCreateDirectories:NO];
     [self.openDialog setAllowedFileTypes:@[@"pdf"]];
     [self.openDialog setAllowsMultipleSelection:YES];
-
-    // React to closing windows to release the window controllers
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:nil];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

@@ -42,7 +42,7 @@
 - (BeamerDocumentSlideMode)getSlideModeForPresentationMode:(NSInteger)layout;
 - (NSInteger)getPresentationModeForSlideMode:(BeamerDocumentSlideMode)mode;
 
-- (void)displaysChanged:(NSNotification*)notification;
+void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo);
 
 @end
 
@@ -61,18 +61,21 @@
     [self.mainDisplayButton setAutoenablesItems:NO];
     [self.helperDisplayButton setAutoenablesItems:NO];
 
-    //TODO: Make a more sophisticated guess
-//    self.mainDisplay = 1;
-//    self.helperDisplay = 2;
-
-    //TODO: When to remove the observer?
     [self addObserver:self forKeyPath:@"mainDisplay" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
     [self addObserver:self forKeyPath:@"helperDisplay" options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
     [self addObserver:self forKeyPath:@"presentationMode" options:(NSKeyValueObservingOptionNew) context:NULL];
 
-    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(displaysChanged:) name:NSApplicationDidChangeScreenParametersNotification object:nil];
+    CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallback, (void*)CFBridgingRetain(self));
 
     [self showWindow:self];
+}
+
+- (void)dealloc
+{
+    [self removeObserver:self forKeyPath:@"mainDisplay"];
+    [self removeObserver:self forKeyPath:@"helperDisplay"];
+    [self removeObserver:self forKeyPath:@"presentationMode"];
+    CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallback, (void*)CFBridgingRetain(self));
 }
 
 - (BOOL)readFromURL:(NSURL *)file error:(NSError *__autoreleasing *)error
@@ -135,11 +138,8 @@
                                                            defer:YES
                                                           screen:fullScreen];
 
-        [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
-        [fullScreenWindow setOpaque:YES];
-        [fullScreenWindow setHidesOnDeactivate:YES];
         [fullScreenWindow setContentView:fullScreenViewController.beamerView];
-        [fullScreenWindow orderFrontRegardless];
+        [fullScreenWindow setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
 
         fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
 
@@ -160,15 +160,11 @@
                                                            defer:YES
                                                           screen:fullScreen];
 
-        [fullScreenWindow setLevel:NSMainMenuWindowLevel+1];
-        [fullScreenWindow setOpaque:YES];
-        [fullScreenWindow setHidesOnDeactivate:YES];
         [fullScreenWindow setContentView:fullScreenViewController.beamerView];
+        [fullScreenWindow setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
 
         BeamerTimerController *timerController = [[BeamerTimerController alloc] init];
         [fullScreenViewController.beamerView addSubview:timerController.timerView];
-
-        [fullScreenWindow orderFrontRegardless];
 
         fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
 
@@ -181,6 +177,12 @@
         self.fullScreens = fullScreens;
 
         [self updateBeamerViews];
+
+        for (NSDictionary *fullScreen in self.fullScreens)
+        {
+            NSWindowController *fullScreenWindowController = fullScreen[@"windowController"];
+            [fullScreenWindowController.window toggleFullScreen:fullScreenWindowController];
+        }
     }
 }
 
@@ -533,14 +535,36 @@
     [self presentNextSlide];
 }
 
-- (void)displaysChanged:(NSNotification *)notification
+void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSummaryFlags flags, void *userInfo)
 {
-    [self exitFullScreen];
-    self.mainDisplay = BeamerDisplayNoDisplay;
-    self.helperDisplay = BeamerDisplayNoDisplay;
-    [self.displayController removeObjects:self.displayController.arrangedObjects];
-    [self.displayController addObject:[NSNull null]];
-    [self.displayController addObjects:[NSScreen screens]];
+    SplitShowController *splitShowController = (SplitShowController*)CFBridgingRelease(userInfo);
+
+    if(flags & kCGDisplayBeginConfigurationFlag)
+    {
+        if(flags & kCGDisplayRemoveFlag)
+        {
+            [splitShowController exitFullScreen];
+            splitShowController.mainDisplay = BeamerDisplayNoDisplay;
+            splitShowController.helperDisplay = BeamerDisplayNoDisplay;
+            [splitShowController.displayController removeObjects:splitShowController.displayController.arrangedObjects];
+            [splitShowController.displayController addObject:[NSNull null]];
+            [splitShowController.displayController addObjects:[NSScreen screens]];
+        }
+
+//        if(flags & kCGDisplayAddFlag)
+//        {
+//        }
+    }
+//    else
+//    {
+//        if (flags & kCGDisplayRemoveFlag)
+//        {
+//        }
+//
+//        if(flags & kCGDisplayAddFlag)
+//        {
+//        }
+//    }
 }
 
 @end
