@@ -43,7 +43,7 @@
 
             for(NSURL *file in [self.openDialog URLs])
             {
-                windowController = [storyBoard instantiateControllerWithIdentifier:@"PreviewWindowController"];
+                windowController = [storyBoard instantiateControllerWithIdentifier:@"SplitShowController"];
 
                 if([windowController readFromURL:file error:&error])
                 {
