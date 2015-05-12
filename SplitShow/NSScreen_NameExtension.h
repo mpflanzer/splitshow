@@ -9,10 +9,11 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/NSScreen.h>
 
+#define kIODisplayConnect "IODisplayConnect"
+
 @interface NSScreen (NameExtension)
 
 @property (readonly) NSString *name;
-
-- (CGDirectDisplayID)displayID;
+@property (readonly) CGDirectDisplayID displayID;
 
 @end
