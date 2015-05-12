@@ -67,7 +67,7 @@
             // Try interleaved mode
             NSDictionary *slides = [self getSlideLayoutForSlideMode:BeamerDocumentSlideModeInterleaved];
 
-            if([slides[@"content"] count] > 0 || [slides[@"notes"] count] > 0)
+            if([slides[@"notes"] count] > 0)
             {
                 self.slideMode = BeamerDocumentSlideModeInterleaved;
             }
@@ -218,7 +218,7 @@
 
         if(navContent == nil)
         {
-            return @{@"content" : [NSArray array], @"notes" : [NSArray array]};
+            return [self getSlideLayoutForSlideMode:BeamerDocumentSlideModeNoNotes];
         }
 
         NSScanner *framePagesScanner = [NSScanner scannerWithString:navContent];
