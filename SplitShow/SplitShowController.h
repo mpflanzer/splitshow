@@ -12,6 +12,8 @@
 #import "BeamerTimerController.h"
 #import "NSScreen_NameExtension.h"
 
+@class PreviewController;
+
 #define BeamerViewControllerNotificationChangeSlide @"BeamerViewControllerNotificationChangeSlide"
 #define BeamerViewControllerNotificationGroupAll -1
 #define BeamerViewControllerNotificationGroupContent 0
@@ -25,6 +27,8 @@
 #define BeamerDisplayNoDisplay 0
 
 @interface SplitShowController : NSWindowController
+
+@property IBOutlet PreviewController *previewController;
 
 @property NSArrayController *displayController;
 @property NSInteger mainDisplay;

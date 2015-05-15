@@ -53,7 +53,7 @@
             return;
         }
 
-        PDFPage *slide = notification.object;
+        PDFPage *slide = notification.userInfo[@"slide"];
 
         if(slide != nil)
         {

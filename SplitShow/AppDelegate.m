@@ -10,6 +10,11 @@
 
 @interface AppDelegate ()
 
+@property NSMutableSet *windowControllers;
+@property NSOpenPanel *openDialog;
+
+- (void)windowWillClose:(NSNotification*)notification;
+
 @end
 
 @implementation AppDelegate
@@ -34,13 +39,12 @@
     [self.openDialog beginWithCompletionHandler:^(NSInteger result) {
         if(result == NSFileHandlingPanelOKButton)
         {
-            NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
             SplitShowController *windowController;
             NSError *error;
 
             for(NSURL *file in [self.openDialog URLs])
             {
-                windowController = [storyBoard instantiateControllerWithIdentifier:@"SplitShowController"];
+                windowController = [[SplitShowController alloc] initWithWindowNibName:@"SplitShowWindow"];
 
                 if([windowController readFromURL:file error:&error])
                 {

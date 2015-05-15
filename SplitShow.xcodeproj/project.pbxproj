@@ -7,11 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E129BDD1B06925A00EEA011 /* Main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E129BDF1B06925A00EEA011 /* Main.xib */; };
+		8E129BE11B069EA500EEA011 /* SplitShowWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E129BE01B069EA500EEA011 /* SplitShowWindow.xib */; };
 		8E21BB891AF8DF4B00697E31 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB881AF8DF4B00697E31 /* AppDelegate.m */; };
 		8E21BB8B1AF8DF4B00697E31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB8A1AF8DF4B00697E31 /* main.m */; };
 		8E21BB8E1AF8DF4B00697E31 /* PreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */; };
 		8E21BB901AF8DF4B00697E31 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */; };
-		8E21BB931AF8DF4B00697E31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BB911AF8DF4B00697E31 /* Main.storyboard */; };
 		8E21BB9F1AF8DF4B00697E31 /* SplitShowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB9E1AF8DF4B00697E31 /* SplitShowTests.m */; };
 		8E21BBAA1AF8DFA800697E31 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E21BBA91AF8DFA800697E31 /* Cocoa.framework */; };
 		8E21BBAC1AF8DFAF00697E31 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E21BBAB1AF8DFAF00697E31 /* Quartz.framework */; };
@@ -40,6 +41,8 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		8E129BDE1B06925A00EEA011 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Main.xib; sourceTree = "<group>"; };
+		8E129BE01B069EA500EEA011 /* SplitShowWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = SplitShowWindow.xib; sourceTree = "<group>"; };
 		8E21BB821AF8DF4B00697E31 /* SplitShow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplitShow.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E21BB861AF8DF4B00697E31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E21BB871AF8DF4B00697E31 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
@@ -48,7 +51,6 @@
 		8E21BB8C1AF8DF4B00697E31 /* PreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewController.h; sourceTree = "<group>"; };
 		8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewController.m; sourceTree = "<group>"; };
 		8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8E21BB921AF8DF4B00697E31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8E21BB981AF8DF4B00697E31 /* SplitShowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitShowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E21BB9D1AF8DF4B00697E31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8E21BB9E1AF8DF4B00697E31 /* SplitShowTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitShowTests.m; sourceTree = "<group>"; };
@@ -131,7 +133,8 @@
 				8E21BBB61AF9822D00697E31 /* BeamerPage.h */,
 				8E21BBB71AF9822D00697E31 /* BeamerPage.m */,
 				8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */,
-				8E21BB911AF8DF4B00697E31 /* Main.storyboard */,
+				8E129BDF1B06925A00EEA011 /* Main.xib */,
+				8E129BE01B069EA500EEA011 /* SplitShowWindow.xib */,
 				8EC8529F1AFB902700955035 /* BeamerTimerView.xib */,
 				8EC852A11AFB905100955035 /* BeamerTimerView.h */,
 				8EC852A21AFB905100955035 /* BeamerTimerView.m */,
@@ -264,9 +267,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E21BB901AF8DF4B00697E31 /* Images.xcassets in Resources */,
+				8E129BE11B069EA500EEA011 /* SplitShowWindow.xib in Resources */,
+				8E129BDD1B06925A00EEA011 /* Main.xib in Resources */,
 				8EC852A61AFBAAAC00955035 /* Credits.rtf in Resources */,
 				8EC852981AFAA48700955035 /* Localizable.strings in Resources */,
-				8E21BB931AF8DF4B00697E31 /* Main.storyboard in Resources */,
 				8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */,
 				8EC852A01AFB902700955035 /* BeamerTimerView.xib in Resources */,
 			);
@@ -319,12 +323,12 @@
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		8E21BB911AF8DF4B00697E31 /* Main.storyboard */ = {
+		8E129BDF1B06925A00EEA011 /* Main.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8E21BB921AF8DF4B00697E31 /* Base */,
+				8E129BDE1B06925A00EEA011 /* Base */,
 			);
-			name = Main.storyboard;
+			name = Main.xib;
 			sourceTree = "<group>";
 		};
 		8EC852961AFAA48700955035 /* Localizable.strings */ = {

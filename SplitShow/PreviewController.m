@@ -17,9 +17,7 @@
 
 @implementation PreviewController
 
-- (void)viewDidLoad {
-    [super viewDidLoad];
-
+- (void)awakeFromNib {
     self.contentController = [[BeamerViewController alloc] initWithFrame:self.contentPreview.bounds];
     self.contentController.group = BeamerViewControllerNotificationGroupContent;
     [self.contentPreview addSubview:self.contentController.beamerView];

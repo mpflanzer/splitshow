@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="SplitShowController">
+            <connections>
+                <outlet property="helperDisplayButton" destination="NKe-f2-8Bh" id="KFA-aw-ouB"/>
+                <outlet property="mainDisplayButton" destination="450-Rs-rD3" id="Iez-89-zS3"/>
+                <outlet property="previewController" destination="olb-zY-X43" id="sNx-9Y-lhD"/>
+                <outlet property="window" destination="0Tf-w7-TsU" id="MDD-ri-fnH"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="0Tf-w7-TsU">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="263" y="184" width="994" height="537"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="COO-NL-yDh">
+                <rect key="frame" x="0.0" y="0.0" width="994" height="537"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="eDO-sx-6c3">
+                        <rect key="frame" x="0.0" y="0.0" width="497" height="537"/>
+                    </customView>
+                    <customView translatesAutoresizingMaskIntoConstraints="NO" id="ZeE-cg-Jcp">
+                        <rect key="frame" x="497" y="0.0" width="497" height="537"/>
+                    </customView>
+                </subviews>
+                <constraints>
+                    <constraint firstAttribute="bottom" secondItem="eDO-sx-6c3" secondAttribute="bottom" id="Foc-l7-hYX"/>
+                    <constraint firstItem="ZeE-cg-Jcp" firstAttribute="leading" secondItem="eDO-sx-6c3" secondAttribute="trailing" id="P7n-ZI-etG"/>
+                    <constraint firstItem="eDO-sx-6c3" firstAttribute="leading" secondItem="COO-NL-yDh" secondAttribute="leading" id="aQH-bt-vXx"/>
+                    <constraint firstAttribute="trailing" secondItem="ZeE-cg-Jcp" secondAttribute="trailing" id="b34-Wv-sgR"/>
+                    <constraint firstItem="ZeE-cg-Jcp" firstAttribute="top" secondItem="COO-NL-yDh" secondAttribute="top" id="m1w-db-yrK"/>
+                    <constraint firstItem="eDO-sx-6c3" firstAttribute="width" secondItem="ZeE-cg-Jcp" secondAttribute="width" id="pUT-Sn-TL6"/>
+                    <constraint firstItem="eDO-sx-6c3" firstAttribute="top" secondItem="COO-NL-yDh" secondAttribute="top" id="pXN-iv-LkN"/>
+                    <constraint firstItem="ZeE-cg-Jcp" firstAttribute="leading" secondItem="eDO-sx-6c3" secondAttribute="trailing" id="pXS-7l-1gf"/>
+                    <constraint firstAttribute="bottom" secondItem="ZeE-cg-Jcp" secondAttribute="bottom" id="pn5-5n-oRx"/>
+                </constraints>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="C1E79B8E-2866-40BE-A43F-18573545E47D" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="4FK-nb-N6y">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="dxe-ab-lR7"/>
+                    <toolbarItem implicitItemIdentifier="66857153-6A38-40B4-80C7-129F3B56E0D4" label="Presentation Mode" paletteLabel="Presentation Mode" id="jX9-Hl-fXx">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="100" height="28"/>
+                        <size key="maxSize" width="184" height="28"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="7Fn-Du-L53" userLabel="presentationModeButton">
+                            <rect key="frame" x="0.0" y="14" width="180" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="OU4-gi-eHr">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="menu"/>
+                                <menu key="menu" id="Dle-U1-xOC"/>
+                            </popUpButtonCell>
+                            <connections>
+                                <binding destination="-2" name="contentValues" keyPath="self.presentationModes" id="Opx-Ej-y9w"/>
+                                <binding destination="-2" name="selectedIndex" keyPath="self.presentationMode" previousBinding="Opx-Ej-y9w" id="4zV-gi-1Bu"/>
+                            </connections>
+                        </popUpButton>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="dTB-uw-8Nd"/>
+                    <toolbarItem implicitItemIdentifier="BBA87A26-57D7-417E-8302-230887EDA1FC" label="" paletteLabel="" id="3Mb-33-YLA">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="82" height="32"/>
+                        <size key="maxSize" width="189" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="gWm-Cg-Q6A">
+                            <rect key="frame" x="0.0" y="14" width="180" height="32"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="push" title="Full Screen" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="n5r-hH-Xry">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleCustomFullScreen:" target="-1" id="GgN-bk-zec"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F042616E-13F1-491F-8AA3-FF4BD6316811" label="Main Display" paletteLabel="Main Display" id="HNI-jv-VG0">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="100" height="28"/>
+                        <size key="maxSize" width="180" height="28"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="450-Rs-rD3" userLabel="mainDisplayButton">
+                            <rect key="frame" x="0.0" y="14" width="180" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="vx4-Fg-bcP">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="menu"/>
+                                <menu key="menu" id="PRk-6d-tD6"/>
+                            </popUpButtonCell>
+                            <connections>
+                                <binding destination="-2" name="contentValues" keyPath="self.displayController.arrangedObjects.name" id="awx-ab-u2T"/>
+                                <binding destination="-2" name="selectedIndex" keyPath="self.mainDisplay" previousBinding="awx-ab-u2T" id="GzU-pw-GJW"/>
+                            </connections>
+                        </popUpButton>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="6F827410-B420-45D9-832F-CBA1F1DDEF61" label="Helper Display" paletteLabel="Helper Display" id="4J1-iB-8io">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="100" height="28"/>
+                        <size key="maxSize" width="180" height="28"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="NKe-f2-8Bh" userLabel="helperDisplayButton">
+                            <rect key="frame" x="39" y="14" width="180" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="w6H-35-5YI">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="menu"/>
+                                <menu key="menu" id="fZ4-2c-5Xu"/>
+                            </popUpButtonCell>
+                            <connections>
+                                <binding destination="-2" name="contentValues" keyPath="self.displayController.arrangedObjects.name" id="pVe-se-1GB"/>
+                                <binding destination="-2" name="selectedIndex" keyPath="self.helperDisplay" previousBinding="pVe-se-1GB" id="F59-5P-mYO"/>
+                            </connections>
+                        </popUpButton>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="jX9-Hl-fXx"/>
+                    <toolbarItem reference="dxe-ab-lR7"/>
+                    <toolbarItem reference="dTB-uw-8Nd"/>
+                    <toolbarItem reference="dxe-ab-lR7"/>
+                    <toolbarItem reference="HNI-jv-VG0"/>
+                    <toolbarItem reference="4J1-iB-8io"/>
+                    <toolbarItem reference="dxe-ab-lR7"/>
+                    <toolbarItem reference="dTB-uw-8Nd"/>
+                    <toolbarItem reference="dxe-ab-lR7"/>
+                    <toolbarItem reference="3Mb-33-YLA"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <point key="canvasLocation" x="433" y="590.5"/>
+        </window>
+        <viewController id="olb-zY-X43" customClass="PreviewController">
+            <connections>
+                <outlet property="contentPreview" destination="eDO-sx-6c3" id="akq-RL-67V"/>
+                <outlet property="notesPreview" destination="ZeE-cg-Jcp" id="IXo-0J-R9g"/>
+                <outlet property="view" destination="COO-NL-yDh" id="aBW-JH-wBO"/>
+            </connections>
+        </viewController>
+    </objects>
+</document>
