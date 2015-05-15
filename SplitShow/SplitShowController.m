@@ -131,7 +131,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         fullScreenBounds.origin = CGPointZero;
         fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
         fullScreenViewController.group = BeamerViewControllerNotificationGroupContent;
-        [fullScreenViewController registerController:nil];
+        [fullScreenViewController registerController:self];
         fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
                                                        styleMask:NSBorderlessWindowMask
                                                          backing:NSBackingStoreBuffered
@@ -153,7 +153,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         fullScreenBounds.origin = CGPointZero;
         fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
         fullScreenViewController.group = BeamerViewControllerNotificationGroupNotes;
-        [fullScreenViewController registerController:nil];
+        [fullScreenViewController registerController:self];
         fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
                                                        styleMask:NSBorderlessWindowMask
                                                          backing:NSBackingStoreBuffered
@@ -257,7 +257,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             // Notify content views
             slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropLeft];
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"slide" : slide}];
 
             // Notify note views
             NSInteger notesIndex = [self getNotesIndex];
@@ -267,7 +267,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
                 slide = [self getSlideAtIndex:notesIndex withCrop:BeamerPageCropRight];
             }
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"slide" : slide}];
 
             break;
         }
@@ -277,7 +277,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             // Notify content views
             slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropNone];
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"slide" : slide}];
 
             // Notify note views
             NSInteger notesIndex = [self getNotesIndex];
@@ -287,7 +287,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
                 slide = [self getSlideAtIndex:notesIndex withCrop:BeamerPageCropNone];
             }
             
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"slide" : slide}];
             
             break;
         }
@@ -297,7 +297,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             // Notify all views
             slide = [self getSlideAtIndex:[self getSlidesIndex] withCrop:BeamerPageCropNone];
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupAll}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupAll, @"slide" : slide}];
 
             break;
         }
@@ -307,10 +307,10 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             // Notify content views
             slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropLeft];
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"slide" : slide}];
 
             // Notify note views
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:slide userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"slide" : slide}];
             
             break;
         }

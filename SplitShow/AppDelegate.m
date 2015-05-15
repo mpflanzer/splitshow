@@ -10,6 +10,11 @@
 
 @interface AppDelegate ()
 
+@property NSMutableSet *windowControllers;
+@property NSOpenPanel *openDialog;
+
+- (void)windowWillClose:(NSNotification*)notification;
+
 @end
 
 @implementation AppDelegate
