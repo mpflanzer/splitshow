@@ -115,7 +115,7 @@
 
 - (NSString *)timerValueAsString
 {
-    return [NSString stringWithFormat:@"%02d:%02d:%02d", (int)self.timerValue / 3600, (int)self.timerValue / 60, (int)self.timerValue % 60];
+    return [NSString stringWithFormat:@"%02d:%02d:%02d", (int)self.timerValue / 3600, (int)(self.timerValue / 60) % 60, (int)self.timerValue % 60];
 }
 
 - (void)updateView
