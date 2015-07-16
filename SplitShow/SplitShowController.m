@@ -88,6 +88,8 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
         self.presentationMode  = [self getPresentationModeForSlideMode:self.presentation.slideMode];
     }
+  
+    self.timerState = 0;
 
     return (self.presentation != nil);
 }
@@ -163,7 +165,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         [fullScreenWindow setContentView:fullScreenViewController.beamerView];
         [fullScreenWindow setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
 
-        BeamerTimerController *timerController = [[BeamerTimerController alloc] init];
+      BeamerTimerController *timerController = [[BeamerTimerController alloc] initWithTimeInterval:self.timerState];
         [fullScreenViewController.beamerView addSubview:timerController.timerView];
 
         fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
@@ -197,6 +199,15 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     {
         NSWindowController *fullScreenWindowController = fullScreen[@"windowController"];
         BeamerViewController *fullScreenViewController = fullScreen[@"viewController"];
+      
+        BeamerTimerController *fullScreenTimerController = fullScreen[@"timerController"];
+      
+        if (fullScreenTimerController != nil)
+        {
+          self.timerState = fullScreenTimerController.timerValue;
+        }
+      
+      
 
         [fullScreenViewController unregisterController:nil];
         [fullScreenWindowController close];
@@ -214,6 +225,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
     BeamerDocumentSlideMode slideMode = [self getSlideModeForPresentationMode:self.presentationMode];
 
+    self.timerState = 0;
     self.currentSlideIndex = 0;
     self.currentSlideLayout = [self.presentation getSlideLayoutForSlideMode:slideMode];
     self.currentSlideCount = [self.currentSlideLayout[@"content"] count];
@@ -224,6 +236,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 - (void)reloadPresentation:(id)sender
 {
     [self readFromURL:self.presentation.documentURL error:nil];
+    self.timerState = 0;
 }
 
 - (void)presentPrevSlide
