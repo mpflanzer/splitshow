@@ -88,7 +88,7 @@
 
 - (void)resetTimer
 {
-    [self initTimer:self.initialValue];
+    [self initTimer:0];
 }
 
 - (void)toggleTimerButton:(NSButton*)sender
