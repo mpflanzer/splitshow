@@ -13,6 +13,7 @@
 @property NSMutableSet *windowControllers;
 @property NSOpenPanel *openDialog;
 
+- (BOOL)openDocumentFromURL:(NSURL*)file;
 - (void)windowWillClose:(NSNotification*)notification;
 
 @end
@@ -34,26 +35,45 @@
 {
 }
 
+- (BOOL)application:(NSApplication *)sender openFile:(NSString *)filename
+{
+    NSURL *docURL = [NSURL fileURLWithPath:filename];
+    return [self openDocumentFromURL:docURL];
+}
+
 - (void)openDocument:(id)sender
 {
     [self.openDialog beginWithCompletionHandler:^(NSInteger result) {
         if(result == NSFileHandlingPanelOKButton)
         {
-            SplitShowController *windowController;
-            NSError *error;
+            NSDocumentController *sharedDocController = [NSDocumentController sharedDocumentController];
 
             for(NSURL *file in [self.openDialog URLs])
             {
-                windowController = [[SplitShowController alloc] initWithWindowNibName:@"SplitShowWindow"];
-
-                if([windowController readFromURL:file error:&error])
+                if([self openDocumentFromURL:file])
                 {
-                    [self.windowControllers addObject:windowController];
-                    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:windowController];
+                    [sharedDocController noteNewRecentDocumentURL:file];
                 }
             }
         }
     }];
+}
+
+- (BOOL)openDocumentFromURL:(NSURL*)file
+{
+    NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
+    SplitShowController *windowController = [storyBoard instantiateControllerWithIdentifier:@"SplitShowController"];
+    NSError *error;
+
+    if([windowController readFromURL:file error:&error])
+    {
+        [self.windowControllers addObject:windowController];
+        [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(windowWillClose:) name:NSWindowWillCloseNotification object:windowController];
+
+        return YES;
+    }
+
+    return NO;
 }
 
 - (void)windowWillClose:(NSNotification *)notification
