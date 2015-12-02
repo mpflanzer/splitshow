@@ -58,7 +58,7 @@
         if(slide != nil)
         {
             [self.document removePageAtIndex:0];
-            [self.document insertPage:slide atIndex:0];
+            [self.document insertPage:[slide copy] atIndex:0];
             [self.beamerView layoutDocumentView];
         }
     }
