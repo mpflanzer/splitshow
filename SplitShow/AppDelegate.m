@@ -61,8 +61,7 @@
 
 - (BOOL)openDocumentFromURL:(NSURL*)file
 {
-    NSStoryboard *storyBoard = [NSStoryboard storyboardWithName:@"Main" bundle:nil];
-    SplitShowController *windowController = [storyBoard instantiateControllerWithIdentifier:@"SplitShowController"];
+    SplitShowController *windowController = [[SplitShowController alloc] initWithWindowNibName:@"SplitShowWindow"];
     NSError *error;
 
     if([windowController readFromURL:file error:&error])
