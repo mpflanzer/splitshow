@@ -29,8 +29,6 @@
 
 - (void)updateBeamerViews;
 
-- (BeamerPage*)getSlideAtIndex:(NSInteger)index withCrop:(BeamerPageCrop)crop;
-
 - (NSInteger)getSlidesIndex;
 
 - (NSInteger)getContentIndexForSlidesIndex:(NSInteger)index;
@@ -87,6 +85,8 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         [self.window setTitle:[self.presentation title]];
 
         self.presentationMode  = [self getPresentationModeForSlideMode:self.presentation.slideMode];
+
+        [self.previewController setDocuments:self.presentation];
     }
 
     return (self.presentation != nil);
@@ -130,6 +130,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         fullScreenBounds = fullScreen.frame;
         fullScreenBounds.origin = CGPointZero;
         fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
+        [fullScreenViewController setDocument:[self.presentation createCroppedContent]];
         fullScreenViewController.group = BeamerViewControllerNotificationGroupContent;
         [fullScreenViewController registerController:self];
         fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
@@ -152,6 +153,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         fullScreenBounds = fullScreen.frame;
         fullScreenBounds.origin = CGPointZero;
         fullScreenViewController = [[BeamerViewController alloc] initWithFrame:fullScreenBounds];
+        [fullScreenViewController setDocument:[self.presentation createCroppedNotes]];
         fullScreenViewController.group = BeamerViewControllerNotificationGroupNotes;
         [fullScreenViewController registerController:self];
         fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
@@ -248,95 +250,71 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
 - (void)updateBeamerViews
 {
-    BeamerPage *slide;
-
     switch(self.presentationMode)
     {
         case BeamerPresentationLayoutSplit:
         {
-            // Notify content views
-            slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropLeft];
+            NSNumber *pageIndex = @([self getContentIndex]);
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"slide" : slide}];
+            // Notify content views
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"pageIndex" : pageIndex}];
 
             // Notify note views
             NSInteger notesIndex = [self getNotesIndex];
 
             if(notesIndex != -1)
             {
-                slide = [self getSlideAtIndex:notesIndex withCrop:BeamerPageCropRight];
+                pageIndex = @(notesIndex);
             }
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"slide" : slide}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"pageIndex" : pageIndex}];
 
             break;
         }
 
         case BeamerPresentationLayoutInterleaved:
         {
-            // Notify content views
-            slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropNone];
+            NSNumber *pageIndex = @([self getContentIndex]);
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"slide" : slide}];
+            // Notify content views
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"pageIndex" : pageIndex}];
 
             // Notify note views
             NSInteger notesIndex = [self getNotesIndex];
 
             if(notesIndex != -1)
             {
-                slide = [self getSlideAtIndex:notesIndex withCrop:BeamerPageCropNone];
+                pageIndex = @(notesIndex);
             }
-            
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"slide" : slide}];
+
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"pageIndex" : pageIndex}];
             
             break;
         }
 
         case BeamerPresentationLayoutMirror:
         {
-            // Notify all views
-            slide = [self getSlideAtIndex:[self getSlidesIndex] withCrop:BeamerPageCropNone];
+            NSNumber *pageIndex = @([self getContentIndex]);
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupAll, @"slide" : slide}];
+            // Notify all views
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupAll, @"pageIndex" : pageIndex}];
 
             break;
         }
 
         case BeamerPresentationLayoutMirrorSplit:
         {
-            // Notify content views
-            slide = [self getSlideAtIndex:[self getContentIndex] withCrop:BeamerPageCropLeft];
+            NSNumber *pageIndex = @([self getContentIndex]);
 
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"slide" : slide}];
+            // Notify content views
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupContent, @"pageIndex" : pageIndex}];
 
             // Notify note views
-            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"slide" : slide}];
+            [[NSNotificationCenter defaultCenter] postNotificationName:BeamerViewControllerNotificationChangeSlide object:self userInfo:@{@"group" : @BeamerViewControllerNotificationGroupNotes, @"pageIndex" : pageIndex}];
             
             break;
         }
     }
-}
-
-- (BeamerPage*)getSlideAtIndex:(NSInteger)index withCrop:(BeamerPageCrop)crop
-{
-    BeamerPage *slide = (BeamerPage*)[self.presentation pageAtIndex:index];
-    BeamerPage *croppedSlide = [slide copy];
-
-    NSRect cropBounds = [slide boundsForBox:kPDFDisplayBoxMediaBox];
-
-    if(crop != BeamerPageCropNone)
-    {
-        cropBounds.size.width /= 2;
-
-        if(crop == BeamerPageCropRight)
-        {
-            cropBounds.origin.x += cropBounds.size.width;
-        }
-    }
-
-    [croppedSlide setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-
-    return croppedSlide;
 }
 
 - (NSInteger)getSlidesIndex
