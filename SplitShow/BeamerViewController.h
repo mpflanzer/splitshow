@@ -24,4 +24,6 @@
 
 - (void)changeView:(NSNotification*)notification;
 
+- (void)setDocument:(PDFDocument*)document;
+
 @end

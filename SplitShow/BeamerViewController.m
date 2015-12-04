@@ -10,8 +10,6 @@
 
 @interface BeamerViewController ()
 
-@property PDFDocument *document;
-
 @end
 
 @implementation BeamerViewController
@@ -23,9 +21,7 @@
     if(self)
     {
         self.group = -1;
-        self.document = [[PDFDocument alloc] initWithURL:[[NSBundle mainBundle] URLForResource:@"empty" withExtension:@"pdf"]];
         self.beamerView = [[BeamerView alloc] initWithFrame:frame];
-        [self.beamerView setDocument:self.document];
     }
 
     return self;
@@ -53,15 +49,19 @@
             return;
         }
 
-        PDFPage *slide = notification.userInfo[@"slide"];
+        NSNumber *pageIndex = notification.userInfo[@"pageIndex"];
 
-        if(slide != nil)
+        if(self.beamerView.document)
         {
-            [self.document removePageAtIndex:0];
-            [self.document insertPage:[slide copy] atIndex:0];
-            [self.beamerView layoutDocumentView];
+            PDFPage *page = [self.beamerView.document pageAtIndex:pageIndex.unsignedIntegerValue];
+            [self.beamerView goToPage:page];
         }
     }
+}
+
+- (void)setDocument:(PDFDocument *)document
+{
+    [self.beamerView setDocument:document];
 }
 
 @end

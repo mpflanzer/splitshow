@@ -33,6 +33,12 @@
     [self.notesController registerController:self.view.window.windowController];
 }
 
+- (void)setDocuments:(BeamerDocument*)document
+{
+    [self.contentController setDocument:[document createCroppedContent]];
+    [self.notesController setDocument:[document createCroppedNotes]];
+}
+
 - (void)setRepresentedObject:(id)representedObject {
     [super setRepresentedObject:representedObject];
 

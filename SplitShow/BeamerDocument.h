@@ -26,4 +26,7 @@ typedef enum : NSUInteger
 
 - (NSDictionary*)getSlideLayoutForSlideMode:(BeamerDocumentSlideMode)mode;
 
+- (PDFDocument*)createCroppedContent;
+- (PDFDocument*)createCroppedNotes;
+
 @end

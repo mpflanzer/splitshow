@@ -12,7 +12,9 @@
 
 @property(readwrite) BeamerDocumentSlideMode slideMode;
 
-- (void)setupSlideLayout;
+- (BeamerDocumentSlideMode)inferSlideMode;
+- (PDFPage*)createCroppedPage:(BeamerPageCrop)crop fromPage:(PDFPage*)page;
+
 - (NSString*)readNAVFile;
 - (NSString*)readEmbeddedNAVFile;
 - (NSString*)readExternalNAVFile;
@@ -27,7 +29,7 @@
 
     if(self)
     {
-        [self setupSlideLayout];
+        self.slideMode = [self inferSlideMode];
     }
 
     return self;
@@ -50,8 +52,10 @@
     }
 }
 
-- (void)setupSlideLayout
+- (BeamerDocumentSlideMode)inferSlideMode
 {
+    BeamerDocumentSlideMode mode = BeamerDocumentSlideModeUnknown;
+
     if(self.pageCount > 0)
     {
         PDFPage *firstPage = [self pageAtIndex:0];
@@ -60,7 +64,7 @@
         // Consider 2.39:1 the widest commonly found aspect ratio of a single frame
         if((pageBounds.size.width / pageBounds.size.height) > 2.39)
         {
-            self.slideMode = BeamerDocumentSlideModeSplit;
+            mode = BeamerDocumentSlideModeSplit;
         }
         else
         {
@@ -69,19 +73,17 @@
 
             if([slides[@"notes"] count] > 0)
             {
-                self.slideMode = BeamerDocumentSlideModeInterleaved;
+                mode = BeamerDocumentSlideModeInterleaved;
             }
             else
             {
                 // If no nav file is found assume no notes
-                self.slideMode = BeamerDocumentSlideModeNoNotes;
+                mode = BeamerDocumentSlideModeNoNotes;
             }
         }
     }
-    else
-    {
-        self.slideMode = BeamerDocumentSlideModeUnknown;
-    }
+
+    return mode;
 }
 
 - (NSString*)readNAVFile
@@ -268,7 +270,7 @@
                 {
                     [contentFrames addObject:@(currentFrameIndex)];
                 }
-                
+
                 ++currentFrameIndex;
             }
         }
@@ -285,6 +287,83 @@
     else
     {
         return @{@"content" : [NSArray array], @"notes" : [NSArray array]};
+    }
+}
+
+- (PDFPage*)createCroppedPage:(BeamerPageCrop)crop fromPage:(PDFPage *)page
+{
+    NSRect cropBounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
+
+    if(crop != BeamerPageCropNone)
+    {
+        cropBounds.size.width /= 2;
+
+        if(crop == BeamerPageCropRight)
+        {
+            cropBounds.origin.x += cropBounds.size.width;
+        }
+    }
+
+    PDFPage *croppedPage = [page copy];
+
+    [croppedPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
+
+    return croppedPage;
+}
+
+- (PDFDocument *)createCroppedContent
+{
+    switch(self.slideMode)
+    {
+        case BeamerDocumentSlideModeNoNotes:
+        case BeamerDocumentSlideModeInterleaved:
+            return [self copy];
+
+        case BeamerDocumentSlideModeSplit:
+        {
+            PDFDocument *croppedDocument = [[PDFDocument alloc] init];
+            PDFPage *croppedPage;
+
+            for(NSUInteger i = 0; i < self.pageCount; ++i)
+            {
+                PDFPage *page = [self pageAtIndex:i];
+                croppedPage = [self createCroppedPage:BeamerPageCropLeft fromPage:page];
+                [croppedDocument insertPage:croppedPage atIndex:i];
+            }
+
+            return croppedDocument;
+        }
+
+        case BeamerDocumentSlideModeUnknown:
+            return nil;
+    }
+}
+
+- (PDFDocument *)createCroppedNotes
+{
+    switch(self.slideMode)
+    {
+        case BeamerDocumentSlideModeNoNotes:
+        case BeamerDocumentSlideModeInterleaved:
+            return [self copy];
+
+        case BeamerDocumentSlideModeSplit:
+        {
+            PDFDocument *croppedDocument = [[PDFDocument alloc] init];
+            PDFPage *croppedPage;
+
+            for(NSUInteger i = 0; i < self.pageCount; ++i)
+            {
+                PDFPage *page = [self pageAtIndex:i];
+                croppedPage = [self createCroppedPage:BeamerPageCropRight fromPage:page];
+                [croppedDocument insertPage:croppedPage atIndex:i];
+            }
+
+            return croppedDocument;
+        }
+
+        case BeamerDocumentSlideModeUnknown:
+            return nil;
     }
 }
 
