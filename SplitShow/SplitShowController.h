@@ -36,6 +36,8 @@
 @property NSArray *presentationModes;
 @property NSInteger presentationMode;
 
+@property NSTimeInterval timerState;
+
 - (BOOL)readFromURL:(NSURL*)file error:(NSError*__autoreleasing *)error;
 
 - (void)cancel:(id)sender;

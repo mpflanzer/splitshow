@@ -20,6 +20,9 @@ typedef enum : NSUInteger {
 
 @property BeamerTimerMode timerMode;
 
+@property NSTimeInterval timerValue;
+
+- (instancetype)initWithTimeInterval: (NSTimeInterval)initialValue;
 - (void)initTimer:(NSTimeInterval)initialValue;
 - (void)startTimer;
 - (void)stopTimer;

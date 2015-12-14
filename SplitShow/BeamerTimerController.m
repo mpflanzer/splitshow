@@ -10,7 +10,7 @@
 
 @interface BeamerTimerController ()
 
-@property NSTimeInterval timerValue;
+
 @property NSTimeInterval initialValue;
 @property NSTimer *timer;
 
@@ -48,6 +48,19 @@
     return self;
 }
 
+
+- (instancetype)initWithTimeInterval: (NSTimeInterval)initialValue
+{
+  self = [self init];
+  
+  [self initTimer:initialValue];
+  
+  return self;
+  
+}
+
+
+
 - (void)initTimer:(NSTimeInterval)initialValue
 {
     self.initialValue = initialValue;
@@ -75,7 +88,7 @@
 
 - (void)resetTimer
 {
-    [self initTimer:self.initialValue];
+    [self initTimer:0];
 }
 
 - (void)toggleTimerButton:(NSButton*)sender
