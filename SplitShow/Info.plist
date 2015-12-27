@@ -11,18 +11,22 @@
 			<array>
 				<string>pdf</string>
 			</array>
+			<key>CFBundleTypeIconFile</key>
+			<string></string>
 			<key>CFBundleTypeMIMETypes</key>
 			<array>
 				<string>application/pdf</string>
 			</array>
 			<key>CFBundleTypeName</key>
-			<string>PDF</string>
+			<string></string>
+			<key>CFBundleTypeOSTypes</key>
+			<array>
+				<string>????</string>
+			</array>
 			<key>CFBundleTypeRole</key>
 			<string>Viewer</string>
-			<key>LSTypeIsPackage</key>
-			<integer>0</integer>
 			<key>NSDocumentClass</key>
-			<string>BeamerDocument</string>
+			<string>SplitShowDocument</string>
 		</dict>
 	</array>
 	<key>CFBundleExecutable</key>
@@ -38,15 +42,17 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>0.9.5</string>
+	<string>1.0</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleVersion</key>
-	<string>15</string>
+	<string>1</string>
 	<key>LSMinimumSystemVersion</key>
 	<string>$(MACOSX_DEPLOYMENT_TARGET)</string>
-	<key>NSMainStoryboardFile</key>
-	<string>Main</string>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright © 2015 Moritz Pflanzer. All rights reserved.</string>
+	<key>NSMainNibFile</key>
+	<string>MainMenu</string>
 	<key>NSPrincipalClass</key>
 	<string>NSApplication</string>
 </dict>

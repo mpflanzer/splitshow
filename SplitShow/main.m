@@ -2,8 +2,8 @@
 //  main.m
 //  SplitShow
 //
-//  Created by Moritz Pflanzer on 05/05/2015.
-//
+//  Created by Moritz Pflanzer on 30/09/2015.
+//  Copyright © 2015 Moritz Pflanzer. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>

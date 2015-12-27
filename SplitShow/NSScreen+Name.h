@@ -1,5 +1,5 @@
 //
-//  NSScreen_NameExtension.h
+//  NSScreen+Name.h
 //  SplitShow
 //
 //  Created by Moritz Pflanzer on 06/05/2015.
@@ -11,7 +11,7 @@
 
 #define kIODisplayConnect "IODisplayConnect"
 
-@interface NSScreen (NameExtension)
+@interface NSScreen (Name)
 
 @property (readonly) NSString *name;
 @property (readonly) CGDirectDisplayID displayID;

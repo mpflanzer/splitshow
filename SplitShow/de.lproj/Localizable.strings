@@ -5,19 +5,19 @@
 "Exit Full Screen" = "Exit Full Screen";
 
 /* First display */
-"First display" = "First display";
+"First display" = "Erster Bildschirm";
 
 /* Helper display */
-"Helper display" = "Helper display";
+"Helper display" = "Hilfsbildschirm";
 
 /* Main display */
-"Main display" = "Main display";
+"Main display" = "Hauptbildschirm";
 
 /* No display */
-"No display" = "No display";
+"No display" = "Kein Bildschirm";
 
 /* Second display */
-"Second display" = "Second display";
+"Second display" = "Zweiter Bildschirm";
 
 /* Start */
 "Start" = "Start";
@@ -26,5 +26,5 @@
 "Stop" = "Stop";
 
 /* No comment provided by engineer. */
-"Unknown" = "Unknown";
+"Unknown" = "Unbekannt";
 

@@ -1,0 +1,42 @@
+
+/* Class = "NSMenuItem"; title = "Interleave"; ObjectID = "12C-ZA-4Cx"; */
+"12C-ZA-4Cx.title" = "Verschachtelt";
+
+/* Class = "NSMenuItem"; title = "Custom"; ObjectID = "4eC-YF-X0Q"; */
+"4eC-YF-X0Q.title" = "Benutzerdefiniert";
+
+/* Class = "NSToolbarItem"; label = "Helper display"; ObjectID = "CNN-xk-aUO"; */
+"CNN-xk-aUO.label" = "Hilfsdisplay";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Helper display"; ObjectID = "CNN-xk-aUO"; */
+"CNN-xk-aUO.paletteLabel" = "Hilfsbildschirm";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "F0z-JX-Cv5"; */
+"F0z-JX-Cv5.title" = "Fenster";
+
+/* Class = "NSMenuItem"; title = "Mirror"; ObjectID = "Lzl-UZ-rzt"; */
+"Lzl-UZ-rzt.title" = "Gespiegelt";
+
+/* Class = "NSButtonCell"; title = "Advanced layout"; ObjectID = "T2C-1W-96C"; */
+"T2C-1W-96C.title" = "Erweitertes Layout";
+
+/* Class = "NSMenuItem"; title = "Split"; ObjectID = "kxV-sq-Jlb"; */
+"kxV-sq-Jlb.title" = "Geteilt";
+
+/* Class = "NSToolbarItem"; label = "Presentation mode"; ObjectID = "nDW-HA-B4o"; */
+"nDW-HA-B4o.label" = "Präsentationsmodus";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Presentation mode"; ObjectID = "nDW-HA-B4o"; */
+"nDW-HA-B4o.paletteLabel" = "Präsentationsmodus";
+
+/* Class = "NSMenuItem"; title = "Inverse split"; ObjectID = "oWI-IF-CDL"; */
+"oWI-IF-CDL.title" = "Umgekehrt geteilt";
+
+/* Class = "NSButtonCell"; title = "Full Screen"; ObjectID = "sbo-Bg-fMx"; */
+"sbo-Bg-fMx.title" = "Vollbild";
+
+/* Class = "NSToolbarItem"; label = "Main display"; ObjectID = "zPX-KS-bWb"; */
+"zPX-KS-bWb.label" = "Hauptbildschirm";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Main display"; ObjectID = "zPX-KS-bWb"; */
+"zPX-KS-bWb.paletteLabel" = "Hauptbildschirm";

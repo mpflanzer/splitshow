@@ -2,11 +2,10 @@
 //  SplitShowTests.m
 //  SplitShowTests
 //
-//  Created by Moritz Pflanzer on 05/05/2015.
-//
+//  Created by Moritz Pflanzer on 30/09/2015.
+//  Copyright © 2015 Moritz Pflanzer. All rights reserved.
 //
 
-#import <Cocoa/Cocoa.h>
 #import <XCTest/XCTest.h>
 
 @interface SplitShowTests : XCTestCase
@@ -27,7 +26,7 @@
 
 - (void)testExample {
     // This is an example of a functional test case.
-    XCTAssert(YES, @"Pass");
+    // Use XCTAssert and related functions to verify your tests produce the correct results.
 }
 
 - (void)testPerformanceExample {
