@@ -1,57 +1,44 @@
 //
-//  BeamerTimerController.m
+//  TimerController.m
 //  SplitShow
 //
 //  Created by Moritz Pflanzer on 07/05/2015.
 //
 //
 
-#import "BeamerTimerController.h"
+#import "TimerController.h"
 
-@interface BeamerTimerController ()
+@interface TimerController ()
 
 @property NSTimeInterval timerValue;
 @property NSTimeInterval initialValue;
 @property NSTimer *timer;
 
+- (void)startTimer;
+- (void)stopTimer;
+
 - (void)timerFired:(id)userDict;
 - (NSString*)timerValueAsString;
-
-- (void)toggleTimerButton:(id)sender;
 
 - (void)updateView;
 
 @end
 
-@implementation BeamerTimerController
+@implementation TimerController
 
-- (instancetype)init
+- (void)viewDidLoad
 {
-    self = [super init];
-
-    if(self)
-    {
-        self.timerMode = BeamerTimerModeForward;
-
-        if([[NSBundle mainBundle] loadNibNamed:@"BeamerTimerView" owner:self topLevelObjects:nil])
-        {
-                [self.timerView.startStopButton setTarget:self];
-                [self.timerView.startStopButton setAction:@selector(toggleTimerButton:)];
-
-                [self.timerView.resetButton setTarget:self];
-                [self.timerView.resetButton setAction:@selector(resetTimer)];
-        }
-
-        [self initTimer:0];
-    }
-
-    return self;
+    self.view.wantsLayer = YES;
+    self.view.layer.backgroundColor = [[NSColor whiteColor] CGColor];
+    self.timerMode = SplitShowTimerModeForward;
+    self.timerValue = 0;
 }
 
-- (void)initTimer:(NSTimeInterval)initialValue
+- (void)initTimer:(NSTimeInterval)initialValue withMode:(SplitShowTimerMode)mode
 {
     self.initialValue = initialValue;
     self.timerValue = initialValue;
+    self.timerMode = mode;
 
     [self updateView];
 }
@@ -73,12 +60,12 @@
     self.timer = nil;
 }
 
-- (void)resetTimer
+- (IBAction)resetTimer:(id)sender
 {
-    [self initTimer:self.initialValue];
+    [self initTimer:self.initialValue withMode:self.timerMode];
 }
 
-- (void)toggleTimerButton:(NSButton*)sender
+- (IBAction)toggleStartStopButton:(NSButton*)sender
 {
     if(self.timer == nil)
     {
@@ -96,16 +83,16 @@
 {
     switch(self.timerMode)
     {
-        case BeamerTimerModeForward:
+        case SplitShowTimerModeForward:
             ++self.timerValue;
             break;
 
-        case BeamerTimerModeBackward:
+        case SplitShowTimerModeBackward:
             --self.timerValue;
             break;
     }
 
-    if(self.timerValue < 0)
+    if(self.timerValue <= 0)
     {
         [self stopTimer];
     }
@@ -120,23 +107,20 @@
 
 - (void)updateView
 {
-    if(self.timerView != nil)
-    {
-        self.timerView.timeLabel.stringValue = [self timerValueAsString];
+        self.timeLabel.stringValue = [self timerValueAsString];
 
         if(self.timer != nil)
         {
-            self.timerView.startStopButton.title = NSLocalizedString(@"Stop", nil);
-            self.timerView.startStopButton.state = NSOnState;
+            self.startStopButton.title = NSLocalizedString(@"Stop", @"Stop");
+            self.startStopButton.state = NSOnState;
         }
         else
         {
-            self.timerView.startStopButton.title = NSLocalizedString(@"Start", nil);
-            self.timerView.startStopButton.state = NSOffState;
+            self.startStopButton.title = NSLocalizedString(@"Start", @"Start");
+            self.startStopButton.state = NSOffState;
         }
 
-        [self.timerView setNeedsLayout:YES];
-    }
+        [self.view setNeedsLayout:YES];
 }
 
 @end

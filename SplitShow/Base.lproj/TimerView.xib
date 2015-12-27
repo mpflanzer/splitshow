@@ -1,28 +1,44 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="7702" systemVersion="14D136" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="7702"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
     </dependencies>
     <objects>
-        <customObject id="-2" userLabel="File's Owner" customClass="BeamerTimerController">
+        <customObject id="-2" userLabel="File's Owner" customClass="TimerController">
             <connections>
-                <outlet property="timerView" destination="c22-O7-iKe" id="teh-JD-03e"/>
+                <outlet property="startStopButton" destination="44o-8g-3TA" id="BmQ-Jd-flZ"/>
+                <outlet property="timeLabel" destination="DVU-QR-7sm" id="Bjf-wh-cEW"/>
+                <outlet property="view" destination="c22-O7-iKe" id="L3r-BX-XRd"/>
             </connections>
         </customObject>
         <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
         <customObject id="-3" userLabel="Application" customClass="NSObject"/>
-        <customView id="c22-O7-iKe" customClass="BeamerTimerView">
-            <rect key="frame" x="0.0" y="0.0" width="199" height="112"/>
+        <customView id="c22-O7-iKe">
+            <rect key="frame" x="0.0" y="0.0" width="214" height="112"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" translatesAutoresizingMaskIntoConstraints="NO" id="DVU-QR-7sm">
-                    <rect key="frame" x="18" y="47" width="163" height="50"/>
+                    <rect key="frame" x="18" y="47" width="178" height="50"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="00:00:00" id="84A-if-VgO">
                         <font key="font" metaFont="system" size="41"/>
                         <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
+                <button translatesAutoresizingMaskIntoConstraints="NO" id="9P4-LE-Fkq">
+                    <rect key="frame" x="118" y="20" width="76" height="27"/>
+                    <constraints>
+                        <constraint firstAttribute="width" constant="76" id="BjC-mq-2Oi"/>
+                        <constraint firstAttribute="height" constant="27" id="tYc-Vv-sjX"/>
+                    </constraints>
+                    <buttonCell key="cell" type="square" title="Reset" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fh0-hL-oA0">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system" size="16"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="resetTimer:" target="-2" id="oR2-89-B5o"/>
+                    </connections>
+                </button>
                 <button translatesAutoresizingMaskIntoConstraints="NO" id="44o-8g-3TA">
                     <rect key="frame" x="20" y="20" width="76" height="27"/>
                     <constraints>
@@ -33,17 +49,9 @@
                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
                         <font key="font" metaFont="system" size="16"/>
                     </buttonCell>
-                </button>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="9P4-LE-Fkq">
-                    <rect key="frame" x="103" y="20" width="76" height="27"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="76" id="BjC-mq-2Oi"/>
-                        <constraint firstAttribute="height" constant="27" id="tYc-Vv-sjX"/>
-                    </constraints>
-                    <buttonCell key="cell" type="square" title="Reset" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="fh0-hL-oA0">
-                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
-                        <font key="font" metaFont="system" size="16"/>
-                    </buttonCell>
+                    <connections>
+                        <action selector="toggleStartStopButton:" target="-2" id="Dl5-ti-2h7"/>
+                    </connections>
                 </button>
             </subviews>
             <constraints>
@@ -54,17 +62,12 @@
                 <constraint firstItem="44o-8g-3TA" firstAttribute="top" secondItem="DVU-QR-7sm" secondAttribute="bottom" id="HQg-Xh-tIx"/>
                 <constraint firstAttribute="trailing" secondItem="DVU-QR-7sm" secondAttribute="trailing" constant="20" id="IgC-zJ-IFy"/>
                 <constraint firstItem="DVU-QR-7sm" firstAttribute="leading" secondItem="c22-O7-iKe" secondAttribute="leading" constant="20" id="Iy8-dW-VGD"/>
-                <constraint firstItem="9P4-LE-Fkq" firstAttribute="leading" secondItem="44o-8g-3TA" secondAttribute="trailing" constant="7" id="Od0-Tv-Lhw"/>
+                <constraint firstItem="9P4-LE-Fkq" firstAttribute="leading" secondItem="44o-8g-3TA" secondAttribute="trailing" constant="22" id="Od0-Tv-Lhw"/>
                 <constraint firstItem="9P4-LE-Fkq" firstAttribute="top" secondItem="DVU-QR-7sm" secondAttribute="bottom" id="Wld-cx-xhu"/>
                 <constraint firstItem="DVU-QR-7sm" firstAttribute="top" secondItem="c22-O7-iKe" secondAttribute="top" constant="15" id="kf3-49-L8E"/>
-                <constraint firstItem="9P4-LE-Fkq" firstAttribute="leading" secondItem="44o-8g-3TA" secondAttribute="trailing" constant="7" id="yGw-Zg-c3T"/>
+                <constraint firstItem="9P4-LE-Fkq" firstAttribute="leading" secondItem="44o-8g-3TA" secondAttribute="trailing" constant="22" id="yGw-Zg-c3T"/>
             </constraints>
-            <connections>
-                <outlet property="resetButton" destination="9P4-LE-Fkq" id="Tmc-kW-sPS"/>
-                <outlet property="startStopButton" destination="44o-8g-3TA" id="bVZ-JC-7K2"/>
-                <outlet property="timeLabel" destination="DVU-QR-7sm" id="0QL-RH-BBB"/>
-            </connections>
-            <point key="canvasLocation" x="363.5" y="407"/>
+            <point key="canvasLocation" x="371" y="407"/>
         </customView>
     </objects>
 </document>

@@ -2,16 +2,14 @@
 //  AppDelegate.h
 //  SplitShow
 //
-//  Created by Moritz Pflanzer on 05/05/2015.
-//
+//  Created by Moritz Pflanzer on 30/09/2015.
+//  Copyright © 2015 Moritz Pflanzer. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
-#import "SplitShowController.h"
 
 @interface AppDelegate : NSObject <NSApplicationDelegate>
 
-- (IBAction)openDocument:(id)sender;
 
 @end
 

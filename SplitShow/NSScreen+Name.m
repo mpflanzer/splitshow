@@ -1,5 +1,5 @@
 //
-//  NSScreen_NameExtension.m
+//  NSScreen+Name.m
 //  SplitShow
 //
 //  Created by Moritz Pflanzer on 06/05/2015.
@@ -9,9 +9,9 @@
 #import <IOKit/graphics/IOGraphicsLib.h>
 #import <ApplicationServices/ApplicationServices.h>
 #import <CoreFoundation/CoreFoundation.h>
-#import "NSScreen_NameExtension.h"
+#import "NSScreen+Name.h"
 
-@implementation NSScreen (NameExtension)
+@implementation NSScreen (Name)
 
 - (CGDirectDisplayID)displayID
 {

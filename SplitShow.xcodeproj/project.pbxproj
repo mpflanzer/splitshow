@@ -7,86 +7,104 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8E21BB891AF8DF4B00697E31 /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB881AF8DF4B00697E31 /* AppDelegate.m */; };
-		8E21BB8B1AF8DF4B00697E31 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB8A1AF8DF4B00697E31 /* main.m */; };
-		8E21BB8E1AF8DF4B00697E31 /* PreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */; };
-		8E21BB901AF8DF4B00697E31 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */; };
-		8E21BB931AF8DF4B00697E31 /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BB911AF8DF4B00697E31 /* Main.storyboard */; };
-		8E21BB9F1AF8DF4B00697E31 /* SplitShowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BB9E1AF8DF4B00697E31 /* SplitShowTests.m */; };
-		8E21BBAA1AF8DFA800697E31 /* Cocoa.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E21BBA91AF8DFA800697E31 /* Cocoa.framework */; };
-		8E21BBAC1AF8DFAF00697E31 /* Quartz.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E21BBAB1AF8DFAF00697E31 /* Quartz.framework */; };
-		8E21BBAF1AF8E0A500697E31 /* BeamerDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBAE1AF8E0A500697E31 /* BeamerDocument.m */; };
-		8E21BBB21AF8E8FE00697E31 /* SplitShowController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */; };
-		8E21BBB51AF9379A00697E31 /* BeamerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB41AF9379A00697E31 /* BeamerView.m */; };
-		8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E21BBB71AF9822D00697E31 /* BeamerPage.m */; };
-		8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */ = {isa = PBXBuildFile; fileRef = 8E21BBB91AFA29BD00697E31 /* empty.pdf */; };
-		8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC852861AFA59DC00955035 /* BeamerViewController.m */; };
-		8EC852981AFAA48700955035 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8EC852961AFAA48700955035 /* Localizable.strings */; };
-		8EC8529B1AFAC52F00955035 /* NSScreen_NameExtension.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */; };
-		8EC8529E1AFB8F7E00955035 /* BeamerTimerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC8529D1AFB8F7E00955035 /* BeamerTimerController.m */; };
-		8EC852A01AFB902700955035 /* BeamerTimerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8EC8529F1AFB902700955035 /* BeamerTimerView.xib */; };
-		8EC852A31AFB905100955035 /* BeamerTimerView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EC852A21AFB905100955035 /* BeamerTimerView.m */; };
-		8EC852A61AFBAAAC00955035 /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 8EC852A41AFBAAAC00955035 /* Credits.rtf */; };
+		8E18536F1BBC57DA00F25E9F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E18536E1BBC57DA00F25E9F /* AppDelegate.m */; };
+		8E1853721BBC57DA00F25E9F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853711BBC57DA00F25E9F /* main.m */; };
+		8E1853781BBC57DA00F25E9F /* SplitShowDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */; };
+		8E18537A1BBC57DA00F25E9F /* SplitShow.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E1853791BBC57DA00F25E9F /* SplitShow.xcassets */; };
+		8E1853881BBC57DA00F25E9F /* SplitShowTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853871BBC57DA00F25E9F /* SplitShowTests.m */; };
+		8E1853931BBC57DA00F25E9F /* SplitShowUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853921BBC57DA00F25E9F /* SplitShowUITests.m */; };
+		8E1853A51BBC633300F25E9F /* SlideView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853A41BBC633300F25E9F /* SlideView.m */; };
+		8E1853A81BBD069000F25E9F /* PDFDocument+Presentation.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853A71BBD069000F25E9F /* PDFDocument+Presentation.m */; };
+		8E1855841BDBF64500E6AEB5 /* PreviewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1855831BDBF64500E6AEB5 /* PreviewController.m */; };
+		8E23BE621C2C5A82008BEFE9 /* NSScreen+Name.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E23BE611C2C5A82008BEFE9 /* NSScreen+Name.m */; };
+		8E2CE7FB1C3007D800CA462F /* Utilities.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE7FA1C3007D800CA462F /* Utilities.m */; };
+		8E2CE8001C30233900CA462F /* PDFView+GoToPageAtIndex.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE7FF1C30233900CA462F /* PDFView+GoToPageAtIndex.m */; };
+		8E2CE8031C30293800CA462F /* DisplayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8021C30293800CA462F /* DisplayController.m */; };
+		8E2CE8061C30485C00CA462F /* TimerController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8051C30485C00CA462F /* TimerController.m */; };
+		8E2CE8311C30557400CA462F /* Credits.rtf in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8301C30557400CA462F /* Credits.rtf */; };
+		8E2CE8331C30628600CA462F /* swap.png in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8321C30628600CA462F /* swap.png */; };
+		8E2CE8341C306E3A00CA462F /* MainMenu.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8361C306E3A00CA462F /* MainMenu.xib */; };
+		8E2CE8371C306E5500CA462F /* TimerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8391C306E5500CA462F /* TimerView.xib */; };
+		8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE83C1C306E5D00CA462F /* Main.xib */; };
+		8E2CE8421C30704E00CA462F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8401C30704E00CA462F /* Localizable.strings */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
-		8E21BB991AF8DF4B00697E31 /* PBXContainerItemProxy */ = {
+		8E1853841BBC57DA00F25E9F /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
-			containerPortal = 8E21BB7A1AF8DF4B00697E31 /* Project object */;
+			containerPortal = 8E1853621BBC57DA00F25E9F /* Project object */;
 			proxyType = 1;
-			remoteGlobalIDString = 8E21BB811AF8DF4B00697E31;
+			remoteGlobalIDString = 8E1853691BBC57DA00F25E9F;
+			remoteInfo = SplitShow;
+		};
+		8E18538F1BBC57DA00F25E9F /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 8E1853621BBC57DA00F25E9F /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 8E1853691BBC57DA00F25E9F;
 			remoteInfo = SplitShow;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		8E21BB821AF8DF4B00697E31 /* SplitShow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplitShow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E21BB861AF8DF4B00697E31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E21BB871AF8DF4B00697E31 /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		8E21BB881AF8DF4B00697E31 /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
-		8E21BB8A1AF8DF4B00697E31 /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
-		8E21BB8C1AF8DF4B00697E31 /* PreviewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = PreviewController.h; sourceTree = "<group>"; };
-		8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = PreviewController.m; sourceTree = "<group>"; };
-		8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		8E21BB921AF8DF4B00697E31 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
-		8E21BB981AF8DF4B00697E31 /* SplitShowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitShowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E21BB9D1AF8DF4B00697E31 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
-		8E21BB9E1AF8DF4B00697E31 /* SplitShowTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitShowTests.m; sourceTree = "<group>"; };
-		8E21BBA91AF8DFA800697E31 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = System/Library/Frameworks/Cocoa.framework; sourceTree = SDKROOT; };
-		8E21BBAB1AF8DFAF00697E31 /* Quartz.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Quartz.framework; path = System/Library/Frameworks/Quartz.framework; sourceTree = SDKROOT; };
-		8E21BBAD1AF8E0A500697E31 /* BeamerDocument.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerDocument.h; sourceTree = "<group>"; };
-		8E21BBAE1AF8E0A500697E31 /* BeamerDocument.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerDocument.m; sourceTree = "<group>"; };
-		8E21BBB01AF8E8FE00697E31 /* SplitShowController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitShowController.h; sourceTree = "<group>"; };
-		8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitShowController.m; sourceTree = "<group>"; };
-		8E21BBB31AF9379A00697E31 /* BeamerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerView.h; sourceTree = "<group>"; };
-		8E21BBB41AF9379A00697E31 /* BeamerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerView.m; sourceTree = "<group>"; };
-		8E21BBB61AF9822D00697E31 /* BeamerPage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerPage.h; sourceTree = "<group>"; };
-		8E21BBB71AF9822D00697E31 /* BeamerPage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerPage.m; sourceTree = "<group>"; };
-		8E21BBB91AFA29BD00697E31 /* empty.pdf */ = {isa = PBXFileReference; lastKnownFileType = image.pdf; path = empty.pdf; sourceTree = "<group>"; };
-		8EC852851AFA59DC00955035 /* BeamerViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerViewController.h; sourceTree = "<group>"; };
-		8EC852861AFA59DC00955035 /* BeamerViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerViewController.m; sourceTree = "<group>"; };
-		8EC852971AFAA48700955035 /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = SplitShow/Base.lproj/Localizable.strings; sourceTree = "<group>"; };
-		8EC852991AFAC52F00955035 /* NSScreen_NameExtension.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NSScreen_NameExtension.h; sourceTree = "<group>"; };
-		8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NSScreen_NameExtension.m; sourceTree = "<group>"; };
-		8EC8529C1AFB8F7E00955035 /* BeamerTimerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerTimerController.h; sourceTree = "<group>"; };
-		8EC8529D1AFB8F7E00955035 /* BeamerTimerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerTimerController.m; sourceTree = "<group>"; };
-		8EC8529F1AFB902700955035 /* BeamerTimerView.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = BeamerTimerView.xib; sourceTree = "<group>"; };
-		8EC852A11AFB905100955035 /* BeamerTimerView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = BeamerTimerView.h; sourceTree = "<group>"; };
-		8EC852A21AFB905100955035 /* BeamerTimerView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = BeamerTimerView.m; sourceTree = "<group>"; };
-		8EC852A51AFBAAAC00955035 /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; name = Base; path = Base.lproj/Credits.rtf; sourceTree = "<group>"; };
+		8E18536A1BBC57DA00F25E9F /* SplitShow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplitShow.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E18536D1BBC57DA00F25E9F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		8E18536E1BBC57DA00F25E9F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8E1853711BBC57DA00F25E9F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
+		8E1853761BBC57DA00F25E9F /* SplitShowDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitShowDocument.h; sourceTree = "<group>"; };
+		8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitShowDocument.m; sourceTree = "<group>"; };
+		8E1853791BBC57DA00F25E9F /* SplitShow.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = SplitShow.xcassets; sourceTree = "<group>"; };
+		8E18537E1BBC57DA00F25E9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E1853831BBC57DA00F25E9F /* SplitShowTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitShowTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E1853871BBC57DA00F25E9F /* SplitShowTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitShowTests.m; sourceTree = "<group>"; };
+		8E1853891BBC57DA00F25E9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E18538E1BBC57DA00F25E9F /* SplitShowUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SplitShowUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		8E1853921BBC57DA00F25E9F /* SplitShowUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitShowUITests.m; sourceTree = "<group>"; };
+		8E1853941BBC57DA00F25E9F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8E1853A31BBC633300F25E9F /* SlideView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SlideView.h; sourceTree = "<group>"; };
+		8E1853A41BBC633300F25E9F /* SlideView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SlideView.m; sourceTree = "<group>"; };
+		8E1853A61BBD069000F25E9F /* PDFDocument+Presentation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PDFDocument+Presentation.h"; sourceTree = "<group>"; };
+		8E1853A71BBD069000F25E9F /* PDFDocument+Presentation.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PDFDocument+Presentation.m"; sourceTree = "<group>"; };
+		8E1855821BDBF64500E6AEB5 /* PreviewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PreviewController.h; sourceTree = "<group>"; };
+		8E1855831BDBF64500E6AEB5 /* PreviewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PreviewController.m; sourceTree = "<group>"; };
+		8E23BE601C2C5A82008BEFE9 /* NSScreen+Name.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "NSScreen+Name.h"; sourceTree = "<group>"; };
+		8E23BE611C2C5A82008BEFE9 /* NSScreen+Name.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "NSScreen+Name.m"; sourceTree = "<group>"; };
+		8E2CE7FA1C3007D800CA462F /* Utilities.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Utilities.m; sourceTree = "<group>"; };
+		8E2CE7FC1C3007F800CA462F /* Utilities.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Utilities.h; sourceTree = "<group>"; };
+		8E2CE7FE1C30233900CA462F /* PDFView+GoToPageAtIndex.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PDFView+GoToPageAtIndex.h"; sourceTree = "<group>"; };
+		8E2CE7FF1C30233900CA462F /* PDFView+GoToPageAtIndex.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PDFView+GoToPageAtIndex.m"; sourceTree = "<group>"; };
+		8E2CE8011C30293800CA462F /* DisplayController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayController.h; sourceTree = "<group>"; };
+		8E2CE8021C30293800CA462F /* DisplayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayController.m; sourceTree = "<group>"; };
+		8E2CE8041C30485B00CA462F /* TimerController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TimerController.h; sourceTree = "<group>"; };
+		8E2CE8051C30485C00CA462F /* TimerController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TimerController.m; sourceTree = "<group>"; };
+		8E2CE8301C30557400CA462F /* Credits.rtf */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.rtf; path = Credits.rtf; sourceTree = "<group>"; };
+		8E2CE8321C30628600CA462F /* swap.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = swap.png; sourceTree = "<group>"; };
+		8E2CE8351C306E3A00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/MainMenu.xib; sourceTree = "<group>"; };
+		8E2CE8381C306E5500CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/TimerView.xib; sourceTree = "<group>"; };
+		8E2CE83B1C306E5D00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/Main.xib; sourceTree = "<group>"; };
+		8E2CE83D1C306E7D00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/TimerView.strings; sourceTree = "<group>"; };
+		8E2CE83E1C306E7D00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Main.strings; sourceTree = "<group>"; };
+		8E2CE83F1C306E7D00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainMenu.strings; sourceTree = "<group>"; };
+		8E2CE8411C30704E00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8E2CE8431C30705F00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
-		8E21BB7F1AF8DF4B00697E31 /* Frameworks */ = {
+		8E1853671BBC57DA00F25E9F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E21BBAC1AF8DFAF00697E31 /* Quartz.framework in Frameworks */,
-				8E21BBAA1AF8DFA800697E31 /* Cocoa.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8E21BB951AF8DF4B00697E31 /* Frameworks */ = {
+		8E1853801BBC57DA00F25E9F /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8E18538B1BBC57DA00F25E9F /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -96,104 +114,114 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		8E21BB791AF8DF4B00697E31 = {
+		8E1853611BBC57DA00F25E9F = {
 			isa = PBXGroup;
 			children = (
-				8E21BB841AF8DF4B00697E31 /* SplitShow */,
-				8E21BBA81AF8DF9E00697E31 /* Frameworks */,
-				8E21BB9B1AF8DF4B00697E31 /* SplitShowTests */,
-				8E21BB831AF8DF4B00697E31 /* Products */,
+				8E18536C1BBC57DA00F25E9F /* SplitShow */,
+				8E1853861BBC57DA00F25E9F /* SplitShowTests */,
+				8E1853911BBC57DA00F25E9F /* SplitShowUITests */,
+				8E18536B1BBC57DA00F25E9F /* Products */,
 			);
 			sourceTree = "<group>";
 		};
-		8E21BB831AF8DF4B00697E31 /* Products */ = {
+		8E18536B1BBC57DA00F25E9F /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				8E21BB821AF8DF4B00697E31 /* SplitShow.app */,
-				8E21BB981AF8DF4B00697E31 /* SplitShowTests.xctest */,
+				8E18536A1BBC57DA00F25E9F /* SplitShow.app */,
+				8E1853831BBC57DA00F25E9F /* SplitShowTests.xctest */,
+				8E18538E1BBC57DA00F25E9F /* SplitShowUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
 		};
-		8E21BB841AF8DF4B00697E31 /* SplitShow */ = {
+		8E18536C1BBC57DA00F25E9F /* SplitShow */ = {
 			isa = PBXGroup;
 			children = (
-				8E21BB871AF8DF4B00697E31 /* AppDelegate.h */,
-				8E21BB881AF8DF4B00697E31 /* AppDelegate.m */,
-				8E21BB8C1AF8DF4B00697E31 /* PreviewController.h */,
-				8E21BB8D1AF8DF4B00697E31 /* PreviewController.m */,
-				8E21BBB01AF8E8FE00697E31 /* SplitShowController.h */,
-				8E21BBB11AF8E8FE00697E31 /* SplitShowController.m */,
-				8EC852991AFAC52F00955035 /* NSScreen_NameExtension.h */,
-				8EC8529A1AFAC52F00955035 /* NSScreen_NameExtension.m */,
-				8E21BBB31AF9379A00697E31 /* BeamerView.h */,
-				8E21BBB41AF9379A00697E31 /* BeamerView.m */,
-				8E21BBB61AF9822D00697E31 /* BeamerPage.h */,
-				8E21BBB71AF9822D00697E31 /* BeamerPage.m */,
-				8E21BB8F1AF8DF4B00697E31 /* Images.xcassets */,
-				8E21BB911AF8DF4B00697E31 /* Main.storyboard */,
-				8EC8529F1AFB902700955035 /* BeamerTimerView.xib */,
-				8EC852A11AFB905100955035 /* BeamerTimerView.h */,
-				8EC852A21AFB905100955035 /* BeamerTimerView.m */,
-				8EC852851AFA59DC00955035 /* BeamerViewController.h */,
-				8EC852861AFA59DC00955035 /* BeamerViewController.m */,
-				8E21BBAD1AF8E0A500697E31 /* BeamerDocument.h */,
-				8E21BBAE1AF8E0A500697E31 /* BeamerDocument.m */,
-				8EC8529C1AFB8F7E00955035 /* BeamerTimerController.h */,
-				8EC8529D1AFB8F7E00955035 /* BeamerTimerController.m */,
-				8E21BB851AF8DF4B00697E31 /* Supporting Files */,
+				8E1853A31BBC633300F25E9F /* SlideView.h */,
+				8E1853A41BBC633300F25E9F /* SlideView.m */,
+				8E2CE8011C30293800CA462F /* DisplayController.h */,
+				8E2CE8021C30293800CA462F /* DisplayController.m */,
+				8E18536D1BBC57DA00F25E9F /* AppDelegate.h */,
+				8E18536E1BBC57DA00F25E9F /* AppDelegate.m */,
+				8E1855821BDBF64500E6AEB5 /* PreviewController.h */,
+				8E1855831BDBF64500E6AEB5 /* PreviewController.m */,
+				8E1853761BBC57DA00F25E9F /* SplitShowDocument.h */,
+				8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */,
+				8E2CE7FC1C3007F800CA462F /* Utilities.h */,
+				8E2CE7FA1C3007D800CA462F /* Utilities.m */,
+				8E2CE8041C30485B00CA462F /* TimerController.h */,
+				8E2CE8051C30485C00CA462F /* TimerController.m */,
+				8E2CE82E1C30546500CA462F /* Categories */,
+				8E2CE82F1C30549A00CA462F /* Resources */,
+				8E1853701BBC57DA00F25E9F /* Supporting Files */,
 			);
 			path = SplitShow;
 			sourceTree = "<group>";
 		};
-		8E21BB851AF8DF4B00697E31 /* Supporting Files */ = {
+		8E1853701BBC57DA00F25E9F /* Supporting Files */ = {
 			isa = PBXGroup;
 			children = (
-				8EC852961AFAA48700955035 /* Localizable.strings */,
-				8E21BBB91AFA29BD00697E31 /* empty.pdf */,
-				8E21BB861AF8DF4B00697E31 /* Info.plist */,
-				8E21BB8A1AF8DF4B00697E31 /* main.m */,
-				8EC852A41AFBAAAC00955035 /* Credits.rtf */,
+				8E1853711BBC57DA00F25E9F /* main.m */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
 		};
-		8E21BB9B1AF8DF4B00697E31 /* SplitShowTests */ = {
+		8E1853861BBC57DA00F25E9F /* SplitShowTests */ = {
 			isa = PBXGroup;
 			children = (
-				8E21BB9E1AF8DF4B00697E31 /* SplitShowTests.m */,
-				8E21BB9C1AF8DF4B00697E31 /* Supporting Files */,
+				8E1853871BBC57DA00F25E9F /* SplitShowTests.m */,
+				8E1853891BBC57DA00F25E9F /* Info.plist */,
 			);
 			path = SplitShowTests;
 			sourceTree = "<group>";
 		};
-		8E21BB9C1AF8DF4B00697E31 /* Supporting Files */ = {
+		8E1853911BBC57DA00F25E9F /* SplitShowUITests */ = {
 			isa = PBXGroup;
 			children = (
-				8E21BB9D1AF8DF4B00697E31 /* Info.plist */,
+				8E1853921BBC57DA00F25E9F /* SplitShowUITests.m */,
+				8E1853941BBC57DA00F25E9F /* Info.plist */,
 			);
-			name = "Supporting Files";
+			path = SplitShowUITests;
 			sourceTree = "<group>";
 		};
-		8E21BBA81AF8DF9E00697E31 /* Frameworks */ = {
+		8E2CE82E1C30546500CA462F /* Categories */ = {
 			isa = PBXGroup;
 			children = (
-				8E21BBAB1AF8DFAF00697E31 /* Quartz.framework */,
-				8E21BBA91AF8DFA800697E31 /* Cocoa.framework */,
+				8E2CE7FE1C30233900CA462F /* PDFView+GoToPageAtIndex.h */,
+				8E2CE7FF1C30233900CA462F /* PDFView+GoToPageAtIndex.m */,
+				8E23BE601C2C5A82008BEFE9 /* NSScreen+Name.h */,
+				8E23BE611C2C5A82008BEFE9 /* NSScreen+Name.m */,
+				8E1853A61BBD069000F25E9F /* PDFDocument+Presentation.h */,
+				8E1853A71BBD069000F25E9F /* PDFDocument+Presentation.m */,
 			);
-			name = Frameworks;
+			name = Categories;
+			sourceTree = "<group>";
+		};
+		8E2CE82F1C30549A00CA462F /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				8E2CE8401C30704E00CA462F /* Localizable.strings */,
+				8E1853791BBC57DA00F25E9F /* SplitShow.xcassets */,
+				8E2CE8321C30628600CA462F /* swap.png */,
+				8E2CE8391C306E5500CA462F /* TimerView.xib */,
+				8E2CE83C1C306E5D00CA462F /* Main.xib */,
+				8E2CE8361C306E3A00CA462F /* MainMenu.xib */,
+				8E18537E1BBC57DA00F25E9F /* Info.plist */,
+				8E2CE8301C30557400CA462F /* Credits.rtf */,
+			);
+			name = Resources;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		8E21BB811AF8DF4B00697E31 /* SplitShow */ = {
+		8E1853691BBC57DA00F25E9F /* SplitShow */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E21BBA21AF8DF4B00697E31 /* Build configuration list for PBXNativeTarget "SplitShow" */;
+			buildConfigurationList = 8E1853971BBC57DA00F25E9F /* Build configuration list for PBXNativeTarget "SplitShow" */;
 			buildPhases = (
-				8E21BB7E1AF8DF4B00697E31 /* Sources */,
-				8E21BB7F1AF8DF4B00697E31 /* Frameworks */,
-				8E21BB801AF8DF4B00697E31 /* Resources */,
+				8E1853661BBC57DA00F25E9F /* Sources */,
+				8E1853671BBC57DA00F25E9F /* Frameworks */,
+				8E1853681BBC57DA00F25E9F /* Resources */,
 			);
 			buildRules = (
 			);
@@ -201,45 +229,68 @@
 			);
 			name = SplitShow;
 			productName = SplitShow;
-			productReference = 8E21BB821AF8DF4B00697E31 /* SplitShow.app */;
+			productReference = 8E18536A1BBC57DA00F25E9F /* SplitShow.app */;
 			productType = "com.apple.product-type.application";
 		};
-		8E21BB971AF8DF4B00697E31 /* SplitShowTests */ = {
+		8E1853821BBC57DA00F25E9F /* SplitShowTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 8E21BBA51AF8DF4B00697E31 /* Build configuration list for PBXNativeTarget "SplitShowTests" */;
+			buildConfigurationList = 8E18539A1BBC57DA00F25E9F /* Build configuration list for PBXNativeTarget "SplitShowTests" */;
 			buildPhases = (
-				8E21BB941AF8DF4B00697E31 /* Sources */,
-				8E21BB951AF8DF4B00697E31 /* Frameworks */,
-				8E21BB961AF8DF4B00697E31 /* Resources */,
+				8E18537F1BBC57DA00F25E9F /* Sources */,
+				8E1853801BBC57DA00F25E9F /* Frameworks */,
+				8E1853811BBC57DA00F25E9F /* Resources */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				8E21BB9A1AF8DF4B00697E31 /* PBXTargetDependency */,
+				8E1853851BBC57DA00F25E9F /* PBXTargetDependency */,
 			);
 			name = SplitShowTests;
 			productName = SplitShowTests;
-			productReference = 8E21BB981AF8DF4B00697E31 /* SplitShowTests.xctest */;
+			productReference = 8E1853831BBC57DA00F25E9F /* SplitShowTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		8E18538D1BBC57DA00F25E9F /* SplitShowUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 8E18539D1BBC57DA00F25E9F /* Build configuration list for PBXNativeTarget "SplitShowUITests" */;
+			buildPhases = (
+				8E18538A1BBC57DA00F25E9F /* Sources */,
+				8E18538B1BBC57DA00F25E9F /* Frameworks */,
+				8E18538C1BBC57DA00F25E9F /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				8E1853901BBC57DA00F25E9F /* PBXTargetDependency */,
+			);
+			name = SplitShowUITests;
+			productName = SplitShowUITests;
+			productReference = 8E18538E1BBC57DA00F25E9F /* SplitShowUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
 		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
-		8E21BB7A1AF8DF4B00697E31 /* Project object */ = {
+		8E1853621BBC57DA00F25E9F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
 				LastUpgradeCheck = 0700;
+				ORGANIZATIONNAME = "Moritz Pflanzer";
 				TargetAttributes = {
-					8E21BB811AF8DF4B00697E31 = {
-						CreatedOnToolsVersion = 6.3.1;
+					8E1853691BBC57DA00F25E9F = {
+						CreatedOnToolsVersion = 7.0.1;
 					};
-					8E21BB971AF8DF4B00697E31 = {
-						CreatedOnToolsVersion = 6.3.1;
-						TestTargetID = 8E21BB811AF8DF4B00697E31;
+					8E1853821BBC57DA00F25E9F = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 8E1853691BBC57DA00F25E9F;
+					};
+					8E18538D1BBC57DA00F25E9F = {
+						CreatedOnToolsVersion = 7.0.1;
+						TestTargetID = 8E1853691BBC57DA00F25E9F;
 					};
 				};
 			};
-			buildConfigurationList = 8E21BB7D1AF8DF4B00697E31 /* Build configuration list for PBXProject "SplitShow" */;
+			buildConfigurationList = 8E1853651BBC57DA00F25E9F /* Build configuration list for PBXProject "SplitShow" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -247,32 +298,41 @@
 				en,
 				Base,
 			);
-			mainGroup = 8E21BB791AF8DF4B00697E31;
-			productRefGroup = 8E21BB831AF8DF4B00697E31 /* Products */;
+			mainGroup = 8E1853611BBC57DA00F25E9F;
+			productRefGroup = 8E18536B1BBC57DA00F25E9F /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				8E21BB811AF8DF4B00697E31 /* SplitShow */,
-				8E21BB971AF8DF4B00697E31 /* SplitShowTests */,
+				8E1853691BBC57DA00F25E9F /* SplitShow */,
+				8E1853821BBC57DA00F25E9F /* SplitShowTests */,
+				8E18538D1BBC57DA00F25E9F /* SplitShowUITests */,
 			);
 		};
 /* End PBXProject section */
 
 /* Begin PBXResourcesBuildPhase section */
-		8E21BB801AF8DF4B00697E31 /* Resources */ = {
+		8E1853681BBC57DA00F25E9F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E21BB901AF8DF4B00697E31 /* Images.xcassets in Resources */,
-				8EC852A61AFBAAAC00955035 /* Credits.rtf in Resources */,
-				8EC852981AFAA48700955035 /* Localizable.strings in Resources */,
-				8E21BB931AF8DF4B00697E31 /* Main.storyboard in Resources */,
-				8E21BBBA1AFA29BD00697E31 /* empty.pdf in Resources */,
-				8EC852A01AFB902700955035 /* BeamerTimerView.xib in Resources */,
+				8E2CE8311C30557400CA462F /* Credits.rtf in Resources */,
+				8E2CE8371C306E5500CA462F /* TimerView.xib in Resources */,
+				8E2CE8331C30628600CA462F /* swap.png in Resources */,
+				8E2CE8421C30704E00CA462F /* Localizable.strings in Resources */,
+				8E18537A1BBC57DA00F25E9F /* SplitShow.xcassets in Resources */,
+				8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */,
+				8E2CE8341C306E3A00CA462F /* MainMenu.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8E21BB961AF8DF4B00697E31 /* Resources */ = {
+		8E1853811BBC57DA00F25E9F /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8E18538C1BBC57DA00F25E9F /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -282,72 +342,96 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
-		8E21BB7E1AF8DF4B00697E31 /* Sources */ = {
+		8E1853661BBC57DA00F25E9F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E21BBB21AF8E8FE00697E31 /* SplitShowController.m in Sources */,
-				8EC8529E1AFB8F7E00955035 /* BeamerTimerController.m in Sources */,
-				8E21BB8E1AF8DF4B00697E31 /* PreviewController.m in Sources */,
-				8E21BBB81AF9822D00697E31 /* BeamerPage.m in Sources */,
-				8EC852A31AFB905100955035 /* BeamerTimerView.m in Sources */,
-				8E21BB8B1AF8DF4B00697E31 /* main.m in Sources */,
-				8EC8529B1AFAC52F00955035 /* NSScreen_NameExtension.m in Sources */,
-				8EC852871AFA59DC00955035 /* BeamerViewController.m in Sources */,
-				8E21BBAF1AF8E0A500697E31 /* BeamerDocument.m in Sources */,
-				8E21BBB51AF9379A00697E31 /* BeamerView.m in Sources */,
-				8E21BB891AF8DF4B00697E31 /* AppDelegate.m in Sources */,
+				8E23BE621C2C5A82008BEFE9 /* NSScreen+Name.m in Sources */,
+				8E1853781BBC57DA00F25E9F /* SplitShowDocument.m in Sources */,
+				8E2CE8031C30293800CA462F /* DisplayController.m in Sources */,
+				8E2CE8001C30233900CA462F /* PDFView+GoToPageAtIndex.m in Sources */,
+				8E1855841BDBF64500E6AEB5 /* PreviewController.m in Sources */,
+				8E2CE7FB1C3007D800CA462F /* Utilities.m in Sources */,
+				8E1853721BBC57DA00F25E9F /* main.m in Sources */,
+				8E1853A51BBC633300F25E9F /* SlideView.m in Sources */,
+				8E18536F1BBC57DA00F25E9F /* AppDelegate.m in Sources */,
+				8E2CE8061C30485C00CA462F /* TimerController.m in Sources */,
+				8E1853A81BBD069000F25E9F /* PDFDocument+Presentation.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		8E21BB941AF8DF4B00697E31 /* Sources */ = {
+		8E18537F1BBC57DA00F25E9F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8E21BB9F1AF8DF4B00697E31 /* SplitShowTests.m in Sources */,
+				8E1853881BBC57DA00F25E9F /* SplitShowTests.m in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		8E18538A1BBC57DA00F25E9F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				8E1853931BBC57DA00F25E9F /* SplitShowUITests.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		8E21BB9A1AF8DF4B00697E31 /* PBXTargetDependency */ = {
+		8E1853851BBC57DA00F25E9F /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = 8E21BB811AF8DF4B00697E31 /* SplitShow */;
-			targetProxy = 8E21BB991AF8DF4B00697E31 /* PBXContainerItemProxy */;
+			target = 8E1853691BBC57DA00F25E9F /* SplitShow */;
+			targetProxy = 8E1853841BBC57DA00F25E9F /* PBXContainerItemProxy */;
+		};
+		8E1853901BBC57DA00F25E9F /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 8E1853691BBC57DA00F25E9F /* SplitShow */;
+			targetProxy = 8E18538F1BBC57DA00F25E9F /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
-		8E21BB911AF8DF4B00697E31 /* Main.storyboard */ = {
+		8E2CE8361C306E3A00CA462F /* MainMenu.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8E21BB921AF8DF4B00697E31 /* Base */,
+				8E2CE8351C306E3A00CA462F /* Base */,
+				8E2CE83F1C306E7D00CA462F /* de */,
 			);
-			name = Main.storyboard;
+			name = MainMenu.xib;
 			sourceTree = "<group>";
 		};
-		8EC852961AFAA48700955035 /* Localizable.strings */ = {
+		8E2CE8391C306E5500CA462F /* TimerView.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
-				8EC852971AFAA48700955035 /* Base */,
+				8E2CE8381C306E5500CA462F /* Base */,
+				8E2CE83D1C306E7D00CA462F /* de */,
+			);
+			name = TimerView.xib;
+			sourceTree = "<group>";
+		};
+		8E2CE83C1C306E5D00CA462F /* Main.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8E2CE83B1C306E5D00CA462F /* Base */,
+				8E2CE83E1C306E7D00CA462F /* de */,
+			);
+			name = Main.xib;
+			sourceTree = "<group>";
+		};
+		8E2CE8401C30704E00CA462F /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8E2CE8411C30704E00CA462F /* Base */,
+				8E2CE8431C30705F00CA462F /* de */,
 			);
 			name = Localizable.strings;
-			path = ..;
-			sourceTree = "<group>";
-		};
-		8EC852A41AFBAAAC00955035 /* Credits.rtf */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8EC852A51AFBAAAC00955035 /* Base */,
-			);
-			name = Credits.rtf;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
-		8E21BBA01AF8DF4B00697E31 /* Debug */ = {
+		8E1853951BBC57DA00F25E9F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -377,7 +461,6 @@
 					"DEBUG=1",
 					"$(inherited)",
 				);
-				GCC_SYMBOLS_PRIVATE_EXTERN = NO;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
 				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
 				GCC_WARN_UNDECLARED_SELECTOR = YES;
@@ -387,10 +470,11 @@
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = macosx;
 			};
 			name = Debug;
 		};
-		8E21BBA11AF8DF4B00697E31 /* Release */ = {
+		8E1853961BBC57DA00F25E9F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
@@ -422,102 +506,128 @@
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				MACOSX_DEPLOYMENT_TARGET = 10.10;
 				MTL_ENABLE_DEBUG_INFO = NO;
+				SDKROOT = macosx;
 			};
 			name = Release;
 		};
-		8E21BBA31AF8DF4B00697E31 /* Debug */ = {
+		8E1853981BBC57DA00F25E9F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = SplitShow/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "eu.pflanzer.$(PRODUCT_NAME:rfc1034identifier)";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.pflanzer.SplitShow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Debug;
 		};
-		8E21BBA41AF8DF4B00697E31 /* Release */ = {
+		8E1853991BBC57DA00F25E9F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				COMBINE_HIDPI_IMAGES = YES;
 				INFOPLIST_FILE = SplitShow/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "eu.pflanzer.$(PRODUCT_NAME:rfc1034identifier)";
+				MACOSX_DEPLOYMENT_TARGET = 10.8;
+				PRODUCT_BUNDLE_IDENTIFIER = eu.pflanzer.SplitShow;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 			};
 			name = Release;
 		};
-		8E21BBA61AF8DF4B00697E31 /* Debug */ = {
+		8E18539B1BBC57DA00F25E9F /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
 				INFOPLIST_FILE = SplitShowTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "eu.pflanzer.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = eu.pflanzer.SplitShowTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SplitShow.app/Contents/MacOS/SplitShow";
 			};
 			name = Debug;
 		};
-		8E21BBA71AF8DF4B00697E31 /* Release */ = {
+		8E18539C1BBC57DA00F25E9F /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				COMBINE_HIDPI_IMAGES = YES;
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-					"$(inherited)",
-				);
 				INFOPLIST_FILE = SplitShowTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = "eu.pflanzer.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = eu.pflanzer.SplitShowTests;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SplitShow.app/Contents/MacOS/SplitShow";
+			};
+			name = Release;
+		};
+		8E18539E1BBC57DA00F25E9F /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SplitShowUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = eu.pflanzer.SplitShowUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = SplitShow;
+				USES_XCTRUNNER = YES;
+			};
+			name = Debug;
+		};
+		8E18539F1BBC57DA00F25E9F /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				COMBINE_HIDPI_IMAGES = YES;
+				INFOPLIST_FILE = SplitShowUITests/Info.plist;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/../Frameworks @loader_path/../Frameworks";
+				PRODUCT_BUNDLE_IDENTIFIER = eu.pflanzer.SplitShowUITests;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				TEST_TARGET_NAME = SplitShow;
+				USES_XCTRUNNER = YES;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		8E21BB7D1AF8DF4B00697E31 /* Build configuration list for PBXProject "SplitShow" */ = {
+		8E1853651BBC57DA00F25E9F /* Build configuration list for PBXProject "SplitShow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8E21BBA01AF8DF4B00697E31 /* Debug */,
-				8E21BBA11AF8DF4B00697E31 /* Release */,
+				8E1853951BBC57DA00F25E9F /* Debug */,
+				8E1853961BBC57DA00F25E9F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8E21BBA21AF8DF4B00697E31 /* Build configuration list for PBXNativeTarget "SplitShow" */ = {
+		8E1853971BBC57DA00F25E9F /* Build configuration list for PBXNativeTarget "SplitShow" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8E21BBA31AF8DF4B00697E31 /* Debug */,
-				8E21BBA41AF8DF4B00697E31 /* Release */,
+				8E1853981BBC57DA00F25E9F /* Debug */,
+				8E1853991BBC57DA00F25E9F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		8E21BBA51AF8DF4B00697E31 /* Build configuration list for PBXNativeTarget "SplitShowTests" */ = {
+		8E18539A1BBC57DA00F25E9F /* Build configuration list for PBXNativeTarget "SplitShowTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
-				8E21BBA61AF8DF4B00697E31 /* Debug */,
-				8E21BBA71AF8DF4B00697E31 /* Release */,
+				8E18539B1BBC57DA00F25E9F /* Debug */,
+				8E18539C1BBC57DA00F25E9F /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		8E18539D1BBC57DA00F25E9F /* Build configuration list for PBXNativeTarget "SplitShowUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8E18539E1BBC57DA00F25E9F /* Debug */,
+				8E18539F1BBC57DA00F25E9F /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
-	rootObject = 8E21BB7A1AF8DF4B00697E31 /* Project object */;
+	rootObject = 8E1853621BBC57DA00F25E9F /* Project object */;
 }

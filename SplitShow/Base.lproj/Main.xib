@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="9531" systemVersion="15C50" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="9531"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="9531"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PreviewController">
+            <connections>
+                <outlet property="helperDisplayButton" destination="Hyg-DQ-ePk" id="N6n-mU-50Y"/>
+                <outlet property="helperDisplayItem" destination="CNN-xk-aUO" id="rfy-sN-PT5"/>
+                <outlet property="helperPreview" destination="EmW-Lk-HwQ" id="q7d-6J-3ko"/>
+                <outlet property="mainDisplayButton" destination="X0N-Xi-OyO" id="5IC-CA-EEa"/>
+                <outlet property="mainDisplayItem" destination="zPX-KS-bWb" id="l4b-d3-E9q"/>
+                <outlet property="mainPreview" destination="6XQ-Ys-GCn" id="BMM-ZU-Rwy"/>
+                <outlet property="window" destination="F0z-JX-Cv5" id="k8O-cj-JqQ"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="950" height="400"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" id="se5-gp-TjO">
+                <rect key="frame" x="0.0" y="0.0" width="950" height="400"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <pdfView autoresizesSubviews="NO" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4el-I3-jqN" customClass="SlideView">
+                        <rect key="frame" x="0.0" y="0.0" width="475" height="400"/>
+                    </pdfView>
+                    <pdfView autoresizesSubviews="NO" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rca-If-Wdl" customClass="SlideView">
+                        <rect key="frame" x="475" y="0.0" width="475" height="400"/>
+                    </pdfView>
+                </subviews>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="EFB8C21B-D410-40AF-B32A-E8108090EC4E" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="Yuo-6o-xNz">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="75CA7F05-D4AE-4A34-BF13-C47A5948A1C5" label="" paletteLabel="" image="swap" id="nnm-dT-Fbq">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="30" height="32"/>
+                        <size key="maxSize" width="82" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="qLy-pQ-OAV">
+                            <rect key="frame" x="0.0" y="14" width="40" height="32"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="push" bezelStyle="rounded" image="swap" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="61M-Lv-LEu">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="swapDisplays:" target="-2" id="HVd-i6-ups"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="OPy-Rs-Va9"/>
+                    <toolbarItem implicitItemIdentifier="66857153-6A38-40B4-80C7-129F3B56E0D4" label="Presentation mode" paletteLabel="Presentation mode" id="nDW-HA-B4o">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="100" height="28"/>
+                        <size key="maxSize" width="184" height="28"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="G8V-xJ-OCS" userLabel="presentationModeButton">
+                            <rect key="frame" x="0.0" y="14" width="180" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" title="Interleave" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" selectedItem="12C-ZA-4Cx" id="plm-0B-aKP">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="menu"/>
+                                <menu key="menu" autoenablesItems="NO" id="eft-LZ-3Js">
+                                    <items>
+                                        <menuItem title="Interleave" state="on" id="12C-ZA-4Cx">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <binding destination="-2" name="enabled" keyPath="document.hasInterleavedLayout" id="TzN-aL-bVj"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Split" tag="1" id="kxV-sq-Jlb">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem title="Inverse split" tag="2" id="oWI-IF-CDL">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem title="Mirror" tag="3" id="Lzl-UZ-rzt">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                        <menuItem title="Custom" tag="4" enabled="NO" id="4eC-YF-X0Q">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                        </menuItem>
+                                    </items>
+                                </menu>
+                            </popUpButtonCell>
+                            <connections>
+                                <binding destination="-2" name="selectedTag" keyPath="selectedPresentationMode" id="wlJ-r9-BrO">
+                                    <dictionary key="options">
+                                        <bool key="NSAllowsEditingMultipleValuesSelection" value="NO"/>
+                                        <bool key="NSConditionallySetsEnabled" value="NO"/>
+                                    </dictionary>
+                                </binding>
+                            </connections>
+                        </popUpButton>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="bLJ-Db-RyV"/>
+                    <toolbarItem implicitItemIdentifier="BBA87A26-57D7-417E-8302-230887EDA1FC" label="" paletteLabel="" id="UEn-b6-dMO">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="82" height="32"/>
+                        <size key="maxSize" width="189" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="i1f-1h-yey">
+                            <rect key="frame" x="0.0" y="14" width="180" height="32"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="push" title="Full Screen" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sbo-Bg-fMx">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                            <connections>
+                                <action selector="toggleCustomFullScreen:" target="-1" id="cZ8-hj-0r2"/>
+                                <binding destination="-2" name="enabled" keyPath="canEnterFullScreen" id="EsF-Yk-fnY"/>
+                            </connections>
+                        </button>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="F042616E-13F1-491F-8AA3-FF4BD6316811" label="Main display" paletteLabel="Main display" id="zPX-KS-bWb">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="100" height="28"/>
+                        <size key="maxSize" width="180" height="28"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="X0N-Xi-OyO" userLabel="mainDisplayButton">
+                            <rect key="frame" x="0.0" y="14" width="180" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zon-zq-Fff">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="menu"/>
+                                <menu key="menu" id="egN-RC-xeQ"/>
+                            </popUpButtonCell>
+                        </popUpButton>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="6F827410-B420-45D9-832F-CBA1F1DDEF61" label="Helper display" paletteLabel="Helper display" id="CNN-xk-aUO">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="100" height="28"/>
+                        <size key="maxSize" width="180" height="28"/>
+                        <popUpButton key="view" verticalHuggingPriority="750" id="Hyg-DQ-ePk" userLabel="helperDisplayButton">
+                            <rect key="frame" x="0.0" y="14" width="180" height="28"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <popUpButtonCell key="cell" type="roundTextured" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="bnm-No-3Cc">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="menu"/>
+                                <menu key="menu" id="LWL-I9-Mbo"/>
+                            </popUpButtonCell>
+                        </popUpButton>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="2C809DF3-B822-4C18-B6EF-96A016868408" label="" paletteLabel="" id="q0o-O3-a6e">
+                        <nil key="toolTip"/>
+                        <size key="minSize" width="82" height="32"/>
+                        <size key="maxSize" width="194" height="32"/>
+                        <button key="view" verticalHuggingPriority="750" id="Yjv-ra-OY2">
+                            <rect key="frame" x="0.0" y="14" width="173" height="32"/>
+                            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                            <buttonCell key="cell" type="push" title="Advanced layout" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T2C-1W-96C">
+                                <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                <font key="font" metaFont="system"/>
+                            </buttonCell>
+                        </button>
+                    </toolbarItem>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="nDW-HA-B4o"/>
+                    <toolbarItem reference="OPy-Rs-Va9"/>
+                    <toolbarItem reference="bLJ-Db-RyV"/>
+                    <toolbarItem reference="OPy-Rs-Va9"/>
+                    <toolbarItem reference="zPX-KS-bWb"/>
+                    <toolbarItem reference="CNN-xk-aUO"/>
+                    <toolbarItem reference="nnm-dT-Fbq"/>
+                    <toolbarItem reference="OPy-Rs-Va9"/>
+                    <toolbarItem reference="bLJ-Db-RyV"/>
+                    <toolbarItem reference="OPy-Rs-Va9"/>
+                    <toolbarItem reference="q0o-O3-a6e"/>
+                    <toolbarItem reference="UEn-b6-dMO"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <outlet property="delegate" destination="-2" id="2QX-eG-qRI"/>
+            </connections>
+            <point key="canvasLocation" x="594" y="259"/>
+        </window>
+        <viewController id="6XQ-Ys-GCn" customClass="DisplayController">
+            <connections>
+                <outlet property="view" destination="4el-I3-jqN" id="INz-P0-NYc"/>
+            </connections>
+        </viewController>
+        <viewController id="EmW-Lk-HwQ" customClass="DisplayController">
+            <connections>
+                <outlet property="view" destination="Rca-If-Wdl" id="NoN-Eh-lR6"/>
+            </connections>
+        </viewController>
+    </objects>
+    <resources>
+        <image name="swap" width="39" height="35"/>
+    </resources>
+</document>

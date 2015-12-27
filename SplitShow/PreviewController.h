@@ -1,18 +1,49 @@
 //
-//  ViewController.h
+//  PreviewController.h
 //  SplitShow
 //
-//  Created by Moritz Pflanzer on 05/05/2015.
-//
+//  Created by Moritz Pflanzer on 24/10/2015.
+//  Copyright © 2015 Moritz Pflanzer. All rights reserved.
 //
 
 #import <Cocoa/Cocoa.h>
-#import "BeamerViewController.h"
+#import <Quartz/Quartz.h>
 
-@interface PreviewController : NSViewController
+@class DisplayController;
 
-@property IBOutlet NSView *contentPreview;
-@property IBOutlet NSView *notesPreview;
+#define kSplitShowNotificationChangeSlide @"kSplitShowNotificationChangeSlide"
+#define kSplitShowNotificationChangeSlideAction @"kSplitShowNotificationChangeSlideAction"
+
+typedef enum : NSUInteger
+{
+    SplitShowPresentationModeInterleave,
+    SplitShowPresentationModeSplit,
+    SplitShowPresentationModeInverseSplit,
+    SplitShowPresentationModeMirror,
+    SplitShowPresentationModeCustom,
+} SplitShowPresentationMode;
+
+typedef enum : NSUInteger
+{
+    SplitShowChangeSlideActionRestart,
+    SplitShowChangeSlideActionPrevious,
+    SplitShowChangeSlideActionNext,
+} SplitShowChangeSlideAction;
+
+@interface PreviewController : NSWindowController <NSWindowDelegate>
+
+@property IBOutlet NSToolbarItem *mainDisplayItem;
+@property IBOutlet NSToolbarItem *helperDisplayItem;
+
+@property IBOutlet NSPopUpButton *mainDisplayButton;
+@property IBOutlet NSPopUpButton *helperDisplayButton;
+
+@property IBOutlet DisplayController *mainPreview;
+@property IBOutlet DisplayController *helperPreview;
+
+- (void)setupViews;
+
+- (IBAction)toggleCustomFullScreen:(id)sender;
+- (IBAction)swapDisplays:(id)sender;
 
 @end
-
