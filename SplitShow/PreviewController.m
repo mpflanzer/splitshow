@@ -33,6 +33,9 @@
 
 @property SplitShowPresentationMode selectedPresentationMode;
 
+@property (readonly) NSInteger maxDocumentPageCount;
+@property NSUInteger currentSlideIndex;
+
 @property (readonly) BOOL isFullScreen;
 @property NSSet *fullScreenControllers;
 
@@ -126,19 +129,55 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     }
 }
 
+- (NSInteger)maxDocumentPageCount
+{
+    NSUInteger max = 0;
+
+    for(NSDictionary *slides in self.splitShowDocument.layouts)
+    {
+        max = MAX(max, [[slides objectForKey:@"document"] pageCount]);
+    }
+
+    max = MAX(max, self.mainPreview.document.pageCount);
+    max = MAX(max, self.helperPreview.document.pageCount);
+
+    return max;
+}
+
 - (void)restartPresentation
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide object:self userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionRestart)}];
+    self.currentSlideIndex = 0;
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
+                                                        object:self
+                                                      userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
+                                                                    kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
 }
 
 - (void)presentPrevSlide
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide object:self userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionPrevious)}];
+    if(self.currentSlideIndex > 0)
+    {
+        --self.currentSlideIndex;
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
+                                                            object:self
+                                                          userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
+                                                                        kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
+    }
 }
 
 - (void)presentNextSlide
 {
-    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide object:self userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionNext)}];
+    if(self.currentSlideIndex < self.maxDocumentPageCount - 1)
+    {
+        ++self.currentSlideIndex;
+
+        [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
+                                                            object:self
+                                                          userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
+                                                                        kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
+    }
 }
 
 - (void)updatePreviewLayouts
@@ -420,6 +459,11 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
 - (void)swapDisplays:(id)sender
 {
+    if(self.selectedPresentationMode == SplitShowPresentationModeCustom)
+    {
+        return;
+    }
+
     NSInteger tmp = self.selectedMainDisplayIndex;
     self.selectedMainDisplayIndex = self.selectedHelperDisplayIndex;
     self.selectedHelperDisplayIndex = tmp;

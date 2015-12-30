@@ -13,6 +13,7 @@
 
 #define kSplitShowNotificationChangeSlide @"kSplitShowNotificationChangeSlide"
 #define kSplitShowNotificationChangeSlideAction @"kSplitShowNotificationChangeSlideAction"
+#define kSplitShowChangeSlideActionGoToIndex @"kSplitShowChangeSlideActionGoToIndex"
 
 typedef enum : NSUInteger
 {
@@ -28,6 +29,7 @@ typedef enum : NSUInteger
     SplitShowChangeSlideActionRestart,
     SplitShowChangeSlideActionPrevious,
     SplitShowChangeSlideActionNext,
+    SplitShowChangeSlideActionGoTo,
 } SplitShowChangeSlideAction;
 
 @interface PreviewController : NSWindowController <NSWindowDelegate>

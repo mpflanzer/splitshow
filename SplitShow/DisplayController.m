@@ -94,6 +94,13 @@
             case SplitShowChangeSlideActionNext:
                 [self.pdfView goToNextPage:notification.object];
                 break;
+
+            case SplitShowChangeSlideActionGoTo:
+            {
+                NSUInteger index = [[notification.userInfo objectForKey:kSplitShowChangeSlideActionGoToIndex] unsignedIntegerValue];
+                [self.pdfView goToPageAtIndex:index];
+                break;
+            }
         }
     }
 }
