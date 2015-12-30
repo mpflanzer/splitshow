@@ -27,6 +27,10 @@
 		8E2CE8371C306E5500CA462F /* TimerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8391C306E5500CA462F /* TimerView.xib */; };
 		8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE83C1C306E5D00CA462F /* Main.xib */; };
 		8E2CE8421C30704E00CA462F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8401C30704E00CA462F /* Localizable.strings */; };
+		8E2CE8871C30A46E00CA462F /* AdvancedLayoutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8861C30A46E00CA462F /* AdvancedLayoutController.m */; };
+		8E2CE88C1C30A89B00CA462F /* PDFPreviewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */; };
+		8E2CE8AA1C32AB3800CA462F /* DestinationLayoutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */; };
+		8E2CE8AE1C33E93A00CA462F /* AdvancedLayout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8B01C33E93A00CA462F /* AdvancedLayout.xib */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -87,6 +91,14 @@
 		8E2CE83F1C306E7D00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		8E2CE8411C30704E00CA462F /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E2CE8431C30705F00CA462F /* de */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
+		8E2CE8851C30A46E00CA462F /* AdvancedLayoutController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdvancedLayoutController.h; sourceTree = "<group>"; };
+		8E2CE8861C30A46E00CA462F /* AdvancedLayoutController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvancedLayoutController.m; sourceTree = "<group>"; };
+		8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPreviewItem.h; sourceTree = "<group>"; };
+		8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPreviewItem.m; sourceTree = "<group>"; };
+		8E2CE8A81C32AB3700CA462F /* DestinationLayoutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationLayoutView.h; sourceTree = "<group>"; };
+		8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationLayoutView.m; sourceTree = "<group>"; };
+		8E2CE8AF1C33E93A00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AdvancedLayout.xib; sourceTree = "<group>"; };
+		8E2CE8B21C33E93E00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AdvancedLayout.strings; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -141,6 +153,12 @@
 				8E1853A41BBC633300F25E9F /* SlideView.m */,
 				8E2CE8011C30293800CA462F /* DisplayController.h */,
 				8E2CE8021C30293800CA462F /* DisplayController.m */,
+				8E2CE8851C30A46E00CA462F /* AdvancedLayoutController.h */,
+				8E2CE8861C30A46E00CA462F /* AdvancedLayoutController.m */,
+				8E2CE8A81C32AB3700CA462F /* DestinationLayoutView.h */,
+				8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */,
+				8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */,
+				8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */,
 				8E18536D1BBC57DA00F25E9F /* AppDelegate.h */,
 				8E18536E1BBC57DA00F25E9F /* AppDelegate.m */,
 				8E1855821BDBF64500E6AEB5 /* PreviewController.h */,
@@ -206,6 +224,7 @@
 				8E2CE8391C306E5500CA462F /* TimerView.xib */,
 				8E2CE83C1C306E5D00CA462F /* Main.xib */,
 				8E2CE8361C306E3A00CA462F /* MainMenu.xib */,
+				8E2CE8B01C33E93A00CA462F /* AdvancedLayout.xib */,
 				8E18537E1BBC57DA00F25E9F /* Info.plist */,
 				8E2CE8301C30557400CA462F /* Credits.rtf */,
 			);
@@ -297,6 +316,7 @@
 			knownRegions = (
 				en,
 				Base,
+				de,
 			);
 			mainGroup = 8E1853611BBC57DA00F25E9F;
 			productRefGroup = 8E18536B1BBC57DA00F25E9F /* Products */;
@@ -322,6 +342,7 @@
 				8E18537A1BBC57DA00F25E9F /* SplitShow.xcassets in Resources */,
 				8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */,
 				8E2CE8341C306E3A00CA462F /* MainMenu.xib in Resources */,
+				8E2CE8AE1C33E93A00CA462F /* AdvancedLayout.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -347,14 +368,17 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E23BE621C2C5A82008BEFE9 /* NSScreen+Name.m in Sources */,
+				8E2CE88C1C30A89B00CA462F /* PDFPreviewItem.m in Sources */,
 				8E1853781BBC57DA00F25E9F /* SplitShowDocument.m in Sources */,
 				8E2CE8031C30293800CA462F /* DisplayController.m in Sources */,
 				8E2CE8001C30233900CA462F /* PDFView+GoToPageAtIndex.m in Sources */,
 				8E1855841BDBF64500E6AEB5 /* PreviewController.m in Sources */,
 				8E2CE7FB1C3007D800CA462F /* Utilities.m in Sources */,
+				8E2CE8AA1C32AB3800CA462F /* DestinationLayoutView.m in Sources */,
 				8E1853721BBC57DA00F25E9F /* main.m in Sources */,
 				8E1853A51BBC633300F25E9F /* SlideView.m in Sources */,
 				8E18536F1BBC57DA00F25E9F /* AppDelegate.m in Sources */,
+				8E2CE8871C30A46E00CA462F /* AdvancedLayoutController.m in Sources */,
 				8E2CE8061C30485C00CA462F /* TimerController.m in Sources */,
 				8E1853A81BBD069000F25E9F /* PDFDocument+Presentation.m in Sources */,
 			);
@@ -426,6 +450,15 @@
 				8E2CE8431C30705F00CA462F /* de */,
 			);
 			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+		8E2CE8B01C33E93A00CA462F /* AdvancedLayout.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
+				8E2CE8AF1C33E93A00CA462F /* Base */,
+				8E2CE8B21C33E93E00CA462F /* de */,
+			);
+			name = AdvancedLayout.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

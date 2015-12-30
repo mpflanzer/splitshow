@@ -29,13 +29,23 @@
                 <rect key="frame" x="0.0" y="0.0" width="950" height="400"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <pdfView autoresizesSubviews="NO" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="4el-I3-jqN" customClass="SlideView">
+                    <pdfView autoresizesSubviews="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4el-I3-jqN" customClass="SlideView">
                         <rect key="frame" x="0.0" y="0.0" width="475" height="400"/>
                     </pdfView>
-                    <pdfView autoresizesSubviews="NO" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Rca-If-Wdl" customClass="SlideView">
+                    <pdfView autoresizesSubviews="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rca-If-Wdl" customClass="SlideView">
                         <rect key="frame" x="475" y="0.0" width="475" height="400"/>
                     </pdfView>
                 </subviews>
+                <constraints>
+                    <constraint firstItem="4el-I3-jqN" firstAttribute="leading" secondItem="se5-gp-TjO" secondAttribute="leading" id="9NK-Up-kN0"/>
+                    <constraint firstAttribute="bottom" secondItem="4el-I3-jqN" secondAttribute="bottom" id="Noy-oX-Yx7"/>
+                    <constraint firstItem="Rca-If-Wdl" firstAttribute="leading" secondItem="4el-I3-jqN" secondAttribute="trailing" id="chb-Nc-e9o"/>
+                    <constraint firstItem="4el-I3-jqN" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="g6m-nC-QU8"/>
+                    <constraint firstItem="Rca-If-Wdl" firstAttribute="width" secondItem="4el-I3-jqN" secondAttribute="width" id="gdl-tx-P0v"/>
+                    <constraint firstItem="Rca-If-Wdl" firstAttribute="top" secondItem="se5-gp-TjO" secondAttribute="top" id="lsJ-ai-GGP"/>
+                    <constraint firstAttribute="bottom" secondItem="Rca-If-Wdl" secondAttribute="bottom" id="stW-Vk-dZa"/>
+                    <constraint firstAttribute="trailing" secondItem="Rca-If-Wdl" secondAttribute="trailing" id="tPh-IF-kTY"/>
+                </constraints>
             </view>
             <toolbar key="toolbar" implicitIdentifier="EFB8C21B-D410-40AF-B32A-E8108090EC4E" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="Yuo-6o-xNz">
                 <allowedToolbarItems>
@@ -44,7 +54,7 @@
                         <size key="minSize" width="30" height="32"/>
                         <size key="maxSize" width="82" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="qLy-pQ-OAV">
-                            <rect key="frame" x="0.0" y="14" width="40" height="32"/>
+                            <rect key="frame" x="0.0" y="14" width="63" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                             <buttonCell key="cell" type="push" bezelStyle="rounded" image="swap" imagePosition="only" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="61M-Lv-LEu">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
@@ -152,10 +162,13 @@
                         <button key="view" verticalHuggingPriority="750" id="Yjv-ra-OY2">
                             <rect key="frame" x="0.0" y="14" width="173" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" title="Advanced layout" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T2C-1W-96C">
+                            <buttonCell key="cell" type="push" title="Advanced layout" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T2C-1W-96C">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
+                            <connections>
+                                <action selector="openAdvancedLayout:" target="-2" id="2xk-8r-qCx"/>
+                            </connections>
                         </button>
                     </toolbarItem>
                 </allowedToolbarItems>

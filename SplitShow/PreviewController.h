@@ -45,5 +45,6 @@ typedef enum : NSUInteger
 
 - (IBAction)toggleCustomFullScreen:(id)sender;
 - (IBAction)swapDisplays:(id)sender;
+- (IBAction)openAdvancedLayout:(id)sender;
 
 @end

@@ -1,0 +1,36 @@
+
+/* Class = "NSMenuItem"; title = "Split"; ObjectID = "CLr-FW-RVG"; */
+"CLr-FW-RVG.title" = "Aufgeteilt";
+
+/* Class = "NSMenuItem"; title = "Even"; ObjectID = "Etb-gA-XaL"; */
+"Etb-gA-XaL.title" = "Gerade";
+
+/* Class = "NSToolbarItem"; label = "Selection"; ObjectID = "Ka5-AL-3zd"; */
+"Ka5-AL-3zd.label" = "Auswahl";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Selection"; ObjectID = "Ka5-AL-3zd"; */
+"Ka5-AL-3zd.paletteLabel" = "Auswahl";
+
+/* Class = "NSWindow"; title = "Window"; ObjectID = "QvC-M9-y7g"; */
+"QvC-M9-y7g.title" = "Fenster";
+
+/* Class = "NSMenuItem"; title = "Odd"; ObjectID = "REq-6O-WPl"; */
+"REq-6O-WPl.title" = "Ungerade";
+
+/* Class = "NSMenuItem"; title = "Select..."; ObjectID = "Thi-2p-BH6"; */
+"Thi-2p-BH6.title" = "Auswählen...";
+
+/* Class = "NSMenuItem"; title = "None"; ObjectID = "XcZ-a2-uyu"; */
+"XcZ-a2-uyu.title" = "Nichts";
+
+/* Class = "NSMenuItem"; title = "All"; ObjectID = "k8b-97-UW1"; */
+"k8b-97-UW1.title" = "Alles";
+
+/* Class = "NSToolbarItem"; label = "Slide mode"; ObjectID = "qqh-A8-fYy"; */
+"qqh-A8-fYy.label" = "Folienmodus";
+
+/* Class = "NSToolbarItem"; paletteLabel = "Slide mode"; ObjectID = "qqh-A8-fYy"; */
+"qqh-A8-fYy.paletteLabel" = "Folienmodus";
+
+/* Class = "NSMenuItem"; title = "Normal"; ObjectID = "xks-Kk-ReV"; */
+"xks-Kk-ReV.title" = "Normal";

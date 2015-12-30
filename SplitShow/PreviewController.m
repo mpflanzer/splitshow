@@ -11,6 +11,7 @@
 #import "NSScreen+Name.h"
 #import "DisplayController.h"
 #import "TimerController.h"
+#import "AdvancedLayoutController.h"
 
 #define kObserverPresentationMode @"selectedPresentationMode"
 
@@ -25,6 +26,7 @@
 @property BOOL canEnterFullScreen;
 
 @property NSArrayController *displayController;
+@property AdvancedLayoutController *advancedLayoutController;
 
 @property NSInteger selectedMainDisplayIndex;
 @property NSInteger selectedHelperDisplayIndex;
@@ -84,6 +86,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     [self removeObserver:self forKeyPath:kObserverMainDisplayMenu];
     [self removeObserver:self forKeyPath:kObserverHelperDisplayMenu];
     [self removeObserver:self forKeyPath:kObserverPresentationMode];
+    [self.advancedLayoutController removeObserver:self forKeyPath:@"indices"];
 
     CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallback, (void*)self);
 }
@@ -171,7 +174,29 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         }
             
         case SplitShowPresentationModeCustom:
+        {
+            NSArray<NSArray*> *screens = self.advancedLayoutController.indices;
+
+            if(screens.count > 0)
+            {
+                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:0] inMode:self.advancedLayoutController.slideMode];
+            }
+            else
+            {
+                self.mainPreview.document = nil;
+            }
+
+            if(screens.count > 1)
+            {
+                self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:1] inMode:self.advancedLayoutController.slideMode];
+            }
+            else
+            {
+                self.helperPreview.document = nil;
+            }
+
             break;
+        }
     }
 }
 
@@ -250,7 +275,20 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         }
 
         case SplitShowPresentationModeCustom:
+        {
+            NSArray<NSArray*> *screens = self.advancedLayoutController.indices;
+
+            for(NSUInteger i = 0; i < screens.count; ++i)
+            {
+                NSArray *indices = [screens objectAtIndex:i];
+
+                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:i],
+                                     @"document" : [self.splitShowDocument createDocumentFromIndices:indices inMode:self.advancedLayoutController.slideMode],
+                                     @"timer" : @NO}];
+            }
+
             break;
+        }
     }
 
     [self.document setLayouts:layouts];
@@ -346,6 +384,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             self.helperDisplayItem.enabled = YES;
         }
 
+        self.canEnterFullScreen = NO;
         [self updatePreviewLayouts];
         [self restartPresentation];
     }
@@ -357,10 +396,26 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     {
         [self toggleDisplayMenuButton:self.mainDisplayButton forChange:change];
     }
+    else if([@"indices" isEqualToString:keyPath])
+    {
+        [self updatePreviewLayouts];
+    }
     else
     {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
+}
+
+- (void)openAdvancedLayout:(id)sender
+{
+    [self.advancedLayoutController removeObserver:self forKeyPath:@"indices"];
+
+    self.advancedLayoutController = [[AdvancedLayoutController alloc] initWithWindowNibName:@"AdvancedLayout"];
+    [self.splitShowDocument addWindowController:self.advancedLayoutController];
+    self.selectedPresentationMode = SplitShowPresentationModeCustom;
+    [self.advancedLayoutController showWindow:self];
+    [self.advancedLayoutController addObserver:self forKeyPath:@"indices" options:NSKeyValueObservingOptionNew context:NULL];
+    self.canEnterFullScreen = YES;
 }
 
 - (void)swapDisplays:(id)sender

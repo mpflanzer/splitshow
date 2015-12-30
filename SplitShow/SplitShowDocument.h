@@ -31,6 +31,7 @@ enum SplitShowError
 
 - (PDFDocument*)createInterleavedDocumentForGroup:(NSString*)group;
 - (PDFDocument*)createSplitDocumentForGroup:(NSString*)group;
+- (PDFDocument*)createSplitDocument;
 - (PDFDocument*)createMirroredDocument;
 - (PDFDocument*)createDocumentFromIndices:(NSArray*)indices inMode:(NSString*)mode;
 

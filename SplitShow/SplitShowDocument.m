@@ -58,7 +58,6 @@
 
 - (void)makeWindowControllers {
     // Override to return the Storyboard file name of the document.
-//    PreviewWindowController *windowController = [[NSStoryboard storyboardWithName:@"Main" bundle:nil] instantiateControllerWithIdentifier:@"PreviewWindowController"];
     PreviewController *windowController = [[PreviewController alloc] initWithWindowNibName:@"Main"];
     [self addWindowController:windowController];
 
@@ -363,6 +362,11 @@
     NSArray *indices = [Utilities makeArrayFrom:start to:[self pageCountForSlideMode:kSplitShowSlideModeSplit] step:2];
 
     return [self createDocumentFromIndices:indices inMode:kSplitShowSlideModeSplit];
+}
+
+- (PDFDocument *)createSplitDocument
+{
+    return [[self.presentations objectForKey:kSplitShowSlideModeSplit] copy];
 }
 
 - (PDFDocument *)createMirroredDocument
