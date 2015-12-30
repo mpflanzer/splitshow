@@ -93,14 +93,11 @@
     for(NSUInteger i = 0; i < self.pdfDocument.pageCount; ++i)
     {
         PDFPage *page = [self.pdfDocument pageAtIndex:i];
-        NSPDFImageRep *pdfImageRep = [NSPDFImageRep imageRepWithData:page.dataRepresentation];
+        NSRect bounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
+        NSImage *image = [[NSImage alloc] initWithSize:bounds.size];
 
-        NSRect bounds = pdfImageRep.bounds;
-        CGFloat factor = 1;
-        NSRect rect = NSMakeRect(0, 0, bounds.size.width * factor, bounds.size.height * factor);
-        NSImage *image = [[NSImage alloc] initWithSize:rect.size];
         [image lockFocus];
-        [pdfImageRep drawInRect:rect];
+        [page drawWithBox:kPDFDisplayBoxMediaBox];
         [image unlockFocus];
 
         [self.previewImageController addObject:image];
