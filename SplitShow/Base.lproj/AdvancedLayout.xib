@@ -18,27 +18,27 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="QvC-M9-y7g">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="643" height="349"/>
+            <rect key="contentRect" x="196" y="240" width="854" height="468"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="EiT-Mj-1SZ">
-                <rect key="frame" x="0.0" y="0.0" width="643" height="349"/>
+                <rect key="frame" x="0.0" y="0.0" width="854" height="468"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <splitView arrangesAllSubviews="NO" dividerStyle="paneSplitter" translatesAutoresizingMaskIntoConstraints="NO" id="X6N-XH-ORh">
-                        <rect key="frame" x="0.0" y="0.0" width="643" height="349"/>
+                        <rect key="frame" x="0.0" y="0.0" width="854" height="468"/>
                         <subviews>
                             <customView id="Mj6-EY-vL9">
-                                <rect key="frame" x="0.0" y="0.0" width="643" height="215"/>
+                                <rect key="frame" x="0.0" y="0.0" width="854" height="290"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <subviews>
                                     <scrollView autohidesScrollers="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="1vv-8A-V4Z">
-                                        <rect key="frame" x="0.0" y="0.0" width="643" height="215"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="854" height="290"/>
                                         <clipView key="contentView" id="siW-LC-sKa">
-                                            <rect key="frame" x="1" y="1" width="641" height="213"/>
+                                            <rect key="frame" x="1" y="1" width="852" height="288"/>
                                             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                             <subviews>
                                                 <collectionView selectable="YES" allowsMultipleSelection="YES" id="akK-a9-fZx">
-                                                    <rect key="frame" x="0.0" y="0.0" width="641" height="213"/>
+                                                    <rect key="frame" x="0.0" y="0.0" width="852" height="288"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <color key="primaryBackgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                                                     <connections>
@@ -67,23 +67,23 @@
                                 </constraints>
                             </customView>
                             <scrollView fixedFrame="YES" horizontalLineScroll="10" horizontalPageScroll="10" verticalLineScroll="10" verticalPageScroll="10" usesPredominantAxisScrolling="NO" id="xmq-Ki-m7i">
-                                <rect key="frame" x="0.0" y="225" width="643" height="124"/>
+                                <rect key="frame" x="0.0" y="300" width="854" height="168"/>
                                 <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                                 <clipView key="contentView" id="OwK-vH-5fg">
-                                    <rect key="frame" x="1" y="1" width="641" height="122"/>
+                                    <rect key="frame" x="1" y="1" width="852" height="166"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
                                         <view fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="mfn-bx-ocw" customClass="DestinationLayoutView">
-                                            <rect key="frame" x="0.0" y="28" width="181" height="94"/>
+                                            <rect key="frame" x="-137" y="5" width="174" height="106"/>
                                         </view>
                                     </subviews>
                                 </clipView>
                                 <scroller key="horizontalScroller" verticalHuggingPriority="750" horizontal="YES" id="KHv-kD-1yy">
-                                    <rect key="frame" x="1" y="107" width="641" height="16"/>
+                                    <rect key="frame" x="1" y="151" width="852" height="16"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                                 <scroller key="verticalScroller" verticalHuggingPriority="750" horizontal="NO" id="adz-fg-oL6">
-                                    <rect key="frame" x="626" y="1" width="16" height="122"/>
+                                    <rect key="frame" x="837" y="1" width="16" height="166"/>
                                     <autoresizingMask key="autoresizingMask"/>
                                 </scroller>
                             </scrollView>
@@ -156,7 +156,7 @@
                     <toolbarItem reference="Ka5-AL-3zd"/>
                 </defaultToolbarItems>
             </toolbar>
-            <point key="canvasLocation" x="406.5" y="327.5"/>
+            <point key="canvasLocation" x="512" y="387"/>
         </window>
         <collectionViewItem id="FAF-2V-fhN" customClass="PDFPreviewItem">
             <connections>

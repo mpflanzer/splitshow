@@ -23,17 +23,17 @@
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
             <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="950" height="400"/>
+            <rect key="contentRect" x="196" y="240" width="1091" height="488"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="se5-gp-TjO">
-                <rect key="frame" x="0.0" y="0.0" width="950" height="400"/>
+                <rect key="frame" x="0.0" y="0.0" width="1091" height="488"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <pdfView autoresizesSubviews="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4el-I3-jqN" customClass="SlideView">
-                        <rect key="frame" x="0.0" y="0.0" width="475" height="400"/>
+                        <rect key="frame" x="0.0" y="0.0" width="546" height="488"/>
                     </pdfView>
                     <pdfView autoresizesSubviews="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Rca-If-Wdl" customClass="SlideView">
-                        <rect key="frame" x="475" y="0.0" width="475" height="400"/>
+                        <rect key="frame" x="546" y="0.0" width="545" height="488"/>
                     </pdfView>
                 </subviews>
                 <constraints>
@@ -190,7 +190,7 @@
             <connections>
                 <outlet property="delegate" destination="-2" id="2QX-eG-qRI"/>
             </connections>
-            <point key="canvasLocation" x="594" y="259"/>
+            <point key="canvasLocation" x="664.5" y="303"/>
         </window>
         <viewController id="6XQ-Ys-GCn" customClass="DisplayController">
             <connections>
