@@ -16,8 +16,6 @@
 @interface CustomLayoutController : NSWindowController <NSCollectionViewDelegate, NSWindowDelegate, CustomLayoutDelegate>
 
 @property PDFDocument *pdfDocument;
-//TODO: Change to Dictionary controller
-@property (readonly) NSMutableDictionary<NSString*, NSMutableArray*> *screenLayouts;
 @property (readonly) NSMutableArray *previewImages;
 
 - (IBAction)selectItems:(NSPopUpButton*)button;

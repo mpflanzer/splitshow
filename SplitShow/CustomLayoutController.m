@@ -17,7 +17,6 @@
 
 @interface CustomLayoutController ()
 
-@property (readwrite) NSMutableDictionary<NSString*, NSMutableArray*> *screenLayouts;
 @property (readonly) SplitShowDocument *splitShowDocument;
 @property (readwrite) NSMutableArray *previewImages;
 @property IBOutlet NSArrayController *previewImageController;
@@ -77,8 +76,6 @@
 
 - (void)setupScreenLayouts
 {
-    self.screenLayouts = [NSMutableDictionary dictionary];
-
     for(NSScreen *screen in [NSScreen screens])
     {
         NSString *screenID = [NSString stringWithFormat:@"%d", screen.displayID];
@@ -89,7 +86,7 @@
             tmp = [NSMutableArray array] ;
         }
 
-        [self.screenLayouts setObject:tmp forKey:screenID];
+        [self.splitShowDocument.customLayouts setObject:tmp forKey:screenID];
     }
 }
 
@@ -161,16 +158,16 @@
 
 - (NSInteger)numberOfScreens
 {
-    return self.screenLayouts.count;
+    return self.splitShowDocument.customLayouts.count;
 }
 
 - (NSInteger)maxSlidesPerScreen
 {
     NSUInteger max = 0;
 
-    for(NSString *screenID in self.screenLayouts)
+    for(NSString *screenID in self.splitShowDocument.customLayouts)
     {
-        NSArray *slides = [self.screenLayouts objectForKey:screenID];
+        NSArray *slides = [self.splitShowDocument.customLayouts objectForKey:screenID];
         max = MAX(max, slides.count);
     }
 
@@ -179,7 +176,7 @@
 
 - (NSInteger)numberOfSlidesForScreen:(NSString*)screenID
 {
-    return [[self.screenLayouts objectForKey:screenID] count];
+    return [[self.splitShowDocument.customLayouts objectForKey:screenID] count];
 }
 
 - (NSString*)nameOfScreen:(NSString*)screenID
@@ -189,36 +186,41 @@
 
 - (NSInteger)slideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
 {
-    return [[[self.screenLayouts objectForKey:screenID] objectAtIndex:slideIndex] integerValue];
+    return [[[self.splitShowDocument.customLayouts objectForKey:screenID] objectAtIndex:slideIndex] integerValue];
 }
 
 - (void)insertSlide:(NSInteger)slide atIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
 {
-    [[self.screenLayouts objectForKey:screenID] insertObject:@(slide) atIndex:slideIndex];
-    self.splitShowDocument.customLayouts = self.screenLayouts;
+    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+    [[self.splitShowDocument.customLayouts objectForKey:screenID] insertObject:@(slide) atIndex:slideIndex];
+    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
 }
 
 - (void)replaceSlideAtIndex:(NSInteger)slideIndex withSlide:(NSInteger)slide forScreen:(NSString*)screenID
 {
-    [[self.screenLayouts objectForKey:screenID] replaceObjectAtIndex:slideIndex withObject:@(slide)];
-    self.splitShowDocument.customLayouts = self.screenLayouts;
+    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+    [[self.splitShowDocument.customLayouts objectForKey:screenID] replaceObjectAtIndex:slideIndex withObject:@(slide)];
+    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
 }
 
 - (void)removeSlideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
 {
-    [[self.screenLayouts objectForKey:screenID] removeObjectAtIndex:slideIndex];
-    self.splitShowDocument.customLayouts = self.screenLayouts;
+    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+    [[self.splitShowDocument.customLayouts objectForKey:screenID] removeObjectAtIndex:slideIndex];
+    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
 }
 
 - (void)removeAllSlides
 {
-    for(NSString *screenID in self.screenLayouts)
+    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+
+    for(NSString *screenID in self.splitShowDocument.customLayouts)
     {
-        NSMutableArray *slides = [self.screenLayouts objectForKey:screenID];
+        NSMutableArray *slides = [self.splitShowDocument.customLayouts objectForKey:screenID];
         [slides removeAllObjects];
     }
 
-    self.splitShowDocument.customLayouts = self.screenLayouts;
+    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
 }
 
 #pragma mark -
