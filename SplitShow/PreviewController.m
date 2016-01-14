@@ -25,6 +25,7 @@
 @property BOOL canEnterFullScreen;
 
 @property NSArrayController *displayController;
+@property TimerController *timerController;
 
 @property NSInteger selectedMainDisplayIndex;
 @property NSInteger selectedHelperDisplayIndex;
@@ -67,6 +68,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     NSSortDescriptor *sortScreenByName = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
     NSArray *sortedScreens = [[NSScreen screens] sortedArrayUsingDescriptors:@[sortScreenByName]];
     self.displayController = [[NSArrayController alloc] initWithContent:sortedScreens];
+    self.timerController = [[TimerController alloc] initWithNibName:@"TimerView" bundle:nil];
 
     self.selectedMainDisplayIndex = kNoSelectedDisplay;
     self.selectedHelperDisplayIndex = kNoSelectedDisplay;
@@ -519,12 +521,9 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         fullScreenViewController.document = document;
         [fullScreenViewController bindToWindowController:self];
 
-        TimerController *timerController;
-
         if(wantsTimer)
         {
-            timerController = [[TimerController alloc] initWithNibName:@"TimerView" bundle:nil];
-            [fullScreenViewController.view addSubview:timerController.view];
+            [fullScreenViewController.view addSubview:self.timerController.view];
         }
 
         NSWindow *fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
@@ -538,14 +537,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
         NSWindowController *fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
 
-        if(wantsTimer)
-        {
-            [fullScreenControllers addObject:@{@"viewController" : fullScreenViewController, @"windowController" : fullScreenWindowController, @"timerController" : timerController}];
-        }
-        else
-        {
-            [fullScreenControllers addObject:@{@"viewController" : fullScreenViewController, @"windowController" : fullScreenWindowController}];
-        }
+        [fullScreenControllers addObject:@{@"viewController" : fullScreenViewController, @"windowController" : fullScreenWindowController}];
 //        [self.document addWindowController:fullScreenWindowController];
         [fullScreenWindowController.window toggleFullScreen:fullScreenWindowController];
     }
