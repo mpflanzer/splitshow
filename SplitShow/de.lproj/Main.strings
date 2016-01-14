@@ -17,8 +17,8 @@
 /* Class = "NSMenuItem"; title = "Mirror"; ObjectID = "Lzl-UZ-rzt"; */
 "Lzl-UZ-rzt.title" = "Gespiegelt";
 
-/* Class = "NSButtonCell"; title = "Advanced layout"; ObjectID = "T2C-1W-96C"; */
-"T2C-1W-96C.title" = "Erweitertes Layout";
+/* Class = "NSButtonCell"; title = "Custom layout"; ObjectID = "T2C-1W-96C"; */
+"T2C-1W-96C.title" = "Benutzerdefiniertes Layout";
 
 /* Class = "NSMenuItem"; title = "Split"; ObjectID = "kxV-sq-Jlb"; */
 "kxV-sq-Jlb.title" = "Geteilt";

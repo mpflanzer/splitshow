@@ -14,6 +14,7 @@
                 <outlet property="mainDisplayButton" destination="X0N-Xi-OyO" id="5IC-CA-EEa"/>
                 <outlet property="mainDisplayItem" destination="zPX-KS-bWb" id="l4b-d3-E9q"/>
                 <outlet property="mainPreview" destination="6XQ-Ys-GCn" id="BMM-ZU-Rwy"/>
+                <outlet property="swapDisplaysButton" destination="qLy-pQ-OAV" id="9bn-fl-2WA"/>
                 <outlet property="window" destination="F0z-JX-Cv5" id="k8O-cj-JqQ"/>
             </connections>
         </customObject>
@@ -22,8 +23,7 @@
         <customObject id="YLy-65-1bz" customClass="NSFontManager"/>
         <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" animationBehavior="default" id="F0z-JX-Cv5">
             <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
-            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
-            <rect key="contentRect" x="196" y="240" width="1091" height="488"/>
+            <rect key="contentRect" x="0.0" y="0.0" width="1091" height="488"/>
             <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
             <view key="contentView" id="se5-gp-TjO">
                 <rect key="frame" x="0.0" y="0.0" width="1091" height="488"/>
@@ -93,7 +93,7 @@
                                         <menuItem title="Mirror" tag="3" id="Lzl-UZ-rzt">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
-                                        <menuItem title="Custom" tag="4" enabled="NO" id="4eC-YF-X0Q">
+                                        <menuItem title="Custom" tag="4" id="4eC-YF-X0Q">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                     </items>
@@ -162,12 +162,12 @@
                         <button key="view" verticalHuggingPriority="750" id="Yjv-ra-OY2">
                             <rect key="frame" x="0.0" y="14" width="173" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" title="Advanced layout" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T2C-1W-96C">
+                            <buttonCell key="cell" type="push" title="Custom layout" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="T2C-1W-96C">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <action selector="openAdvancedLayout:" target="-2" id="2xk-8r-qCx"/>
+                                <action selector="openCustomLayout:" target="-1" id="mgg-ln-kKl"/>
                             </connections>
                         </button>
                     </toolbarItem>

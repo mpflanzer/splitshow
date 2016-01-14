@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		8E18536F1BBC57DA00F25E9F /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E18536E1BBC57DA00F25E9F /* AppDelegate.m */; };
 		8E1853721BBC57DA00F25E9F /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853711BBC57DA00F25E9F /* main.m */; };
 		8E1853781BBC57DA00F25E9F /* SplitShowDocument.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */; };
 		8E18537A1BBC57DA00F25E9F /* SplitShow.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8E1853791BBC57DA00F25E9F /* SplitShow.xcassets */; };
@@ -27,10 +26,11 @@
 		8E2CE8371C306E5500CA462F /* TimerView.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8391C306E5500CA462F /* TimerView.xib */; };
 		8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE83C1C306E5D00CA462F /* Main.xib */; };
 		8E2CE8421C30704E00CA462F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8401C30704E00CA462F /* Localizable.strings */; };
-		8E2CE8871C30A46E00CA462F /* AdvancedLayoutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8861C30A46E00CA462F /* AdvancedLayoutController.m */; };
+		8E2CE8871C30A46E00CA462F /* CustomLayoutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8861C30A46E00CA462F /* CustomLayoutController.m */; };
 		8E2CE88C1C30A89B00CA462F /* PDFPreviewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */; };
 		8E2CE8AA1C32AB3800CA462F /* DestinationLayoutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */; };
-		8E2CE8AE1C33E93A00CA462F /* AdvancedLayout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8B01C33E93A00CA462F /* AdvancedLayout.xib */; };
+		8E2CE8AE1C33E93A00CA462F /* CustomLayout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8B01C33E93A00CA462F /* CustomLayout.xib */; };
+		8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA178711C41B6E20025C9FD /* AppDelegate.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -52,8 +52,6 @@
 
 /* Begin PBXFileReference section */
 		8E18536A1BBC57DA00F25E9F /* SplitShow.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SplitShow.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		8E18536D1BBC57DA00F25E9F /* AppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
-		8E18536E1BBC57DA00F25E9F /* AppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8E1853711BBC57DA00F25E9F /* main.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = main.m; sourceTree = "<group>"; };
 		8E1853761BBC57DA00F25E9F /* SplitShowDocument.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SplitShowDocument.h; sourceTree = "<group>"; };
 		8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SplitShowDocument.m; sourceTree = "<group>"; };
@@ -91,14 +89,16 @@
 		8E2CE83F1C306E7D00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/MainMenu.strings; sourceTree = "<group>"; };
 		8E2CE8411C30704E00CA462F /* Base */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = Base; path = Base.lproj/Localizable.strings; sourceTree = "<group>"; };
 		8E2CE8431C30705F00CA462F /* de */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/Localizable.strings; sourceTree = "<group>"; };
-		8E2CE8851C30A46E00CA462F /* AdvancedLayoutController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AdvancedLayoutController.h; sourceTree = "<group>"; };
-		8E2CE8861C30A46E00CA462F /* AdvancedLayoutController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AdvancedLayoutController.m; sourceTree = "<group>"; };
+		8E2CE8851C30A46E00CA462F /* CustomLayoutController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutController.h; sourceTree = "<group>"; };
+		8E2CE8861C30A46E00CA462F /* CustomLayoutController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutController.m; sourceTree = "<group>"; };
 		8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPreviewItem.h; sourceTree = "<group>"; };
 		8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPreviewItem.m; sourceTree = "<group>"; };
 		8E2CE8A81C32AB3700CA462F /* DestinationLayoutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationLayoutView.h; sourceTree = "<group>"; };
 		8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationLayoutView.m; sourceTree = "<group>"; };
-		8E2CE8AF1C33E93A00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/AdvancedLayout.xib; sourceTree = "<group>"; };
-		8E2CE8B21C33E93E00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/AdvancedLayout.strings; sourceTree = "<group>"; };
+		8E2CE8AF1C33E93A00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CustomLayout.xib; sourceTree = "<group>"; };
+		8E2CE8B21C33E93E00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CustomLayout.strings; sourceTree = "<group>"; };
+		8EA178701C41B6E20025C9FD /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
+		8EA178711C41B6E20025C9FD /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,18 +149,18 @@
 		8E18536C1BBC57DA00F25E9F /* SplitShow */ = {
 			isa = PBXGroup;
 			children = (
+				8EA178701C41B6E20025C9FD /* AppDelegate.h */,
+				8EA178711C41B6E20025C9FD /* AppDelegate.m */,
 				8E1853A31BBC633300F25E9F /* SlideView.h */,
 				8E1853A41BBC633300F25E9F /* SlideView.m */,
 				8E2CE8011C30293800CA462F /* DisplayController.h */,
 				8E2CE8021C30293800CA462F /* DisplayController.m */,
-				8E2CE8851C30A46E00CA462F /* AdvancedLayoutController.h */,
-				8E2CE8861C30A46E00CA462F /* AdvancedLayoutController.m */,
+				8E2CE8851C30A46E00CA462F /* CustomLayoutController.h */,
+				8E2CE8861C30A46E00CA462F /* CustomLayoutController.m */,
 				8E2CE8A81C32AB3700CA462F /* DestinationLayoutView.h */,
 				8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */,
 				8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */,
 				8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */,
-				8E18536D1BBC57DA00F25E9F /* AppDelegate.h */,
-				8E18536E1BBC57DA00F25E9F /* AppDelegate.m */,
 				8E1855821BDBF64500E6AEB5 /* PreviewController.h */,
 				8E1855831BDBF64500E6AEB5 /* PreviewController.m */,
 				8E1853761BBC57DA00F25E9F /* SplitShowDocument.h */,
@@ -224,7 +224,7 @@
 				8E2CE8391C306E5500CA462F /* TimerView.xib */,
 				8E2CE83C1C306E5D00CA462F /* Main.xib */,
 				8E2CE8361C306E3A00CA462F /* MainMenu.xib */,
-				8E2CE8B01C33E93A00CA462F /* AdvancedLayout.xib */,
+				8E2CE8B01C33E93A00CA462F /* CustomLayout.xib */,
 				8E18537E1BBC57DA00F25E9F /* Info.plist */,
 				8E2CE8301C30557400CA462F /* Credits.rtf */,
 			);
@@ -342,7 +342,7 @@
 				8E18537A1BBC57DA00F25E9F /* SplitShow.xcassets in Resources */,
 				8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */,
 				8E2CE8341C306E3A00CA462F /* MainMenu.xib in Resources */,
-				8E2CE8AE1C33E93A00CA462F /* AdvancedLayout.xib in Resources */,
+				8E2CE8AE1C33E93A00CA462F /* CustomLayout.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -373,12 +373,12 @@
 				8E2CE8031C30293800CA462F /* DisplayController.m in Sources */,
 				8E2CE8001C30233900CA462F /* PDFView+GoToPageAtIndex.m in Sources */,
 				8E1855841BDBF64500E6AEB5 /* PreviewController.m in Sources */,
+				8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */,
 				8E2CE7FB1C3007D800CA462F /* Utilities.m in Sources */,
 				8E2CE8AA1C32AB3800CA462F /* DestinationLayoutView.m in Sources */,
 				8E1853721BBC57DA00F25E9F /* main.m in Sources */,
 				8E1853A51BBC633300F25E9F /* SlideView.m in Sources */,
-				8E18536F1BBC57DA00F25E9F /* AppDelegate.m in Sources */,
-				8E2CE8871C30A46E00CA462F /* AdvancedLayoutController.m in Sources */,
+				8E2CE8871C30A46E00CA462F /* CustomLayoutController.m in Sources */,
 				8E2CE8061C30485C00CA462F /* TimerController.m in Sources */,
 				8E1853A81BBD069000F25E9F /* PDFDocument+Presentation.m in Sources */,
 			);
@@ -452,13 +452,13 @@
 			name = Localizable.strings;
 			sourceTree = "<group>";
 		};
-		8E2CE8B01C33E93A00CA462F /* AdvancedLayout.xib */ = {
+		8E2CE8B01C33E93A00CA462F /* CustomLayout.xib */ = {
 			isa = PBXVariantGroup;
 			children = (
 				8E2CE8AF1C33E93A00CA462F /* Base */,
 				8E2CE8B21C33E93E00CA462F /* de */,
 			);
-			name = AdvancedLayout.xib;
+			name = CustomLayout.xib;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

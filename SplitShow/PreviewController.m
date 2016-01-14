@@ -11,10 +11,9 @@
 #import "NSScreen+Name.h"
 #import "DisplayController.h"
 #import "TimerController.h"
-#import "AdvancedLayoutController.h"
 
+#define kObserverCustomLayouts @"customLayouts"
 #define kObserverPresentationMode @"selectedPresentationMode"
-
 #define kObserverMainDisplayMenu @"selectedMainDisplayIndex"
 #define kObserverHelperDisplayMenu @"selectedHelperDisplayIndex"
 
@@ -26,7 +25,6 @@
 @property BOOL canEnterFullScreen;
 
 @property NSArrayController *displayController;
-@property AdvancedLayoutController *advancedLayoutController;
 
 @property NSInteger selectedMainDisplayIndex;
 @property NSInteger selectedHelperDisplayIndex;
@@ -34,15 +32,17 @@
 @property SplitShowPresentationMode selectedPresentationMode;
 
 @property (readonly) NSInteger maxDocumentPageCount;
-@property NSUInteger currentSlideIndex;
+@property NSInteger currentSlideIndex;
 
 @property (readonly) BOOL isFullScreen;
 @property NSSet *fullScreenControllers;
+@property NSArray *screens;
 
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
 - (void)toggleDisplayMenuButton:(NSPopUpButton*)button forChange:(NSDictionary *)change;
 
-- (void)restartPresentation;
+- (void)reloadPresentation;
+- (void)reloadCurrentSlide;
 - (void)presentPrevSlide;
 - (void)presentNextSlide;
 
@@ -68,17 +68,33 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     NSArray *sortedScreens = [[NSScreen screens] sortedArrayUsingDescriptors:@[sortScreenByName]];
     self.displayController = [[NSArrayController alloc] initWithContent:sortedScreens];
 
+    self.selectedMainDisplayIndex = kNoSelectedDisplay;
+    self.selectedHelperDisplayIndex = kNoSelectedDisplay;
+    self.selectedPresentationMode = [self guessPresentationMode];
+    self.currentSlideIndex = 0;
+
     [self bindDisplayMenuButton:self.mainDisplayButton toProperty:kObserverMainDisplayMenu];
     [self bindDisplayMenuButton:self.helperDisplayButton toProperty:kObserverHelperDisplayMenu];
 
     [self addObserver:self forKeyPath:kObserverMainDisplayMenu options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
     [self addObserver:self forKeyPath:kObserverHelperDisplayMenu options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
     [self addObserver:self forKeyPath:kObserverPresentationMode options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:NULL];
+    [self.splitShowDocument addObserver:self forKeyPath:kObserverCustomLayouts options:NSKeyValueObservingOptionNew context:NULL];
 
     [self.mainPreview bindToWindowController:self];
     [self.helperPreview bindToWindowController:self];
 
     CGDisplayRegisterReconfigurationCallback(displayReconfigurationCallback, (void*)self);
+}
+
+- (void)windowDidBecomeMain:(NSNotification *)notification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationWindowDidBecomeMain object:self.splitShowDocument];
+}
+
+- (void)windowDidResignMain:(NSNotification *)notification
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationWindowDidResignMain object:self.splitShowDocument];
 }
 
 - (void)windowWillClose:(NSNotification *)notification
@@ -89,19 +105,16 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     [self removeObserver:self forKeyPath:kObserverMainDisplayMenu];
     [self removeObserver:self forKeyPath:kObserverHelperDisplayMenu];
     [self removeObserver:self forKeyPath:kObserverPresentationMode];
-    [self.advancedLayoutController removeObserver:self forKeyPath:@"indices"];
+    [self.splitShowDocument removeObserver:self forKeyPath:kObserverCustomLayouts];
 
     CGDisplayRemoveReconfigurationCallback(displayReconfigurationCallback, (void*)self);
+
+    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationWindowWillClose object:self.splitShowDocument];
 }
 
 - (SplitShowDocument *)splitShowDocument
 {
     return (SplitShowDocument*)self.document;
-}
-
-- (void)setupViews
-{
-    self.selectedPresentationMode = [self guessPresentationMode];
 }
 
 - (NSString *)windowTitleForDocumentDisplayName:(NSString *)displayName
@@ -133,7 +146,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 {
     NSUInteger max = 0;
 
-    for(NSDictionary *slides in self.splitShowDocument.layouts)
+    for(NSDictionary *slides in self.screens)
     {
         max = MAX(max, [[slides objectForKey:@"document"] pageCount]);
     }
@@ -144,14 +157,25 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     return max;
 }
 
-- (void)restartPresentation
+- (void)reloadPresentation
 {
-    self.currentSlideIndex = 0;
+    if(self.currentSlideIndex >= self.maxDocumentPageCount)
+    {
+        self.currentSlideIndex = MAX(0, self.maxDocumentPageCount - 1);
+    }
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
                                                         object:self
                                                       userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
-                                                                    kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
+                                                                 kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
+}
+
+- (void)reloadCurrentSlide
+{
+    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
+                                                        object:self
+                                                      userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
+                                                                 kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
 }
 
 - (void)presentPrevSlide
@@ -214,24 +238,18 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             
         case SplitShowPresentationModeCustom:
         {
-            NSArray<NSArray*> *screens = self.advancedLayoutController.indices;
+            NSArray<NSArray*> *screens = self.splitShowDocument.customLayouts;
+            self.mainPreview.document = nil;
+            self.helperPreview.document = nil;
 
             if(screens.count > 0)
             {
-                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:0] inMode:self.advancedLayoutController.slideMode];
-            }
-            else
-            {
-                self.mainPreview.document = nil;
-            }
+                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:0] inMode:self.splitShowDocument.customLayoutMode];
 
-            if(screens.count > 1)
-            {
-                self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:1] inMode:self.advancedLayoutController.slideMode];
-            }
-            else
-            {
-                self.helperPreview.document = nil;
+                if(screens.count > 1)
+                {
+                    self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:1] inMode:self.splitShowDocument.customLayoutMode];
+                }
             }
 
             break;
@@ -241,7 +259,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
 - (void)updatePresentationLayouts
 {
-    NSMutableArray *layouts = [NSMutableArray array];
+    NSMutableArray *screens = [NSMutableArray array];
 
     switch(self.selectedPresentationMode)
     {
@@ -249,13 +267,13 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         {
             if(self.selectedMainDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
                                      @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupContent]}];
             }
 
             if(self.selectedHelperDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
                                      @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupNotes],
                                      @"timer" : @YES}];
             }
@@ -266,13 +284,13 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         {
             if(self.selectedMainDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
                                      @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent]}];
             }
 
             if(self.selectedHelperDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
                                      @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes],
                                      @"timer" : @YES}];
             }
@@ -283,13 +301,13 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         {
             if(self.selectedMainDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
                                      @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes]}];
             }
 
             if(self.selectedHelperDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
                                      @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent],
                                      @"timer" : @YES}];
             }
@@ -300,13 +318,13 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         {
             if(self.selectedMainDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedMainDisplayIndex],
                                      @"document" : [self.splitShowDocument createMirroredDocument]}];
             }
 
             if(self.selectedHelperDisplayIndex != kNoSelectedDisplay)
             {
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:self.selectedHelperDisplayIndex],
                                      @"document" : [self.splitShowDocument createMirroredDocument],
                                      @"timer" : @YES}];
             }
@@ -315,14 +333,14 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
         case SplitShowPresentationModeCustom:
         {
-            NSArray<NSArray*> *screens = self.advancedLayoutController.indices;
+            NSArray<NSArray*> *layouts = self.splitShowDocument.customLayouts;
 
-            for(NSUInteger i = 0; i < screens.count; ++i)
+            for(NSUInteger i = 0; i < layouts.count; ++i)
             {
-                NSArray *indices = [screens objectAtIndex:i];
+                NSArray *slides = [layouts objectAtIndex:i];
 
-                [layouts addObject:@{@"display" : [[NSScreen screens] objectAtIndex:i],
-                                     @"document" : [self.splitShowDocument createDocumentFromIndices:indices inMode:self.advancedLayoutController.slideMode],
+                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:i],
+                                     @"document" : [self.splitShowDocument createDocumentFromIndices:slides inMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
 
@@ -330,7 +348,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         }
     }
 
-    [self.document setLayouts:layouts];
+    self.screens = screens;
 }
 
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
@@ -416,16 +434,17 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         {
             self.mainDisplayItem.enabled = NO;
             self.helperDisplayItem.enabled = NO;
+            self.swapDisplaysButton.enabled = NO;
         }
         else
         {
             self.mainDisplayItem.enabled = YES;
             self.helperDisplayItem.enabled = YES;
+            self.swapDisplaysButton.enabled = YES;
         }
 
-        self.canEnterFullScreen = NO;
         [self updatePreviewLayouts];
-        [self restartPresentation];
+        [self reloadPresentation];
     }
     else if([kObserverMainDisplayMenu isEqualToString:keyPath])
     {
@@ -435,26 +454,15 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     {
         [self toggleDisplayMenuButton:self.mainDisplayButton forChange:change];
     }
-    else if([@"indices" isEqualToString:keyPath])
+    else if([kObserverCustomLayouts isEqualToString:keyPath])
     {
         [self updatePreviewLayouts];
+        [self reloadPresentation];
     }
     else
     {
         [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
     }
-}
-
-- (void)openAdvancedLayout:(id)sender
-{
-    [self.advancedLayoutController removeObserver:self forKeyPath:@"indices"];
-
-    self.advancedLayoutController = [[AdvancedLayoutController alloc] initWithWindowNibName:@"AdvancedLayout"];
-    [self.splitShowDocument addWindowController:self.advancedLayoutController];
-    self.selectedPresentationMode = SplitShowPresentationModeCustom;
-    [self.advancedLayoutController showWindow:self];
-    [self.advancedLayoutController addObserver:self forKeyPath:@"indices" options:NSKeyValueObservingOptionNew context:NULL];
-    self.canEnterFullScreen = YES;
 }
 
 - (void)swapDisplays:(id)sender
@@ -497,11 +505,11 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
     NSMutableSet *fullScreenControllers = [NSMutableSet set];
 
-    for(NSDictionary *layout in self.splitShowDocument.layouts)
+    for(NSDictionary *screen in self.screens)
     {
-        NSScreen *fullScreen = [layout objectForKey:@"display"];
-        PDFDocument *document = [layout objectForKey:@"document"];
-        BOOL wantsTimer = [[layout objectForKey:@"timer"] boolValue];
+        NSScreen *fullScreen = [screen objectForKey:@"display"];
+        PDFDocument *document = [screen objectForKey:@"document"];
+        BOOL wantsTimer = [[screen objectForKey:@"timer"] boolValue];
 
         NSRect fullScreenBounds = fullScreen.frame;
         fullScreenBounds.origin = CGPointZero;
@@ -581,6 +589,27 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     }
 
     return [super validateMenuItem:menuItem];
+}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    [super encodeRestorableStateWithCoder:coder];
+
+    [coder encodeObject:@(self.selectedMainDisplayIndex) forKey:@"selectedMainDisplayIndex"];
+    [coder encodeObject:@(self.selectedHelperDisplayIndex) forKey:@"selectedHelperDisplayIndex"];
+    [coder encodeObject:@(self.selectedPresentationMode) forKey:@"selectedPresentationMode"];
+    [coder encodeObject:@(self.currentSlideIndex) forKey:@"currentSlideIndex"];
+}
+
+- (void)restoreStateWithCoder:(NSCoder *)coder
+{
+    [super restoreStateWithCoder:coder];
+
+    self.selectedMainDisplayIndex = [[coder decodeObjectForKey:@"selectedMainDisplayIndex"] integerValue];
+    self.selectedHelperDisplayIndex = [[coder decodeObjectForKey:@"selectedHelperDisplayIndex"] integerValue];
+    self.selectedPresentationMode = (SplitShowPresentationMode)[[coder decodeObjectForKey:@"selectedPresentationMode"] integerValue];
+    self.currentSlideIndex = [[coder decodeObjectForKey:@"currentSlideIndex"] integerValue];
+    [self reloadCurrentSlide];
 }
 
 - (void)keyDown:(NSEvent *)theEvent

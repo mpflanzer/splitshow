@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 
 @class PDFDocument;
+@class CustomLayoutController;
 
 #define kSplitShowSlideModeNormal @"kSplitShowSlideModeNormal"
 #define kSplitShowSlideModeSplit @"kSplitShowSlideModeSplit"
@@ -23,7 +24,8 @@ enum SplitShowError
 
 @interface SplitShowDocument : NSDocument
 
-@property NSArray *layouts;
+@property NSMutableArray *customLayouts;
+@property NSString *customLayoutMode;
 
 @property (readonly) NSString *name;
 @property (readonly) BOOL hasInterleavedLayout;

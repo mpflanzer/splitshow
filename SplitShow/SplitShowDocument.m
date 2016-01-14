@@ -10,8 +10,12 @@
 #import <Quartz/Quartz.h>
 #import "PDFDocument+Presentation.h"
 #import "PreviewController.h"
+#import "CustomLayoutController.h"
 #import "DisplayController.h"
 #import "Utilities.h"
+
+#define kSplitShowDocumentEncodeCustomLayoutMode @"kSplitShowDocumentEncodeCustomLayoutMode"
+#define kSplitShowDocumentEncodeCustomLayouts @"kSplitShowDocumentEncodeCustomLayouts"
 
 @interface SplitShowDocument ()
 
@@ -56,12 +60,11 @@
     return NO;
 }
 
-- (void)makeWindowControllers {
+- (void)makeWindowControllers
+{
     // Override to return the Storyboard file name of the document.
-    PreviewController *windowController = [[PreviewController alloc] initWithWindowNibName:@"Main"];
-    [self addWindowController:windowController];
-
-    [windowController setupViews];
+    PreviewController *previewController = [[PreviewController alloc] initWithWindowNibName:@"Main"];
+    [self addWindowController:previewController];
 }
 
 //- (NSData *)dataOfType:(NSString *)typeName error:(NSError **)outError {
@@ -388,6 +391,27 @@
     }
     
     return document;
+}
+
+//+ (NSArray<NSString *> *)restorableStateKeyPaths
+//{
+//    return @[@"self.documentMode", @"self.layouts"];
+//}
+
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
+{
+    [super encodeRestorableStateWithCoder:coder];
+
+    [coder encodeObject:self.customLayoutMode forKey:kSplitShowDocumentEncodeCustomLayoutMode];
+    [coder encodeObject:self.customLayouts forKey:kSplitShowDocumentEncodeCustomLayouts];
+}
+
+- (void)restoreStateWithCoder:(NSCoder *)coder
+{
+    [super restoreStateWithCoder:coder];
+
+    self.customLayoutMode = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayoutMode];
+    self.customLayouts = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayouts];
 }
 
 @end

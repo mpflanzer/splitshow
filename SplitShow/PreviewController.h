@@ -15,6 +15,10 @@
 #define kSplitShowNotificationChangeSlideAction @"kSplitShowNotificationChangeSlideAction"
 #define kSplitShowChangeSlideActionGoToIndex @"kSplitShowChangeSlideActionGoToIndex"
 
+#define kSplitShowNotificationWindowDidBecomeMain @"kSplitShowNotificationWindowDidBecomeMain"
+#define kSplitShowNotificationWindowDidResignMain @"kSplitShowNotificationWindowDidResignMain"
+#define kSplitShowNotificationWindowWillClose @"kSplitShowNotificationWindowWillClose"
+
 typedef enum : NSUInteger
 {
     SplitShowPresentationModeInterleave,
@@ -39,14 +43,12 @@ typedef enum : NSUInteger
 
 @property IBOutlet NSPopUpButton *mainDisplayButton;
 @property IBOutlet NSPopUpButton *helperDisplayButton;
+@property IBOutlet NSButton *swapDisplaysButton;
 
 @property IBOutlet DisplayController *mainPreview;
 @property IBOutlet DisplayController *helperPreview;
 
-- (void)setupViews;
-
 - (IBAction)toggleCustomFullScreen:(id)sender;
 - (IBAction)swapDisplays:(id)sender;
-- (IBAction)openAdvancedLayout:(id)sender;
 
 @end

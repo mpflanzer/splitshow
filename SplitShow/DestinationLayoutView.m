@@ -8,8 +8,7 @@
 
 #import "DestinationLayoutView.h"
 #import <Quartz/Quartz.h>
-#import "AdvancedLayoutController.h"
-#import "NSScreen+Name.h"
+#import "CustomLayoutController.h"
 
 #define IMAGE_WIDTH 100
 #define IMAGE_HEIGHT 70
@@ -20,30 +19,25 @@
 @interface DestinationLayoutView ()
 
 @property CAShapeLayer *marker;
-@property NSMutableArray<NSMutableArray<CALayer*>*> *layers;
-@property (readwrite) NSMutableArray<NSMutableArray<NSNumber*>*> *indices;
-@property NSMutableArray<CALayer*> *headerLayer;
-@property (readonly) NSUInteger maxItemsPerScreen;
-@property NSNumber *selectedPageIndex;
+@property CALayer *baseLayer;
+@property NSMutableArray<NSMutableArray<CALayer*>*> *slideLayers;
+@property NSMutableArray<CALayer*> *headerLayers;
 @property CALayer *selectedLayer;
-@property NSPoint selectedIndex;
+@property NSPoint selectedSlideIndex;
 @property CAShapeLayer *selectionMarker;
 @property (readonly) NSUInteger rowHeight;
 
+- (void)addHeaderForScreen:(NSInteger)screenIndex;
+- (void)addSlidesForScreen:(NSInteger)screenIndex;
 - (NSRect)contentSize;
-- (void)deleteSelectedItem;
+- (void)removeSelectedSlide;
 
 @end
 
 @implementation DestinationLayoutView
 
-@synthesize previewImages = _previewImages;
-
 - (void)awakeFromNib
 {
-    self.indices = [NSMutableArray array];
-    self.layers = [NSMutableArray array];
-
     self.wantsLayer = YES;
 
     [self registerForDraggedTypes:@[(NSString*)kUTTypeData]];
@@ -64,30 +58,6 @@
     self.selectionMarker.path = CGPathCreateWithRect(CGRectMake(0, 0, IMAGE_WIDTH, self.rowHeight), NULL);
     [self.layer addSublayer:self.selectionMarker];
 
-    self.headerLayer = [NSMutableArray arrayWithCapacity:[[NSScreen screens] count]];
-
-    for(NSInteger i = 0; i < [[NSScreen screens] count]; ++i)
-    {
-        NSScreen *screen = [[NSScreen screens] objectAtIndex:i];
-
-        CATextLayer *textLayer = [CATextLayer layer];
-        textLayer.string = screen.name;
-        textLayer.fontSize = 12;
-        textLayer.foregroundColor = [[NSColor blackColor] CGColor];
-        textLayer.truncationMode = kCATruncationMiddle;
-        textLayer.alignmentMode = kCAAlignmentCenter;
-        textLayer.frame = NSMakeRect(10, (self.rowHeight - 20) / 2, IMAGE_OFFSET - 20, 20);
-
-        CALayer *backgroundLayer = [CALayer layer];
-        backgroundLayer.frame = NSMakeRect(0, i * (self.rowHeight + IMAGE_SPACING_Y), IMAGE_OFFSET, self.rowHeight);
-        backgroundLayer.backgroundColor = [[NSColor colorWithWhite:0 alpha:0.3] CGColor];
-        [backgroundLayer addSublayer:textLayer];
-
-        [self.layer addSublayer:backgroundLayer];
-
-        [self.headerLayer addObject:backgroundLayer];
-    }
-
     [self.window makeFirstResponder:self];
 }
 
@@ -101,22 +71,10 @@
     return YES;
 }
 
-- (NSUInteger)maxItemsPerScreen
-{
-    NSUInteger max = 0;
-
-    for(NSArray *items in self.indices)
-    {
-        max = MAX(max, items.count);
-    }
-
-    return max;
-}
-
 - (NSRect)contentSize
 {
-    NSInteger numberOfScreens = self.indices.count;
-    NSUInteger width = MAX(IMAGE_OFFSET + (self.maxItemsPerScreen) * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X + IMAGE_WIDTH,
+    NSInteger numberOfScreens = [[NSScreen screens] count];
+    NSUInteger width = MAX(IMAGE_OFFSET + (self.delegate.maxSlidesPerScreen) * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X + IMAGE_WIDTH,
                            self.superview.bounds.size.width);
     NSUInteger height = numberOfScreens * self.rowHeight + MAX(numberOfScreens - 1, 0) * IMAGE_SPACING_Y;
 
@@ -136,6 +94,45 @@
 //
 //    return MAX(IMAGE_HEIGHT, self.superview.bounds.size.height / self.screenItems.count);
 //#endif
+}
+
+- (void)addHeaderForScreen:(NSInteger)screenIndex
+{
+    CATextLayer *textLayer = [CATextLayer layer];
+    textLayer.string = [self.delegate nameOfScreenAtIndex:screenIndex];
+    textLayer.fontSize = 12;
+    textLayer.foregroundColor = [[NSColor blackColor] CGColor];
+    textLayer.truncationMode = kCATruncationMiddle;
+    textLayer.alignmentMode = kCAAlignmentCenter;
+    textLayer.frame = NSMakeRect(10, (self.rowHeight - 20) / 2, IMAGE_OFFSET - 20, 20);
+    
+    CALayer *backgroundLayer = [CALayer layer];
+    backgroundLayer.frame = NSMakeRect(0, screenIndex * (self.rowHeight + IMAGE_SPACING_Y), IMAGE_OFFSET, self.rowHeight);
+    backgroundLayer.backgroundColor = [[NSColor colorWithWhite:0 alpha:0.3] CGColor];
+    [backgroundLayer addSublayer:textLayer];
+    
+    [self.baseLayer addSublayer:backgroundLayer];
+    [self.headerLayers addObject:backgroundLayer];
+}
+
+- (void)addSlidesForScreen:(NSInteger)screenIndex
+{
+    NSMutableArray *layers = [NSMutableArray arrayWithCapacity:[self.delegate numberOfSlidesForScreenAtIndex:screenIndex]];
+
+    for(NSInteger slideIndex = 0; slideIndex < [self.delegate numberOfSlidesForScreenAtIndex:screenIndex]; ++slideIndex)
+    {
+        NSInteger slide = [self.delegate slideAtIndex:slideIndex forScreen:screenIndex];
+        CALayer *newLayer = [CALayer layer];
+        newLayer.contents = [self.previewImages objectAtIndex:slide];
+        newLayer.frame = NSMakeRect(IMAGE_OFFSET + slideIndex * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X,
+                                    screenIndex * (self.rowHeight + IMAGE_SPACING_Y),
+                                    IMAGE_WIDTH, self.rowHeight);
+        
+        [layers insertObject:newLayer atIndex:slideIndex];
+        [self.baseLayer addSublayer:newLayer];
+    }
+    
+    [self.slideLayers insertObject:layers atIndex:screenIndex];
 }
 
 //- (NSArray<NSArray *> *)indices
@@ -159,33 +156,25 @@
 //    return screens;
 //}
 
-- (NSArray<NSImage *> *)previewImages
+- (void)loadLayouts
 {
-    return _previewImages;
-}
-
-- (void)setPreviewImages:(NSArray<NSImage *> *)previewImages
-{
-    _previewImages = previewImages;
-
-    for(NSArray<CALayer*> *items in self.layers)
+    if(self.baseLayer)
     {
-        for(CALayer *layer in items)
-        {
-            [layer removeFromSuperlayer];
-        }
+        [self.baseLayer removeFromSuperlayer];
     }
 
-    [self.indices removeAllObjects];
-    [self.layers removeAllObjects];
+    self.baseLayer = [CALayer layer];
+    self.slideLayers = [NSMutableArray  arrayWithCapacity:self.delegate.numberOfScreens];
+    self.headerLayers = [NSMutableArray arrayWithCapacity:self.delegate.numberOfScreens];
 
-    for(NSUInteger i = 0; i < [[NSScreen screens] count]; ++i)
+    for(NSInteger screenIndex = 0; screenIndex < self.delegate.numberOfScreens; ++screenIndex)
     {
-        [self.indices addObject:[NSMutableArray array]];
-        [self.layers addObject:[NSMutableArray array]];
+        [self addHeaderForScreen:screenIndex];
+        [self addSlidesForScreen:screenIndex];
     }
 
     self.frame = [self contentSize];
+    [self.layer addSublayer:self.baseLayer];
 }
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
@@ -198,25 +187,25 @@
 {
     NSPoint location = [self convertPoint:sender.draggingLocation fromView:self.window.contentView];
 
-    NSInteger y = location.y / (self.rowHeight + IMAGE_SPACING_Y);
-    NSInteger maxItems = [[self.indices objectAtIndex:y] count];
-    NSInteger x = MIN((location.x - IMAGE_OFFSET) / (IMAGE_WIDTH + IMAGE_SPACING_X), maxItems);
+    NSInteger screenIndex = location.y / (self.rowHeight + IMAGE_SPACING_Y);
+    NSInteger maxSlides = [self.delegate numberOfSlidesForScreenAtIndex:screenIndex];
+    NSInteger x = MIN((location.x - IMAGE_OFFSET) / (IMAGE_WIDTH + IMAGE_SPACING_X), maxSlides);
     NSInteger x_rem = ((NSInteger)location.x - IMAGE_OFFSET) % (IMAGE_WIDTH + IMAGE_SPACING_X);
 
     [CATransaction begin];
     [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
 
-    if(x_rem < IMAGE_SPACING_X || x == maxItems)
+    if(x_rem < IMAGE_SPACING_X || x == maxSlides)
     {
         self.marker.path = CGPathCreateWithRect(CGRectMake(0, 0, 2, self.rowHeight), NULL);
         self.marker.position = NSMakePoint(IMAGE_OFFSET + x * (IMAGE_WIDTH + IMAGE_SPACING_X) + (IMAGE_SPACING_X / 2),
-                                           y * (self.rowHeight + IMAGE_SPACING_Y));
+                                           screenIndex * (self.rowHeight + IMAGE_SPACING_Y));
     }
     else
     {
         self.marker.path = CGPathCreateWithRect(CGRectMake(0, 0, IMAGE_WIDTH, self.rowHeight), NULL);
         self.marker.position = NSMakePoint(IMAGE_OFFSET + x * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X,
-                                           y * (self.rowHeight + IMAGE_SPACING_Y));
+                                           screenIndex * (self.rowHeight + IMAGE_SPACING_Y));
     }
 
     [CATransaction commit];
@@ -236,27 +225,24 @@
 
 - (BOOL)performDragOperation:(id<NSDraggingInfo>)sender
 {
-    [self willChangeValueForKey:@"indices"];
-
     NSPoint location = [self convertPoint:sender.draggingLocation fromView:self.window.contentView];
 
-    NSInteger y = location.y / (self.rowHeight + IMAGE_SPACING_Y);
-    NSInteger maxItems = [[self.indices objectAtIndex:y] count];
-    NSInteger x = MIN((location.x - IMAGE_OFFSET) / (IMAGE_WIDTH + IMAGE_SPACING_X), maxItems);
+    NSInteger screenIndex = location.y / (self.rowHeight + IMAGE_SPACING_Y);
+    NSInteger maxSlides = [self.delegate numberOfSlidesForScreenAtIndex:screenIndex];
+    NSInteger x = MIN((location.x - IMAGE_OFFSET) / (IMAGE_WIDTH + IMAGE_SPACING_X), maxSlides);
     NSInteger x_rem = ((NSInteger)location.x - IMAGE_OFFSET) % (IMAGE_WIDTH + IMAGE_SPACING_X);
 
     NSPasteboard *pasteboard = sender.draggingPasteboard;
     NSData *indexData = [pasteboard dataForType:kSplitShowLayoutData];
     NSIndexSet *indexes = [NSKeyedUnarchiver unarchiveObjectWithData:indexData];
 
-    NSMutableArray<NSNumber*> *indexItems = [self.indices objectAtIndex:y];
-    NSMutableArray<CALayer*> *layerItems = [self.layers objectAtIndex:y];
+    NSMutableArray<CALayer*> *layerItems = [self.slideLayers objectAtIndex:screenIndex];
 
-    if(x_rem < IMAGE_SPACING_X || x == maxItems)
+    if(x_rem < IMAGE_SPACING_X || x == maxSlides)
     {
         NSUInteger shift = indexes.count * (IMAGE_WIDTH + IMAGE_SPACING_X);
 
-        for(NSUInteger i = x; i < indexItems.count; ++i)
+        for(NSUInteger i = x; i < layerItems.count; ++i)
         {
             CALayer *layer = [layerItems objectAtIndex:i];
             layer.position = NSMakePoint(layer.position.x + shift, layer.position.y);
@@ -269,13 +255,13 @@
             CALayer *newLayer = [CALayer layer];
             newLayer.contents = [self.previewImages objectAtIndex:idx];
             newLayer.frame = NSMakeRect(IMAGE_OFFSET + i * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X,
-                                     y * (self.rowHeight + IMAGE_SPACING_Y),
+                                     screenIndex * (self.rowHeight + IMAGE_SPACING_Y),
                                      IMAGE_WIDTH, self.rowHeight);
 
-            [indexItems insertObject:@(idx) atIndex:i];
+            [self.delegate insertSlide:idx atIndex:i forScreen:screenIndex];
             [layerItems insertObject:newLayer atIndex:i];
 
-            [self.layer addSublayer:newLayer];
+            [self.baseLayer addSublayer:newLayer];
             idx = [indexes indexGreaterThanIndex:idx];
         }
     }
@@ -289,19 +275,19 @@
         CALayer *newLayer = [CALayer layer];
         newLayer.contents = [self.previewImages objectAtIndex:idx];
         newLayer.frame = NSMakeRect(IMAGE_OFFSET + x * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X,
-                                    y * (self.rowHeight + IMAGE_SPACING_Y),
+                                    screenIndex * (self.rowHeight + IMAGE_SPACING_Y),
                                     IMAGE_WIDTH, self.rowHeight);
 
-        [indexItems replaceObjectAtIndex:x withObject:@(idx)];
+        [self.delegate replaceSlideAtIndex:x withSlide:idx forScreen:screenIndex];
         [layerItems replaceObjectAtIndex:x withObject:newLayer];
 
-        [self.layer addSublayer:newLayer];
+        [self.baseLayer addSublayer:newLayer];
 
         if(indexes.count > 1)
         {
             NSUInteger shift = (indexes.count - 1) * (IMAGE_WIDTH + IMAGE_SPACING_X);
 
-            for(NSUInteger i = x + 1; i < indexItems.count; ++i)
+            for(NSUInteger i = x + 1; i < layerItems.count; ++i)
             {
                 CALayer *layer = [layerItems objectAtIndex:i];
                 layer.position = NSMakePoint(layer.position.x + shift, layer.position.y);
@@ -314,19 +300,17 @@
                 CALayer *newLayer = [CALayer layer];
                 newLayer.contents = [self.previewImages objectAtIndex:idx];
                 newLayer.frame = NSMakeRect(IMAGE_OFFSET + i * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X,
-                                            y * (self.rowHeight + IMAGE_SPACING_Y),
+                                            screenIndex * (self.rowHeight + IMAGE_SPACING_Y),
                                             IMAGE_WIDTH, self.rowHeight);
 
-                [indexItems insertObject:@(idx) atIndex:i];
+                [self.delegate insertSlide:idx atIndex:i forScreen:screenIndex];
                 [layerItems insertObject:newLayer atIndex:i];
 
-                [self.layer addSublayer:newLayer];
+                [self.baseLayer addSublayer:newLayer];
                 idx = [indexes indexGreaterThanIndex:idx];
             }
         }
     }
-
-    [self didChangeValueForKey:@"indices"];
 
     return YES;
 }
@@ -351,22 +335,18 @@
         return;
     }
 
-    if(y < self.indices.count && x < [[self.indices objectAtIndex:y] count])
+    if(y < self.delegate.numberOfScreens && x < [self.delegate numberOfSlidesForScreenAtIndex:y])
     {
-        NSNumber *oldPageIndex = self.selectedPageIndex;
-
-        if(oldPageIndex)
+        if(self.selectedLayer)
         {
-            self.selectedPageIndex = nil;
             self.selectedLayer = nil;
             self.selectionMarker.hidden = YES;
         }
 
-        if(oldPageIndex != [[self.indices objectAtIndex:y] objectAtIndex:x])
+        if(self.selectedSlideIndex.x != x || self.selectedSlideIndex.y != y)
         {
-            self.selectedPageIndex = [[self.indices objectAtIndex:y] objectAtIndex:x];
-            self.selectedLayer = [[self.layers objectAtIndex:y] objectAtIndex:x];
-            self.selectedIndex = NSMakePoint(x, y);
+            self.selectedLayer = [[self.slideLayers objectAtIndex:y] objectAtIndex:x];
+            self.selectedSlideIndex = NSMakePoint(x, y);
 
             [CATransaction begin];
             [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
@@ -379,7 +359,7 @@
     }
 }
 
-- (void)deleteSelectedItem
+- (void)removeSelectedSlide
 {
     if(self.selectedLayer)
     {
@@ -390,18 +370,17 @@
         self.selectionMarker.hidden = YES;
         [CATransaction commit];
 
-        NSMutableArray *indexItems = [self.indices objectAtIndex:self.selectedIndex.y];
-        NSMutableArray *layerItems = [self.layers objectAtIndex:self.selectedIndex.y];
+        NSMutableArray *layerItems = [self.slideLayers objectAtIndex:self.selectedSlideIndex.y];
 
-        [indexItems removeObject:self.selectedPageIndex];
+        [self.delegate removeSlideAtIndex:self.selectedSlideIndex.x forScreen:self.selectedSlideIndex.y];
 
-        for(NSUInteger i = self.selectedIndex.x; i < indexItems.count; ++i)
+        for(NSUInteger i = self.selectedSlideIndex.x; i < layerItems.count; ++i)
         {
             CALayer *layer = [layerItems objectAtIndex:i];
             layer.position = NSMakePoint(layer.position.x - (IMAGE_WIDTH + IMAGE_SPACING_X), layer.position.y);
         }
 
-        self.selectedPageIndex = nil;
+        self.selectedSlideIndex = NSMakePoint(NSNotFound, NSNotFound);
         self.selectedLayer = nil;
         self.frame = [self contentSize];
     }
@@ -409,12 +388,12 @@
 
 - (void)deleteBackward:(id)sender
 {
-    [self deleteSelectedItem];
+    [self removeSelectedSlide];
 }
 
 - (void)deleteForward:(id)sender
 {
-    [self deleteSelectedItem];
+    [self removeSelectedSlide];
 }
 
 - (void)keyDown:(NSEvent *)theEvent
