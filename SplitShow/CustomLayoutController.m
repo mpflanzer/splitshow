@@ -17,7 +17,7 @@
 
 @interface CustomLayoutController ()
 
-@property (readwrite) NSMutableArray<NSMutableArray<NSNumber*>*> *screenLayouts;
+@property (readwrite) NSMutableDictionary<NSString*, NSMutableArray*> *screenLayouts;
 @property (readonly) SplitShowDocument *splitShowDocument;
 @property (readwrite) NSMutableArray *previewImages;
 @property IBOutlet NSArrayController *previewImageController;
@@ -77,19 +77,19 @@
 
 - (void)setupScreenLayouts
 {
-    self.screenLayouts = [NSMutableArray array];
+    self.screenLayouts = [NSMutableDictionary dictionary];
 
-    for(NSInteger screenIndex = 0; screenIndex < [[NSScreen screens] count]; ++screenIndex)
+    for(NSScreen *screen in [NSScreen screens])
     {
-        if(screenIndex < self.splitShowDocument.customLayouts.count)
+        NSString *screenID = [NSString stringWithFormat:@"%d", screen.displayID];
+        NSMutableArray *tmp = [self.splitShowDocument.customLayouts objectForKey:screenID];
+
+        if(!tmp)
         {
-            NSMutableArray *tmp = [NSMutableArray arrayWithArray:[self.splitShowDocument.customLayouts objectAtIndex:screenIndex]];
-            [self.screenLayouts addObject:tmp];
+            tmp = [NSMutableArray array] ;
         }
-        else
-        {
-            [self.screenLayouts addObject:[NSMutableArray array]];
-        }
+
+        [self.screenLayouts setObject:tmp forKey:screenID];
     }
 }
 
@@ -168,51 +168,53 @@
 {
     NSUInteger max = 0;
 
-    for(NSArray *items in self.screenLayouts)
+    for(NSString *screenID in self.screenLayouts)
     {
-        max = MAX(max, items.count);
+        NSArray *slides = [self.screenLayouts objectForKey:screenID];
+        max = MAX(max, slides.count);
     }
 
     return max;
 }
 
-- (NSInteger)numberOfSlidesForScreenAtIndex:(NSInteger)index
+- (NSInteger)numberOfSlidesForScreen:(NSString*)screenID
 {
-    return [[self.screenLayouts objectAtIndex:index] count];
+    return [[self.screenLayouts objectForKey:screenID] count];
 }
 
-- (NSString*)nameOfScreenAtIndex:(NSInteger)index
+- (NSString*)nameOfScreen:(NSString*)screenID
 {
-    return [[[NSScreen screens] objectAtIndex:index] name];
+    return [[NSScreen screenWithDisplayID:screenID.intValue] name];
 }
 
-- (NSInteger)slideAtIndex:(NSInteger)slideIndex forScreen:(NSInteger)screenIndex
+- (NSInteger)slideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
 {
-    return [[[self.screenLayouts objectAtIndex:screenIndex] objectAtIndex:slideIndex] integerValue];
+    return [[[self.screenLayouts objectForKey:screenID] objectAtIndex:slideIndex] integerValue];
 }
 
-- (void)insertSlide:(NSInteger)slide atIndex:(NSInteger)slideIndex forScreen:(NSInteger)screenIndex
+- (void)insertSlide:(NSInteger)slide atIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
 {
-    [[self.screenLayouts objectAtIndex:screenIndex] insertObject:@(slide) atIndex:slideIndex];
+    [[self.screenLayouts objectForKey:screenID] insertObject:@(slide) atIndex:slideIndex];
     self.splitShowDocument.customLayouts = self.screenLayouts;
 }
 
-- (void)replaceSlideAtIndex:(NSInteger)slideIndex withSlide:(NSInteger)slide forScreen:(NSInteger)screenIndex
+- (void)replaceSlideAtIndex:(NSInteger)slideIndex withSlide:(NSInteger)slide forScreen:(NSString*)screenID
 {
-    [[self.screenLayouts objectAtIndex:screenIndex] replaceObjectAtIndex:slideIndex withObject:@(slide)];
+    [[self.screenLayouts objectForKey:screenID] replaceObjectAtIndex:slideIndex withObject:@(slide)];
     self.splitShowDocument.customLayouts = self.screenLayouts;
 }
 
-- (void)removeSlideAtIndex:(NSInteger)slideIndex forScreen:(NSInteger)screenIndex
+- (void)removeSlideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
 {
-    [[self.screenLayouts objectAtIndex:screenIndex] removeObjectAtIndex:slideIndex];
+    [[self.screenLayouts objectForKey:screenID] removeObjectAtIndex:slideIndex];
     self.splitShowDocument.customLayouts = self.screenLayouts;
 }
 
 - (void)removeAllSlides
 {
-    for(NSMutableArray *slides in self.screenLayouts)
+    for(NSString *screenID in self.screenLayouts)
     {
+        NSMutableArray *slides = [self.screenLayouts objectForKey:screenID];
         [slides removeAllObjects];
     }
 

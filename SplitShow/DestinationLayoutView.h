@@ -13,14 +13,14 @@
 @property (readonly) NSInteger numberOfScreens;
 @property (readonly) NSInteger maxSlidesPerScreen;
 
-- (NSInteger)numberOfSlidesForScreenAtIndex:(NSInteger)index;
-- (NSString*)nameOfScreenAtIndex:(NSInteger)index;
+- (NSInteger)numberOfSlidesForScreen:(NSString*)screenID;
+- (NSString*)nameOfScreen:(NSString*)screenID;
 
-- (NSInteger)slideAtIndex:(NSInteger)slideIndex forScreen:(NSInteger)screenIndex;
+- (NSInteger)slideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID;
 
-- (void)insertSlide:(NSInteger)slide atIndex:(NSInteger)slideIndex forScreen:(NSInteger)screenIndex;
-- (void)replaceSlideAtIndex:(NSInteger)slideIndex withSlide:(NSInteger)slide forScreen:(NSInteger)screenIndex;
-- (void)removeSlideAtIndex:(NSInteger)slideIndex forScreen:(NSInteger)screenIndex;
+- (void)insertSlide:(NSInteger)slide atIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID;
+- (void)replaceSlideAtIndex:(NSInteger)slideIndex withSlide:(NSInteger)slide forScreen:(NSString*)screenID;
+- (void)removeSlideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID;
 //- (void)removeAllSlidesForScreen:(NSInteger)screenIndex;
 - (void)removeAllSlides;
 

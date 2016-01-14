@@ -17,7 +17,7 @@
 
 @property PDFDocument *pdfDocument;
 //TODO: Change to Dictionary controller
-@property (readonly) NSMutableArray<NSMutableArray<NSNumber*>*> *screenLayouts;
+@property (readonly) NSMutableDictionary<NSString*, NSMutableArray*> *screenLayouts;
 @property (readonly) NSMutableArray *previewImages;
 
 - (IBAction)selectItems:(NSPopUpButton*)button;

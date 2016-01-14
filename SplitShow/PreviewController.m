@@ -238,7 +238,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             
         case SplitShowPresentationModeCustom:
         {
-            NSArray<NSArray*> *screens = self.splitShowDocument.customLayouts;
+            NSArray<NSArray*> *screens = [self.splitShowDocument.customLayouts allValues];
             self.mainPreview.document = nil;
             self.helperPreview.document = nil;
 
@@ -333,13 +333,11 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
         case SplitShowPresentationModeCustom:
         {
-            NSArray<NSArray*> *layouts = self.splitShowDocument.customLayouts;
-
-            for(NSUInteger i = 0; i < layouts.count; ++i)
+            for(NSString *screenID in self.splitShowDocument.customLayouts)
             {
-                NSArray *slides = [layouts objectAtIndex:i];
+                NSArray *slides = [self.splitShowDocument.customLayouts objectForKey:screenID];
 
-                [screens addObject:@{@"display" : [[NSScreen screens] objectAtIndex:i],
+                [screens addObject:@{@"display" : [NSScreen screenWithDisplayID:screenID.intValue],
                                      @"document" : [self.splitShowDocument createDocumentFromIndices:slides inMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
@@ -456,8 +454,11 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     }
     else if([kObserverCustomLayouts isEqualToString:keyPath])
     {
-        [self updatePreviewLayouts];
-        [self reloadPresentation];
+        if(self.selectedPresentationMode == SplitShowPresentationModeCustom)
+        {
+            [self updatePreviewLayouts];
+            [self reloadPresentation];
+        }
     }
     else
     {
