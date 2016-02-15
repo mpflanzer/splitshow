@@ -28,9 +28,12 @@
 		8E2CE8421C30704E00CA462F /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8401C30704E00CA462F /* Localizable.strings */; };
 		8E2CE8871C30A46E00CA462F /* CustomLayoutController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8861C30A46E00CA462F /* CustomLayoutController.m */; };
 		8E2CE88C1C30A89B00CA462F /* PDFPreviewItem.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */; };
-		8E2CE8AA1C32AB3800CA462F /* DestinationLayoutView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */; };
+		8E2CE8AA1C32AB3800CA462F /* CustomLayoutContentView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E2CE8A91C32AB3800CA462F /* CustomLayoutContentView.m */; };
 		8E2CE8AE1C33E93A00CA462F /* CustomLayout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8B01C33E93A00CA462F /* CustomLayout.xib */; };
 		8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA178711C41B6E20025C9FD /* AppDelegate.m */; };
+		8EA71BC41C48E1B60025BDB3 /* CustomLayoutHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */; };
+		8ECF769C1C4B0C8D00451FFE /* CustomLayoutTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */; };
+		8ECF76A71C4EBA9300451FFE /* DisplayIDTransformer.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF76A61C4EBA9300451FFE /* DisplayIDTransformer.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -93,12 +96,18 @@
 		8E2CE8861C30A46E00CA462F /* CustomLayoutController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutController.m; sourceTree = "<group>"; };
 		8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = PDFPreviewItem.h; sourceTree = "<group>"; };
 		8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = PDFPreviewItem.m; sourceTree = "<group>"; };
-		8E2CE8A81C32AB3700CA462F /* DestinationLayoutView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DestinationLayoutView.h; sourceTree = "<group>"; };
-		8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DestinationLayoutView.m; sourceTree = "<group>"; };
+		8E2CE8A81C32AB3700CA462F /* CustomLayoutContentView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutContentView.h; sourceTree = "<group>"; };
+		8E2CE8A91C32AB3800CA462F /* CustomLayoutContentView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutContentView.m; sourceTree = "<group>"; };
 		8E2CE8AF1C33E93A00CA462F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/CustomLayout.xib; sourceTree = "<group>"; };
 		8E2CE8B21C33E93E00CA462F /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/CustomLayout.strings; sourceTree = "<group>"; };
 		8EA178701C41B6E20025C9FD /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8EA178711C41B6E20025C9FD /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
+		8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutHeaderView.h; sourceTree = "<group>"; };
+		8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutHeaderView.m; sourceTree = "<group>"; };
+		8ECF769A1C4B0C8D00451FFE /* CustomLayoutTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutTableView.h; sourceTree = "<group>"; };
+		8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutTableView.m; sourceTree = "<group>"; };
+		8ECF76A51C4EBA9300451FFE /* DisplayIDTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayIDTransformer.h; sourceTree = "<group>"; };
+		8ECF76A61C4EBA9300451FFE /* DisplayIDTransformer.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = DisplayIDTransformer.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -149,6 +158,10 @@
 		8E18536C1BBC57DA00F25E9F /* SplitShow */ = {
 			isa = PBXGroup;
 			children = (
+				8ECF76A51C4EBA9300451FFE /* DisplayIDTransformer.h */,
+				8ECF76A61C4EBA9300451FFE /* DisplayIDTransformer.m */,
+				8ECF769A1C4B0C8D00451FFE /* CustomLayoutTableView.h */,
+				8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */,
 				8EA178701C41B6E20025C9FD /* AppDelegate.h */,
 				8EA178711C41B6E20025C9FD /* AppDelegate.m */,
 				8E1853A31BBC633300F25E9F /* SlideView.h */,
@@ -157,8 +170,10 @@
 				8E2CE8021C30293800CA462F /* DisplayController.m */,
 				8E2CE8851C30A46E00CA462F /* CustomLayoutController.h */,
 				8E2CE8861C30A46E00CA462F /* CustomLayoutController.m */,
-				8E2CE8A81C32AB3700CA462F /* DestinationLayoutView.h */,
-				8E2CE8A91C32AB3800CA462F /* DestinationLayoutView.m */,
+				8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */,
+				8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */,
+				8E2CE8A81C32AB3700CA462F /* CustomLayoutContentView.h */,
+				8E2CE8A91C32AB3800CA462F /* CustomLayoutContentView.m */,
 				8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */,
 				8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */,
 				8E1855821BDBF64500E6AEB5 /* PreviewController.h */,
@@ -375,12 +390,15 @@
 				8E1855841BDBF64500E6AEB5 /* PreviewController.m in Sources */,
 				8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */,
 				8E2CE7FB1C3007D800CA462F /* Utilities.m in Sources */,
-				8E2CE8AA1C32AB3800CA462F /* DestinationLayoutView.m in Sources */,
+				8E2CE8AA1C32AB3800CA462F /* CustomLayoutContentView.m in Sources */,
+				8ECF76A71C4EBA9300451FFE /* DisplayIDTransformer.m in Sources */,
 				8E1853721BBC57DA00F25E9F /* main.m in Sources */,
 				8E1853A51BBC633300F25E9F /* SlideView.m in Sources */,
 				8E2CE8871C30A46E00CA462F /* CustomLayoutController.m in Sources */,
 				8E2CE8061C30485C00CA462F /* TimerController.m in Sources */,
 				8E1853A81BBD069000F25E9F /* PDFDocument+Presentation.m in Sources */,
+				8ECF769C1C4B0C8D00451FFE /* CustomLayoutTableView.m in Sources */,
+				8EA71BC41C48E1B60025BDB3 /* CustomLayoutHeaderView.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

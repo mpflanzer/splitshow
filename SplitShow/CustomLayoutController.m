@@ -11,22 +11,33 @@
 #import <Quartz/Quartz.h>
 #import "SplitShowDocument.h"
 #import "Utilities.h"
-#import "DestinationLayoutView.h"
+#import "CustomLayoutContentView.h"
 #import "PreviewController.h"
 #import "NSScreen+Name.h"
+#import "CustomLayoutHeaderView.h"
+#import "CustomLayoutContentView.h"
+#import "DisplayIDTransformer.h"
+
+#define kNoSelectedDisplay -1
 
 @interface CustomLayoutController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
-@property (readwrite) NSMutableArray *previewImages;
+@property NSMutableArray *previewImages;
 @property IBOutlet NSArrayController *previewImageController;
+@property NSArrayController *displayController;
 @property IBOutlet NSCollectionView *sourceView;
-@property IBOutlet DestinationLayoutView *destinationView;
+@property IBOutlet NSTableView *layoutTableView;
+@property NSMutableSet<NSIndexPath*> *selectedSlides;
+@property NSMutableDictionary<NSNumber*, NSPopUpButton*> *selectedDisplays;
 
-- (void)setupScreenLayouts;
+- (void)removeSelectedSlides;
 - (void)generatePreviewImages;
 - (void)documentActivateNotification:(NSNotification *)notification;
 - (void)documentDeactivateNotification:(NSNotification *)notification;
+
+- (void)bindHeaderView:(CustomLayoutHeaderView*)view;
+- (void)toggleDisplayMenuButton:(NSPopUpButton*)button forChange:(NSDictionary *)change;
 
 - (IBAction)changeLayoutMode:(NSPopUpButton*)button;
 
@@ -51,8 +62,13 @@
 
     self.window.restorationClass = [[[NSApplication sharedApplication] delegate] class];
 
-    self.previewImages = [NSMutableArray array];
+    NSSortDescriptor *sortScreenByName = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
+    NSArray *sortedScreens = [[NSScreen screens] sortedArrayUsingDescriptors:@[sortScreenByName]];
+    self.displayController = [[NSArrayController alloc] initWithContent:sortedScreens];
 
+    self.previewImages = [NSMutableArray array];
+    self.selectedSlides = [NSMutableSet set];
+    self.selectedDisplays = [NSMutableDictionary dictionary];
     self.document = [[NSDocumentController sharedDocumentController] currentDocument];
 
     if(!self.splitShowDocument.customLayoutMode)
@@ -60,6 +76,9 @@
         self.splitShowDocument.customLayoutMode = kSplitShowSlideModeNormal;
     }
 
+//    self.layoutController = [[NSArrayController alloc] init];
+//    [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
+//
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentActivateNotification:) name:kSplitShowNotificationWindowDidBecomeMain object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentDeactivateNotification:) name:kSplitShowNotificationWindowDidResignMain object:nil];
 }
@@ -67,27 +86,20 @@
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
     [super encodeRestorableStateWithCoder:coder];
+
+    [coder encodeObject:self.selectedSlides forKey:@"selectedSlides"];
+}
+
+- (void)restoreStateWithCoder:(NSCoder *)coder
+{
+    [super restoreStateWithCoder:coder];
+
+    self.selectedSlides = [coder decodeObjectForKey:@"selectedSlides"];
 }
 
 - (void)dealloc
 {
     [[NSNotificationCenter defaultCenter] removeObserver:self];
-}
-
-- (void)setupScreenLayouts
-{
-    for(NSScreen *screen in [NSScreen screens])
-    {
-        NSString *screenID = [NSString stringWithFormat:@"%d", screen.displayID];
-        NSMutableArray *tmp = [self.splitShowDocument.customLayouts objectForKey:screenID];
-
-        if(!tmp)
-        {
-            tmp = [NSMutableArray array] ;
-        }
-
-        [self.splitShowDocument.customLayouts setObject:tmp forKey:screenID];
-    }
 }
 
 - (NSString *)windowTitleForDocumentDisplayName:(NSString *)displayName
@@ -114,6 +126,8 @@
 {
     [super setDocument:document];
 
+    NSLog(@"Set document: %@", document);
+
     if([kSplitShowSlideModeNormal isEqualToString:self.splitShowDocument.customLayoutMode])
     {
         self.pdfDocument = [self.splitShowDocument createMirroredDocument];
@@ -127,10 +141,102 @@
         self.pdfDocument = [self.splitShowDocument createMirroredDocument];
     }
 
-    [self setupScreenLayouts];
     [self generatePreviewImages];
-    self.destinationView.previewImages = self.previewImages;
-    [self.destinationView loadLayouts];
+    self.layoutController = [[NSArrayController alloc] initWithContent:[document customLayouts]];
+
+    [self.layoutTableView reloadData];
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if(menuItem.tag == kNoSelectedDisplay)
+    {
+        return YES;
+    }
+    else
+    {
+        NSScreen *selectedScreen = [self.displayController.arrangedObjects objectAtIndex:menuItem.tag];
+        NSPopUpButton *buttonForSelectedDisplay = [self.selectedDisplays objectForKey:@(selectedScreen.displayID)];
+
+        return (!buttonForSelectedDisplay || buttonForSelectedDisplay.selectedItem == menuItem);
+    }
+}
+
+- (void)bindHeaderView:(CustomLayoutHeaderView*)view;
+{
+    NSDictionary *bindingContentOptions = @{NSInsertsNullPlaceholderBindingOption : @YES};
+    NSDictionary *bindingValuesOptions = @{NSNullPlaceholderBindingOption : NSLocalizedString(@"No display", @"No display")};
+    NSDictionary *bindingSelectionOptions = @{NSValidatesImmediatelyBindingOption : @YES};
+
+    [view.displayButton bind:@"content" toObject:self.displayController withKeyPath:@"arrangedObjects" options:bindingContentOptions];
+    [view.displayButton bind:@"contentObjects" toObject:self.displayController withKeyPath:@"arrangedObjects.displayID" options:nil];
+    [view.displayButton bind:@"contentValues" toObject:self.displayController withKeyPath:@"arrangedObjects.name" options:bindingValuesOptions];
+    [view.displayButton bind:@"selectedObject" toObject:view withKeyPath:@"objectValue.displayID" options:bindingSelectionOptions];
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if([@"objectValue.displayID" isEqualToString:keyPath])
+    {
+        [self.selectedDisplays removeObjectForKey:[change objectForKey:NSKeyValueChangeOldKey]];
+        [self.selectedDisplays setObject:[object displayButton] forKey:[change objectForKey:NSKeyValueChangeNewKey]];
+        [self.splitShowDocument invalidateRestorableState];
+    }
+    else if([@"objectValue.name" isEqualToString:keyPath])
+    {
+        [self.splitShowDocument invalidateRestorableState];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (IBAction)changeSelectedDisplay:(NSPopUpButton*)button
+{
+    for(NSNumber *displayID in self.selectedDisplays)
+    {
+        if([self.selectedDisplays objectForKey:displayID] == button)
+        {
+            [self.selectedDisplays removeObjectForKey:displayID];
+            break;
+        }
+    }
+
+    if(button.selectedTag != kNoSelectedDisplay)
+    {
+        NSScreen *selectedScreen = [self.displayController.arrangedObjects objectAtIndex:button.selectedTag];
+
+        [self.selectedDisplays setObject:button forKey:@(selectedScreen.displayID)];
+    }
+//    for(NSInteger i = 0; i < [self.layoutController.arrangedObjects count]; ++i)
+//    {
+//        CustomLayoutHeaderView *view = [self.layoutTableView viewAtColumn:0 row:i makeIfNecessary:NO];
+//
+//        if(view.displayButton != button)
+//        {
+//            for(NSInteger j = 0; j < view.displayButtons)
+//            [view.displayButton itemAtIndex:selectedItem].enabled = NO;
+//        }
+//    }
+}
+
+- (void)toggleDisplayMenuButton:(NSPopUpButton*)button forChange:(NSDictionary *)change
+{
+//    NSNumber *oldDisplayIndex = change[NSKeyValueChangeOldKey];
+//    NSNumber *newDisplayIndex = change[NSKeyValueChangeNewKey];
+//
+//    if(oldDisplayIndex.integerValue != kNoSelectedDisplay)
+//    {
+//        ((NSMenuItem*)[button itemAtIndex:oldDisplayIndex.unsignedIntegerValue + 1]).enabled = YES;
+//    }
+//
+//    if(newDisplayIndex.integerValue != kNoSelectedDisplay)
+//    {
+//        ((NSMenuItem*)[button itemAtIndex:newDisplayIndex.unsignedIntegerValue + 1]).enabled = NO;
+//    }
+//
+//    self.canEnterFullScreen = (self.selectedMainDisplayIndex != kNoSelectedDisplay || self.selectedHelperDisplayIndex != kNoSelectedDisplay);
 }
 
 - (IBAction)changeLayoutMode:(NSPopUpButton *)button
@@ -150,85 +256,121 @@
 
     [self removeAllSlides];
     [self generatePreviewImages];
-    self.destinationView.previewImages = self.previewImages;
-    [self.destinationView loadLayouts];
+//    [self.layoutTableView reloadData];
 }
 
 #pragma mark - CustomLayoutDelegate
 
-- (NSInteger)numberOfScreens
-{
-    return self.splitShowDocument.customLayouts.count;
-}
+//- (NSInteger)rowHeight
+//{
+//    return self.layoutTableView.rowHeight;
+//}
+//
+//- (NSInteger)numberOfSlidesForRow:(NSInteger)row
+//{
+//    return [[[self.splitShowDocument.customLayouts objectAtIndex:row] objectForKey:@"slides"] count];
+//}
 
-- (NSInteger)maxSlidesPerScreen
+- (NSInteger)maxSlidesPerLayout
 {
-    NSUInteger max = 0;
+    NSInteger max = 0;
 
-    for(NSString *screenID in self.splitShowDocument.customLayouts)
+    for(NSDictionary *info in self.splitShowDocument.customLayouts)
     {
-        NSArray *slides = [self.splitShowDocument.customLayouts objectForKey:screenID];
+        NSArray *slides = [info objectForKey:@"slides"];
         max = MAX(max, slides.count);
     }
 
     return max;
 }
 
-- (NSInteger)numberOfSlidesForScreen:(NSString*)screenID
-{
-    return [[self.splitShowDocument.customLayouts objectForKey:screenID] count];
-}
-
-- (NSString*)nameOfScreen:(NSString*)screenID
-{
-    return [[NSScreen screenWithDisplayID:screenID.intValue] name];
-}
-
-- (NSInteger)slideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
-{
-    return [[[self.splitShowDocument.customLayouts objectForKey:screenID] objectAtIndex:slideIndex] integerValue];
-}
-
-- (void)insertSlide:(NSInteger)slide atIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
+- (void)willUpdateSlides
 {
     [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-    [[self.splitShowDocument.customLayouts objectForKey:screenID] insertObject:@(slide) atIndex:slideIndex];
+}
+
+- (void)didUpdateSlides
+{
     [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
 }
 
-- (void)replaceSlideAtIndex:(NSInteger)slideIndex withSlide:(NSInteger)slide forScreen:(NSString*)screenID
-{
-    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-    [[self.splitShowDocument.customLayouts objectForKey:screenID] replaceObjectAtIndex:slideIndex withObject:@(slide)];
-    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-}
-
-- (void)removeSlideAtIndex:(NSInteger)slideIndex forScreen:(NSString*)screenID
-{
-    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-    [[self.splitShowDocument.customLayouts objectForKey:screenID] removeObjectAtIndex:slideIndex];
-    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-}
+//- (NSInteger)slideAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    return [[[[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"] objectAtIndex:indexPath.item] integerValue];
+//}
+//
+//- (void)insertSlide:(NSInteger)slide atIndexPath:(NSIndexPath *)indexPath
+//{
+//    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+//    NSMutableArray *slides = [[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"];
+//    [slides insertObject:@(slide) atIndex:indexPath.item];
+//    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+//}
+//
+//- (void)replaceSlideAtIndexPath:(NSIndexPath *)indexPath withSlide:(NSInteger)slide
+//{
+//    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+//    NSMutableArray *slides = [[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"];
+//    [slides replaceObjectAtIndex:indexPath.item withObject:@(slide)];
+//    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+//}
+//
+//- (void)removeSlideAtIndexPath:(NSIndexPath *)indexPath
+//{
+//    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+//    NSMutableArray *slides = [[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"];
+//    [slides removeObjectAtIndex:indexPath.item];
+//    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+//}
 
 - (void)removeAllSlides
 {
     [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
 
-    for(NSString *screenID in self.splitShowDocument.customLayouts)
+    for(NSMutableDictionary *info in self.splitShowDocument.customLayouts)
     {
-        NSMutableArray *slides = [self.splitShowDocument.customLayouts objectForKey:screenID];
-        [slides removeAllObjects];
+        [[info objectForKey:@"slides"] removeAllObjects];
     }
 
     [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+}
+
+- (NSImage *)previewImageForSlide:(NSInteger)slide
+{
+    NSLog(@"Get preview image");
+    return [self.previewImages objectAtIndex:slide];
+}
+
+- (BOOL)toggleSlideAtIndexPath:(NSIndexPath *)indexPath
+{
+    if([self.selectedSlides containsObject:indexPath])
+    {
+        [self.selectedSlides removeObject:indexPath];
+        [self invalidateRestorableState];
+        return NO;
+    }
+    else
+    {
+        [self.selectedSlides addObject:indexPath];
+        [self invalidateRestorableState];
+        return YES;
+    }
+}
+
+- (BOOL)isSelectedSlideAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self.selectedSlides containsObject:indexPath];
 }
 
 #pragma mark -
 
 - (void)generatePreviewImages
 {
+    NSLog(@"Generate preview images");
+
     if(!self.previewImageController)
     {
+        NSLog(@"No controller");
         return;
     }
     
@@ -296,6 +438,32 @@
     [button selectItemWithTag:0];
 }
 
+#pragma mark - CustomLayout Action
+
+- (IBAction)addLayout:(id)sender
+{
+    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"slides",
+                                 [NSString stringWithFormat:@"%@ #%lu", NSLocalizedString(@"Layout", @"Layout"), self.splitShowDocument.customLayouts.count + 1], @"name",
+                                 nil];
+    [self.splitShowDocument.customLayouts addObject:info];
+
+    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+}
+
+- (IBAction)removeLayouts:(id)sender
+{
+    if(self.layoutTableView.selectedRowIndexes.count > 0)
+    {
+        [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+        [self.splitShowDocument.customLayouts removeObjectsAtIndexes:self.layoutTableView.selectedRowIndexes];
+        [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+    }
+}
+
+#pragma mark - CollectionView Delegate
+
 - (BOOL)collectionView:(NSCollectionView *)collectionView canDragItemsAtIndexes:(NSIndexSet *)indexes withEvent:(NSEvent *)event
 {
     return YES;
@@ -308,6 +476,78 @@
     [pasteboard setData:indexData forType:kSplitShowLayoutData];
     
     return YES;
+}
+
+#pragma mark - TableView Delegate
+
+- (CGFloat)tableView:(NSTableView *)tableView heightOfRow:(NSInteger)row
+{
+    return 100;
+}
+
+- (NSView *)tableView:(NSTableView *)tableView viewForTableColumn:(NSTableColumn *)tableColumn row:(NSInteger)row
+{
+    if([@"Header" isEqualToString:tableColumn.identifier])
+    {
+        CustomLayoutHeaderView *view = [tableView makeViewWithIdentifier:@"CustomLayoutHeader" owner:self];
+        view.delegate = self;
+
+        [view addObserver:self forKeyPath:@"objectValue.displayID" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:NULL];
+        [view addObserver:self forKeyPath:@"objectValue.name" options:0 context:NULL];
+
+        [self bindHeaderView:view];
+        return view;
+    }
+    else if([@"Content" isEqualToString:tableColumn.identifier])
+    {
+//        CustomLayoutContentView *view = [tableView makeViewWithIdentifier:@"CustomLayoutContent" owner:self];
+        CustomLayoutContentView *view = [[CustomLayoutContentView alloc] init];
+        view.layer.backgroundColor = [[NSColor colorWithRed:(rand() / (float)RAND_MAX) green:(rand() / (float)RAND_MAX) blue:(rand() / (float)RAND_MAX) alpha:1.0] CGColor];
+        view.row = row;
+        view.col = tableColumn;
+        view.delegate = self;
+        NSLog(@"Set object");
+        view.objectValue = [self.layoutController.arrangedObjects objectAtIndex:row];
+
+        return view;
+    }
+
+    return nil;
+}
+
+#pragma mark - Key events
+
+- (void)deleteBackward:(id)sender
+{
+    [self removeSelectedSlides];
+}
+
+- (void)deleteForward:(id)sender
+{
+    [self removeSelectedSlides];
+}
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    [self interpretKeyEvents:@[theEvent]];
+}
+
+-(void)removeSelectedSlides
+{
+    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+
+    NSArray *sortedIndexPath = [self.selectedSlides sortedArrayUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"section" ascending:YES], [[NSSortDescriptor alloc] initWithKey:@"item" ascending:NO]]];
+
+    for(NSIndexPath *indexPath in sortedIndexPath)
+    {
+        NSMutableDictionary *info = [self.splitShowDocument.customLayouts objectAtIndex:indexPath.section];
+        [[info objectForKey:@"slides"] removeObjectAtIndex:indexPath.item];
+    }
+
+    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+
+    [self.selectedSlides removeAllObjects];
+    [self invalidateRestorableState];
 }
 
 @end

@@ -85,6 +85,7 @@
 {
     self.pdfDocument = [[PDFDocument alloc] initWithURL:url];
     self.presentations = [self generatePresentationsForModes:self.supportedSlideModes fromPDFDocument:self.pdfDocument];
+    self.customLayouts = [NSMutableArray array];
     self.navFileContent = [self readNAVFileForDocument:self.pdfDocument];
 
     self.interleavedIndices = [self createInterleavedIndicesFromNavFileContent:self.navFileContent];

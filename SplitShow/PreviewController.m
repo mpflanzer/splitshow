@@ -240,17 +240,21 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
             
         case SplitShowPresentationModeCustom:
         {
-            NSArray<NSArray*> *screens = [self.splitShowDocument.customLayouts allValues];
+            NSDictionary *info;
             self.mainPreview.document = nil;
             self.helperPreview.document = nil;
 
-            if(screens.count > 0)
+            if(self.splitShowDocument.customLayouts.count > 0)
             {
-                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:0] inMode:self.splitShowDocument.customLayoutMode];
+                info = [self.splitShowDocument.customLayouts objectAtIndex:0];
 
-                if(screens.count > 1)
+                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode];
+
+                if(self.splitShowDocument.customLayouts.count > 1)
                 {
-                    self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[screens objectAtIndex:1] inMode:self.splitShowDocument.customLayoutMode];
+                    info = [self.splitShowDocument.customLayouts objectAtIndex:1];
+                    
+                    self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode];
                 }
             }
 
@@ -335,12 +339,10 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
         case SplitShowPresentationModeCustom:
         {
-            for(NSString *screenID in self.splitShowDocument.customLayouts)
+            for(NSDictionary *info in self.splitShowDocument.customLayouts)
             {
-                NSArray *slides = [self.splitShowDocument.customLayouts objectForKey:screenID];
-
-                [screens addObject:@{@"display" : [NSScreen screenWithDisplayID:screenID.intValue],
-                                     @"document" : [self.splitShowDocument createDocumentFromIndices:slides inMode:self.splitShowDocument.customLayoutMode],
+                [screens addObject:@{@"display" : [NSScreen screenWithDisplayID:[[info objectForKey:@"displayID"] intValue]],
+                                     @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
 

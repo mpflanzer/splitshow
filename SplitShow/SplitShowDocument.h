@@ -24,7 +24,7 @@ enum SplitShowError
 
 @interface SplitShowDocument : NSDocument
 
-@property NSMutableDictionary<NSString*, NSMutableArray*> *customLayouts;
+@property NSMutableArray<NSMutableDictionary*> *customLayouts;
 @property NSString *customLayoutMode;
 
 @property (readonly) NSString *name;

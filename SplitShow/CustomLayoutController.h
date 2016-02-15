@@ -7,16 +7,16 @@
 //
 
 #import <Cocoa/Cocoa.h>
-#import "DestinationLayoutView.h"
+#import "CustomLayoutContentView.h"
 
 #define kSplitShowLayoutData @"kSplitShowLayoutData"
 
 @class PDFDocument;
 
-@interface CustomLayoutController : NSWindowController <NSCollectionViewDelegate, NSWindowDelegate, CustomLayoutDelegate>
+@interface CustomLayoutController : NSWindowController <NSCollectionViewDelegate, NSTableViewDelegate, NSWindowDelegate, CustomLayoutDelegate>
 
 @property PDFDocument *pdfDocument;
-@property (readonly) NSMutableArray *previewImages;
+@property NSArrayController *layoutController;
 
 - (IBAction)selectItems:(NSPopUpButton*)button;
 
@@ -25,5 +25,9 @@
 + (instancetype) alloc  __attribute__((unavailable("alloc not available, call sharedCustomLayoutController instead")));
 - (instancetype) init   __attribute__((unavailable("init not available, call sharedCustomLayoutController instead")));
 + (instancetype) new    __attribute__((unavailable("new not available, call sharedCustomLayoutController instead")));
+
+- (IBAction)addLayout:(id)sender;
+- (IBAction)removeLayouts:(id)sender;
+- (IBAction)changeSelectedDisplay:(NSPopUpButton*)button;
 
 @end
