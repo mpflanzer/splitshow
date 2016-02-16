@@ -11,6 +11,11 @@
 
 @implementation CustomLayoutHeaderView
 
+- (void)awakeFromNib
+{
+    [self addObserver:self forKeyPath:@"objectValue.name" options:0 context:NULL];
+}
+
 - (void)setObjectValue:(id)objectValue
 {
     NSNumber *displayID = [objectValue objectForKey:@"displayID"];
@@ -23,12 +28,29 @@
     [super setObjectValue:objectValue];
 }
 
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    return NO;
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if([@"objectValue.name" isEqualToString:keyPath])
+    {
+        [self.delegate didChangeLayoutName];
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
 - (void)dealloc
 {
+    [self removeObserver:self forKeyPath:@"objectValue.name"];
+
     if(self.delegate)
     {
-        [self removeObserver:self.delegate forKeyPath:@"objectValue.displayID"];
-        [self removeObserver:self.delegate forKeyPath:@"objectValue.name"];
         [self.displayButton unbind:@"content"];
         [self.displayButton unbind:@"contentValues"];
         [self.displayButton unbind:@"contentObjects"];

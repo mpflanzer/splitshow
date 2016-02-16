@@ -6,6 +6,7 @@
 //  Copyright © 2016 Moritz Pflanzer. All rights reserved.
 //
 
+#import "CustomLayoutDelegateProtocol.h"
 #import <Cocoa/Cocoa.h>
 
 @interface CustomLayoutHeaderView : NSTableCellView
@@ -13,6 +14,6 @@
 @property IBOutlet NSTextField *layoutName;
 @property IBOutlet NSPopUpButton *displayButton;
 
-@property id delegate;
+@property id<CustomLayoutDelegate> delegate;
 
 @end

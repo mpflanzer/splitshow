@@ -25,6 +25,7 @@
 - (void)updateColumnWidth;
 - (CAShapeLayer *)createSelectionMarkerAtIndex:(NSInteger)slideIndex;
 - (void)loadSlides;
+- (void)unselectAllSlides;
 - (void)initView;
 
 @end
@@ -129,13 +130,23 @@
     [self updateColumnWidth];
 }
 
+- (void)unselectAllSlides
+{
+    for(CALayer *slide in self.slidesLayer.sublayers)
+    {
+        [slide.sublayers objectAtIndex:0].hidden = YES;
+    }
+}
+
 - (void)updateColumnWidth
 {
-    NSLog(@"Update width");
+    __block NSTableColumn *col = self.col;
+    __block float maxWidth = self.maxContentWidth;
 
-    self.col.minWidth = self.col.width;
-    self.col.maxWidth = self.maxContentWidth;
-    self.col.width = self.maxContentWidth;
+    dispatch_async(dispatch_get_main_queue(), ^{
+        col.maxWidth = maxWidth;
+        col.width = maxWidth;
+    });
 }
 
 - (NSDragOperation)draggingEntered:(id<NSDraggingInfo>)sender
@@ -196,13 +207,13 @@
     if(x_rem < IMAGE_SPACING_X || x == maxSlides)
     {
         // Insert between slides
-//        NSUInteger shift = indexes.count * (IMAGE_WIDTH + IMAGE_SPACING_X);
+        NSUInteger shift = indexes.count * (IMAGE_WIDTH + IMAGE_SPACING_X);
 
-//        for(NSUInteger i = x; i < self.slidesLayer.sublayers.count; ++i)
-//        {
-//            CALayer *layer = [self.slidesLayer.sublayers objectAtIndex:i];
-//            layer.position = NSMakePoint(layer.position.x + shift, layer.position.y);
-//        }
+        for(NSUInteger i = x; i < self.slidesLayer.sublayers.count; ++i)
+        {
+            CALayer *layer = [self.slidesLayer.sublayers objectAtIndex:i];
+            layer.position = NSMakePoint(layer.position.x + shift, layer.position.y);
+        }
 
         NSUInteger slide = indexes.firstIndex;
 
@@ -210,14 +221,14 @@
 
         for(NSUInteger i = x; slide != NSNotFound; ++i)
         {
-//            CALayer *newLayer = [CALayer layer];
-//            newLayer.contents = [self.delegate previewImageForSlide:slide];
-//            newLayer.frame = NSMakeRect(i * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
-//                                     IMAGE_WIDTH, self.bounds.size.height);
+            CALayer *newLayer = [CALayer layer];
+            newLayer.contents = [self.delegate previewImageForSlide:slide];
+            newLayer.frame = NSMakeRect(i * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
+                                     IMAGE_WIDTH, self.bounds.size.height);
 
             [self.slides insertObject:@(slide) atIndex:i];
 
-//            [self.slidesLayer insertSublayer:newLayer atIndex:(unsigned int)i];
+            [self.slidesLayer insertSublayer:newLayer atIndex:(unsigned int)i];
             slide = [indexes indexGreaterThanIndex:slide];
         }
 
@@ -228,38 +239,38 @@
         // Replace slide (and insert more slides)
         NSUInteger slide = indexes.firstIndex;
 
-//        CALayer *oldLayer = [self.slidesLayer.sublayers objectAtIndex:x];
-//
-//        CALayer *newLayer = [CALayer layer];
-//        newLayer.contents = [self.delegate previewImageForSlide:slide];
-//        newLayer.frame = NSMakeRect(x * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
-//                                    IMAGE_WIDTH, self.bounds.size.height);
+        CALayer *oldLayer = [self.slidesLayer.sublayers objectAtIndex:x];
+
+        CALayer *newLayer = [CALayer layer];
+        newLayer.contents = [self.delegate previewImageForSlide:slide];
+        newLayer.frame = NSMakeRect(x * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
+                                    IMAGE_WIDTH, self.bounds.size.height);
 
         [self.delegate willUpdateSlides];
         [self.slides replaceObjectAtIndex:x withObject:@(slide)];
-//        [self.slidesLayer replaceSublayer:oldLayer with:newLayer];
+        [self.slidesLayer replaceSublayer:oldLayer with:newLayer];
 
         if(indexes.count > 1)
         {
-//            NSUInteger shift = (indexes.count - 1) * (IMAGE_WIDTH + IMAGE_SPACING_X);
-//
-//            for(NSUInteger i = x + 1; i < self.slidesLayer.sublayers.count; ++i)
-//            {
-//                CALayer *layer = [self.slidesLayer.sublayers objectAtIndex:i];
-//                layer.position = NSMakePoint(layer.position.x + shift, layer.position.y);
-//            }
+            NSUInteger shift = (indexes.count - 1) * (IMAGE_WIDTH + IMAGE_SPACING_X);
+
+            for(NSUInteger i = x + 1; i < self.slidesLayer.sublayers.count; ++i)
+            {
+                CALayer *layer = [self.slidesLayer.sublayers objectAtIndex:i];
+                layer.position = NSMakePoint(layer.position.x + shift, layer.position.y);
+            }
 
             slide = [indexes indexGreaterThanIndex:slide];
 
             for(NSUInteger i = x + 1; slide != NSNotFound; ++i)
             {
-//                CALayer *newLayer = [CALayer layer];
-//                newLayer.contents = [self.delegate previewImageForSlide:slide];
-//                newLayer.frame = NSMakeRect(i * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
-//                                            IMAGE_WIDTH, self.bounds.size.height);
+                CALayer *newLayer = [CALayer layer];
+                newLayer.contents = [self.delegate previewImageForSlide:slide];
+                newLayer.frame = NSMakeRect(i * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
+                                            IMAGE_WIDTH, self.bounds.size.height);
 
                 [self.slides insertObject:@(slide) atIndex:i];
-//                [self.slidesLayer insertSublayer:newLayer atIndex:(unsigned int)i];
+                [self.slidesLayer insertSublayer:newLayer atIndex:(unsigned int)i];
 
                 slide = [indexes indexGreaterThanIndex:slide];
             }
@@ -274,8 +285,8 @@
 - (void)concludeDragOperation:(id<NSDraggingInfo>)sender
 {
     self.marker.hidden = YES;
-//
-//    [self updateColumnWidth];
+
+    [self updateColumnWidth];
 }
 
 - (void)mouseDown:(NSEvent *)theEvent
@@ -290,17 +301,21 @@
         return;
     }
 
-    NSLog(@"Clicked on view: %@", self);
-
     if(x < self.slides.count)
     {
+        // Clear selection if cmd is not pressed
+        if(!(theEvent.modifierFlags & NSCommandKeyMask))
+        {
+            [self.delegate unselectAllSlides];
+            [self unselectAllSlides];
+        }
+
         BOOL selectSlide = [self.delegate toggleSlideAtIndexPath:[NSIndexPath indexPathForItem:x inSection:self.row]];
 
         [CATransaction begin];
         [CATransaction setValue:(id)kCFBooleanTrue forKey:kCATransactionDisableActions];
 
         CALayer *slide = [self.slidesLayer.sublayers objectAtIndex:x];
-//        [slide.sublayers objectAtIndex:0].hidden = ![slide.sublayers objectAtIndex:0].hidden;
         [slide.sublayers objectAtIndex:0].hidden = !selectSlide;
 
         [CATransaction commit];

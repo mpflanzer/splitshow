@@ -37,7 +37,6 @@
 - (void)documentDeactivateNotification:(NSNotification *)notification;
 
 - (void)bindHeaderView:(CustomLayoutHeaderView*)view;
-- (void)toggleDisplayMenuButton:(NSPopUpButton*)button forChange:(NSDictionary *)change;
 
 - (IBAction)changeLayoutMode:(NSPopUpButton*)button;
 
@@ -76,25 +75,11 @@
         self.splitShowDocument.customLayoutMode = kSplitShowSlideModeNormal;
     }
 
-//    self.layoutController = [[NSArrayController alloc] init];
-//    [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
-//
+    self.layoutController = [NSArrayController new];
+    [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
+
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentActivateNotification:) name:kSplitShowNotificationWindowDidBecomeMain object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentDeactivateNotification:) name:kSplitShowNotificationWindowDidResignMain object:nil];
-}
-
-- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
-{
-    [super encodeRestorableStateWithCoder:coder];
-
-    [coder encodeObject:self.selectedSlides forKey:@"selectedSlides"];
-}
-
-- (void)restoreStateWithCoder:(NSCoder *)coder
-{
-    [super restoreStateWithCoder:coder];
-
-    self.selectedSlides = [coder decodeObjectForKey:@"selectedSlides"];
 }
 
 - (void)dealloc
@@ -126,8 +111,6 @@
 {
     [super setDocument:document];
 
-    NSLog(@"Set document: %@", document);
-
     if([kSplitShowSlideModeNormal isEqualToString:self.splitShowDocument.customLayoutMode])
     {
         self.pdfDocument = [self.splitShowDocument createMirroredDocument];
@@ -142,24 +125,28 @@
     }
 
     [self generatePreviewImages];
-    self.layoutController = [[NSArrayController alloc] initWithContent:[document customLayouts]];
-
+    self.selectedSlides = [NSMutableSet set];
     [self.layoutTableView reloadData];
 }
 
-- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)anItem
 {
-    if(menuItem.tag == kNoSelectedDisplay)
+    if(anItem.action == @selector(changeSelectedDisplay:))
     {
-        return YES;
-    }
-    else
-    {
-        NSScreen *selectedScreen = [self.displayController.arrangedObjects objectAtIndex:menuItem.tag];
-        NSPopUpButton *buttonForSelectedDisplay = [self.selectedDisplays objectForKey:@(selectedScreen.displayID)];
+        if(anItem.tag == kNoSelectedDisplay)
+        {
+            return YES;
+        }
+        else
+        {
+            NSScreen *selectedScreen = [self.displayController.arrangedObjects objectAtIndex:anItem.tag];
+            NSPopUpButton *buttonForSelectedDisplay = [self.selectedDisplays objectForKey:@(selectedScreen.displayID)];
 
-        return (!buttonForSelectedDisplay || buttonForSelectedDisplay.selectedItem == menuItem);
+            return (!buttonForSelectedDisplay || buttonForSelectedDisplay.selectedItem == anItem);
+        }
     }
+
+    return YES;
 }
 
 - (void)bindHeaderView:(CustomLayoutHeaderView*)view;
@@ -172,24 +159,8 @@
     [view.displayButton bind:@"contentObjects" toObject:self.displayController withKeyPath:@"arrangedObjects.displayID" options:nil];
     [view.displayButton bind:@"contentValues" toObject:self.displayController withKeyPath:@"arrangedObjects.name" options:bindingValuesOptions];
     [view.displayButton bind:@"selectedObject" toObject:view withKeyPath:@"objectValue.displayID" options:bindingSelectionOptions];
-}
 
-- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
-{
-    if([@"objectValue.displayID" isEqualToString:keyPath])
-    {
-        [self.selectedDisplays removeObjectForKey:[change objectForKey:NSKeyValueChangeOldKey]];
-        [self.selectedDisplays setObject:[object displayButton] forKey:[change objectForKey:NSKeyValueChangeNewKey]];
-        [self.splitShowDocument invalidateRestorableState];
-    }
-    else if([@"objectValue.name" isEqualToString:keyPath])
-    {
-        [self.splitShowDocument invalidateRestorableState];
-    }
-    else
-    {
-        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
-    }
+    view.delegate = self;
 }
 
 - (IBAction)changeSelectedDisplay:(NSPopUpButton*)button
@@ -209,34 +180,8 @@
 
         [self.selectedDisplays setObject:button forKey:@(selectedScreen.displayID)];
     }
-//    for(NSInteger i = 0; i < [self.layoutController.arrangedObjects count]; ++i)
-//    {
-//        CustomLayoutHeaderView *view = [self.layoutTableView viewAtColumn:0 row:i makeIfNecessary:NO];
-//
-//        if(view.displayButton != button)
-//        {
-//            for(NSInteger j = 0; j < view.displayButtons)
-//            [view.displayButton itemAtIndex:selectedItem].enabled = NO;
-//        }
-//    }
-}
 
-- (void)toggleDisplayMenuButton:(NSPopUpButton*)button forChange:(NSDictionary *)change
-{
-//    NSNumber *oldDisplayIndex = change[NSKeyValueChangeOldKey];
-//    NSNumber *newDisplayIndex = change[NSKeyValueChangeNewKey];
-//
-//    if(oldDisplayIndex.integerValue != kNoSelectedDisplay)
-//    {
-//        ((NSMenuItem*)[button itemAtIndex:oldDisplayIndex.unsignedIntegerValue + 1]).enabled = YES;
-//    }
-//
-//    if(newDisplayIndex.integerValue != kNoSelectedDisplay)
-//    {
-//        ((NSMenuItem*)[button itemAtIndex:newDisplayIndex.unsignedIntegerValue + 1]).enabled = NO;
-//    }
-//
-//    self.canEnterFullScreen = (self.selectedMainDisplayIndex != kNoSelectedDisplay || self.selectedHelperDisplayIndex != kNoSelectedDisplay);
+    [self.document invalidateRestorableState];
 }
 
 - (IBAction)changeLayoutMode:(NSPopUpButton *)button
@@ -256,20 +201,9 @@
 
     [self removeAllSlides];
     [self generatePreviewImages];
-//    [self.layoutTableView reloadData];
 }
 
 #pragma mark - CustomLayoutDelegate
-
-//- (NSInteger)rowHeight
-//{
-//    return self.layoutTableView.rowHeight;
-//}
-//
-//- (NSInteger)numberOfSlidesForRow:(NSInteger)row
-//{
-//    return [[[self.splitShowDocument.customLayouts objectAtIndex:row] objectForKey:@"slides"] count];
-//}
 
 - (NSInteger)maxSlidesPerLayout
 {
@@ -294,34 +228,10 @@
     [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
 }
 
-//- (NSInteger)slideAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    return [[[[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"] objectAtIndex:indexPath.item] integerValue];
-//}
-//
-//- (void)insertSlide:(NSInteger)slide atIndexPath:(NSIndexPath *)indexPath
-//{
-//    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-//    NSMutableArray *slides = [[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"];
-//    [slides insertObject:@(slide) atIndex:indexPath.item];
-//    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-//}
-//
-//- (void)replaceSlideAtIndexPath:(NSIndexPath *)indexPath withSlide:(NSInteger)slide
-//{
-//    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-//    NSMutableArray *slides = [[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"];
-//    [slides replaceObjectAtIndex:indexPath.item withObject:@(slide)];
-//    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-//}
-//
-//- (void)removeSlideAtIndexPath:(NSIndexPath *)indexPath
-//{
-//    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-//    NSMutableArray *slides = [[self.splitShowDocument.customLayouts objectAtIndex:indexPath.section] objectForKey:@"slides"];
-//    [slides removeObjectAtIndex:indexPath.item];
-//    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-//}
+- (void)didChangeLayoutName
+{
+    [self.document invalidateRestorableState];
+}
 
 - (void)removeAllSlides
 {
@@ -337,7 +247,6 @@
 
 - (NSImage *)previewImageForSlide:(NSInteger)slide
 {
-    NSLog(@"Get preview image");
     return [self.previewImages objectAtIndex:slide];
 }
 
@@ -362,15 +271,17 @@
     return [self.selectedSlides containsObject:indexPath];
 }
 
+- (void)unselectAllSlides
+{
+    [self.selectedSlides removeAllObjects];
+}
+
 #pragma mark -
 
 - (void)generatePreviewImages
 {
-    NSLog(@"Generate preview images");
-
     if(!self.previewImageController)
     {
-        NSLog(@"No controller");
         return;
     }
     
@@ -450,6 +361,8 @@
     [self.splitShowDocument.customLayouts addObject:info];
 
     [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+
+    [self.layoutTableView reloadData];
 }
 
 - (IBAction)removeLayouts:(id)sender
@@ -460,6 +373,8 @@
         [self.splitShowDocument.customLayouts removeObjectsAtIndexes:self.layoutTableView.selectedRowIndexes];
         [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
     }
+
+    [self.layoutTableView reloadData];
 }
 
 #pragma mark - CollectionView Delegate
@@ -490,23 +405,16 @@
     if([@"Header" isEqualToString:tableColumn.identifier])
     {
         CustomLayoutHeaderView *view = [tableView makeViewWithIdentifier:@"CustomLayoutHeader" owner:self];
-        view.delegate = self;
-
-        [view addObserver:self forKeyPath:@"objectValue.displayID" options:(NSKeyValueObservingOptionNew | NSKeyValueObservingOptionOld) context:NULL];
-        [view addObserver:self forKeyPath:@"objectValue.name" options:0 context:NULL];
-
         [self bindHeaderView:view];
+
         return view;
     }
     else if([@"Content" isEqualToString:tableColumn.identifier])
     {
-//        CustomLayoutContentView *view = [tableView makeViewWithIdentifier:@"CustomLayoutContent" owner:self];
-        CustomLayoutContentView *view = [[CustomLayoutContentView alloc] init];
-        view.layer.backgroundColor = [[NSColor colorWithRed:(rand() / (float)RAND_MAX) green:(rand() / (float)RAND_MAX) blue:(rand() / (float)RAND_MAX) alpha:1.0] CGColor];
+        CustomLayoutContentView *view = [tableView makeViewWithIdentifier:@"CustomLayoutContent" owner:self];
         view.row = row;
         view.col = tableColumn;
         view.delegate = self;
-        NSLog(@"Set object");
         view.objectValue = [self.layoutController.arrangedObjects objectAtIndex:row];
 
         return view;
@@ -516,6 +424,11 @@
 }
 
 #pragma mark - Key events
+
+- (void)keyDown:(NSEvent *)theEvent
+{
+    [self interpretKeyEvents:@[theEvent]];
+}
 
 - (void)deleteBackward:(id)sender
 {
@@ -527,13 +440,13 @@
     [self removeSelectedSlides];
 }
 
-- (void)keyDown:(NSEvent *)theEvent
-{
-    [self interpretKeyEvents:@[theEvent]];
-}
-
 -(void)removeSelectedSlides
 {
+    if(self.selectedSlides.count == 0)
+    {
+        return;
+    }
+    
     [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
 
     NSArray *sortedIndexPath = [self.selectedSlides sortedArrayUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"section" ascending:YES], [[NSSortDescriptor alloc] initWithKey:@"item" ascending:NO]]];

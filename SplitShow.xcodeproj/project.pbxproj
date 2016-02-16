@@ -104,6 +104,7 @@
 		8EA178711C41B6E20025C9FD /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutHeaderView.h; sourceTree = "<group>"; };
 		8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutHeaderView.m; sourceTree = "<group>"; };
+		8EB620331C73A80D00F8C007 /* CustomLayoutDelegateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLayoutDelegateProtocol.h; sourceTree = "<group>"; };
 		8ECF769A1C4B0C8D00451FFE /* CustomLayoutTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutTableView.h; sourceTree = "<group>"; };
 		8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutTableView.m; sourceTree = "<group>"; };
 		8ECF76A51C4EBA9300451FFE /* DisplayIDTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayIDTransformer.h; sourceTree = "<group>"; };
@@ -173,6 +174,7 @@
 				8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */,
 				8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */,
 				8E2CE8A81C32AB3700CA462F /* CustomLayoutContentView.h */,
+				8EB620331C73A80D00F8C007 /* CustomLayoutDelegateProtocol.h */,
 				8E2CE8A91C32AB3800CA462F /* CustomLayoutContentView.m */,
 				8E2CE88A1C30A89B00CA462F /* PDFPreviewItem.h */,
 				8E2CE88B1C30A89B00CA462F /* PDFPreviewItem.m */,
