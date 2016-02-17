@@ -20,6 +20,12 @@
 
 #define kNoSelectedDisplay -1
 
+typedef enum : NSUInteger
+{
+    SplitShowSlideModeNormal,
+    SplitShowSlideModeSplit,
+} SplitShowSlideMode;
+
 @interface CustomLayoutController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
@@ -30,6 +36,7 @@
 @property IBOutlet NSTableView *layoutTableView;
 @property NSMutableSet<NSIndexPath*> *selectedSlides;
 @property NSMutableDictionary<NSNumber*, NSPopUpButton*> *selectedDisplays;
+@property NSInteger selectedLayoutMode;
 
 - (void)removeSelectedSlides;
 - (void)generatePreviewImages;
@@ -64,22 +71,17 @@
     NSSortDescriptor *sortScreenByName = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
     NSArray *sortedScreens = [[NSScreen screens] sortedArrayUsingDescriptors:@[sortScreenByName]];
     self.displayController = [[NSArrayController alloc] initWithContent:sortedScreens];
-
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
     self.selectedDisplays = [NSMutableDictionary dictionary];
-    self.document = [[NSDocumentController sharedDocumentController] currentDocument];
-
-    if(!self.splitShowDocument.customLayoutMode)
-    {
-        self.splitShowDocument.customLayoutMode = kSplitShowSlideModeNormal;
-    }
-
+    self.selectedLayoutMode = SplitShowSlideModeNormal;
     self.layoutController = [NSArrayController new];
     [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentActivateNotification:) name:kSplitShowNotificationWindowDidBecomeMain object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentDeactivateNotification:) name:kSplitShowNotificationWindowDidResignMain object:nil];
+
+    self.document = [[NSDocumentController sharedDocumentController] currentDocument];
 }
 
 - (void)dealloc
@@ -114,19 +116,21 @@
     if([kSplitShowSlideModeNormal isEqualToString:self.splitShowDocument.customLayoutMode])
     {
         self.pdfDocument = [self.splitShowDocument createMirroredDocument];
+        self.selectedLayoutMode = SplitShowSlideModeNormal;
     }
     else if([kSplitShowSlideModeSplit isEqualToString:self.splitShowDocument.customLayoutMode])
     {
         self.pdfDocument = [self.splitShowDocument createSplitDocument];
+        self.selectedLayoutMode = SplitShowSlideModeSplit;
     }
     else
     {
         self.pdfDocument = [self.splitShowDocument createMirroredDocument];
+        self.selectedLayoutMode = SplitShowSlideModeNormal;
     }
 
+    [self.selectedSlides removeAllObjects];
     [self generatePreviewImages];
-    self.selectedSlides = [NSMutableSet set];
-    [self.layoutTableView reloadData];
 }
 
 - (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)anItem
@@ -189,11 +193,21 @@
     switch(button.selectedTag)
     {
         case 0:
+            if([kSplitShowSlideModeNormal isEqualToString:self.splitShowDocument.customLayoutMode])
+            {
+                return;
+            }
+
             self.splitShowDocument.customLayoutMode = kSplitShowSlideModeNormal;
             self.pdfDocument = [self.splitShowDocument createMirroredDocument];
             break;
 
         case 1:
+            if([kSplitShowSlideModeSplit isEqualToString:self.splitShowDocument.customLayoutMode])
+            {
+                return;
+            }
+
             self.splitShowDocument.customLayoutMode = kSplitShowSlideModeSplit;
             self.pdfDocument = [self.splitShowDocument createSplitDocument];
             break;

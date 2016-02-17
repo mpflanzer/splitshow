@@ -217,6 +217,7 @@
                             </popUpButtonCell>
                             <connections>
                                 <action selector="changeLayoutMode:" target="-2" id="W8g-E2-g53"/>
+                                <binding destination="-2" name="selectedTag" keyPath="selectedLayoutMode" id="JzO-lF-7OP"/>
                             </connections>
                         </popUpButton>
                     </toolbarItem>
