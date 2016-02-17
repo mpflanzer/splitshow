@@ -1,9 +1,9 @@
 //
 //  LayoutView.m
-//  PDFThumbnailTest
+//  SplitShow
 //
 //  Created by Moritz Pflanzer on 28/12/2015.
-//  Copyright © 2015 Moritz Pflanzer. All rights reserved.
+//  Copyright © 2015-2016 Moritz Pflanzer. All rights reserved.
 //
 
 #import "CustomLayoutContentView.h"

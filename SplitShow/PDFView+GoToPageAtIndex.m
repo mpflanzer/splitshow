@@ -3,7 +3,7 @@
 //  SplitShow
 //
 //  Created by Moritz Pflanzer on 27/12/2015.
-//  Copyright © 2015 Moritz Pflanzer. All rights reserved.
+//  Copyright © 2015-2016 Moritz Pflanzer. All rights reserved.
 //
 
 #import "PDFView+GoToPageAtIndex.h"

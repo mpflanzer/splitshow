@@ -3,7 +3,7 @@
 //  SplitShow
 //
 //  Created by Moritz Pflanzer on 07/05/2015.
-//
+//  Copyright © 2015-2016 Moritz Pflanzer. All rights reserved.
 //
 
 #import "TimerController.h"
