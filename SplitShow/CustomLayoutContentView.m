@@ -122,7 +122,6 @@
         slideLayer.contents = [self.delegate previewImageForSlide:slide];
         slideLayer.frame = NSMakeRect(slideIndex * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X, 0,
                                     IMAGE_WIDTH, self.bounds.size.height);
-        slideLayer.backgroundColor = [[NSColor redColor] CGColor];
         [slideLayer addSublayer:[self createSelectionMarkerAtIndex:slideIndex]];
         [self.slidesLayer addSublayer:slideLayer];
     }
