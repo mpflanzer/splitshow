@@ -50,6 +50,8 @@
         [self.displayButton unbind:@"contentValues"];
         [self.displayButton unbind:@"contentObjects"];
         [self.displayButton unbind:@"selectedObject"];
+
+        [self removeObserver:self.delegate forKeyPath:@"objectValue.displayID"];
     }
 }
 

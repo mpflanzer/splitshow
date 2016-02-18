@@ -35,7 +35,7 @@ typedef enum : NSUInteger
 @property IBOutlet NSCollectionView *sourceView;
 @property IBOutlet NSTableView *layoutTableView;
 @property NSMutableSet<NSIndexPath*> *selectedSlides;
-@property NSMutableDictionary<NSNumber*, NSPopUpButton*> *selectedDisplays;
+@property NSMutableSet<NSNumber*> *selectedDisplays;
 @property NSInteger selectedLayoutMode;
 
 - (void)removeSelectedSlides;
@@ -44,6 +44,7 @@ typedef enum : NSUInteger
 - (void)documentDeactivateNotification:(NSNotification *)notification;
 
 - (void)bindHeaderView:(CustomLayoutHeaderView*)view;
+- (void)initSelectedDisplays;
 
 - (IBAction)changeLayoutMode:(NSPopUpButton*)button;
 
@@ -73,7 +74,7 @@ typedef enum : NSUInteger
     self.displayController = [[NSArrayController alloc] initWithContent:sortedScreens];
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
-    self.selectedDisplays = [NSMutableDictionary dictionary];
+    self.selectedDisplays = [NSMutableSet set];
     self.selectedLayoutMode = SplitShowSlideModeNormal;
     self.layoutController = [NSArrayController new];
     [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
@@ -131,22 +132,63 @@ typedef enum : NSUInteger
 
     [self.selectedSlides removeAllObjects];
     [self generatePreviewImages];
+    [self initSelectedDisplays];
 }
 
-- (BOOL)validateUserInterfaceItem:(id<NSValidatedUserInterfaceItem>)anItem
+- (void)initSelectedDisplays
 {
-    if(anItem.action == @selector(changeSelectedDisplay:))
+    for(unsigned int i = 0; i < [self.layoutController.arrangedObjects count]; ++i)
     {
-        if(anItem.tag == kNoSelectedDisplay)
+        NSDictionary *info = [self.layoutController.arrangedObjects objectAtIndex:i];
+        NSNumber *displayID = [info objectForKey:@"displayID"];
+
+        if(displayID)
+        {
+            [self.selectedDisplays addObject:displayID];
+        }
+    }
+}
+
+- (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
+{
+    if([@"objectValue.displayID" isEqualToString:keyPath])
+    {
+        NSNumber *oldDisplayID = [change objectForKey:NSKeyValueChangeOldKey];
+        NSNumber *newDisplayID = [change objectForKey:NSKeyValueChangeNewKey];
+
+        if(oldDisplayID)
+        {
+            [self.selectedDisplays removeObject:oldDisplayID];
+        }
+
+        if(newDisplayID)
+        {
+            [self.selectedDisplays addObject:newDisplayID];
+        }
+
+        if(oldDisplayID || newDisplayID)
+        {
+            [self.document invalidateRestorableState];
+        }
+    }
+    else
+    {
+        [super observeValueForKeyPath:keyPath ofObject:object change:change context:context];
+    }
+}
+
+- (BOOL)validateMenuItem:(NSMenuItem *)menuItem
+{
+    if(menuItem.action == @selector(changeSelectedDisplay:))
+    {
+        if(menuItem.tag == kNoSelectedDisplay)
         {
             return YES;
         }
         else
         {
-            NSScreen *selectedScreen = [self.displayController.arrangedObjects objectAtIndex:anItem.tag];
-            NSPopUpButton *buttonForSelectedDisplay = [self.selectedDisplays objectForKey:@(selectedScreen.displayID)];
-
-            return (!buttonForSelectedDisplay || buttonForSelectedDisplay.selectedItem == anItem);
+            BOOL alreadySelected = [self.selectedDisplays containsObject:menuItem.representedObject];
+            return (!alreadySelected || menuItem.state == 1);
         }
     }
 
@@ -164,28 +206,18 @@ typedef enum : NSUInteger
     [view.displayButton bind:@"contentValues" toObject:self.displayController withKeyPath:@"arrangedObjects.name" options:bindingValuesOptions];
     [view.displayButton bind:@"selectedObject" toObject:view withKeyPath:@"objectValue.displayID" options:bindingSelectionOptions];
 
+    [view addObserver:self forKeyPath:@"objectValue.displayID" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
+
+    //FIXME: Hack to enable menu validation
+    view.displayButton.target = self;
+    view.displayButton.action = @selector(changeSelectedDisplay:);
+
     view.delegate = self;
 }
 
-- (IBAction)changeSelectedDisplay:(NSPopUpButton*)button
+- (void)changeSelectedDisplay:(NSPopUpButton *)button
 {
-    for(NSNumber *displayID in self.selectedDisplays)
-    {
-        if([self.selectedDisplays objectForKey:displayID] == button)
-        {
-            [self.selectedDisplays removeObjectForKey:displayID];
-            break;
-        }
-    }
-
-    if(button.selectedTag != kNoSelectedDisplay)
-    {
-        NSScreen *selectedScreen = [self.displayController.arrangedObjects objectAtIndex:button.selectedTag];
-
-        [self.selectedDisplays setObject:button forKey:@(selectedScreen.displayID)];
-    }
-
-    [self.document invalidateRestorableState];
+    //FIXME: Hack to enable menu validation
 }
 
 - (IBAction)changeLayoutMode:(NSPopUpButton *)button

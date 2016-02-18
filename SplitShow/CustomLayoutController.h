@@ -13,7 +13,7 @@
 
 @class PDFDocument;
 
-@interface CustomLayoutController : NSWindowController <NSCollectionViewDelegate, NSTableViewDelegate, NSWindowDelegate, CustomLayoutDelegate, NSUserInterfaceValidations>
+@interface CustomLayoutController : NSWindowController <NSCollectionViewDelegate, NSTableViewDelegate, NSWindowDelegate, CustomLayoutDelegate>
 
 @property PDFDocument *pdfDocument;
 @property NSArrayController *layoutController;
