@@ -108,6 +108,7 @@
 		8EB620331C73A80D00F8C007 /* CustomLayoutDelegateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLayoutDelegateProtocol.h; sourceTree = "<group>"; };
 		8EB620341C7885FF00F8C007 /* CustomLayoutParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutParser.h; sourceTree = "<group>"; };
 		8EB620351C7885FF00F8C007 /* CustomLayoutParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutParser.m; sourceTree = "<group>"; };
+		8EB620371C78C54300F8C007 /* Errors.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = Errors.h; sourceTree = "<group>"; };
 		8ECF769A1C4B0C8D00451FFE /* CustomLayoutTableView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutTableView.h; sourceTree = "<group>"; };
 		8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutTableView.m; sourceTree = "<group>"; };
 		8ECF76A51C4EBA9300451FFE /* DisplayIDTransformer.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = DisplayIDTransformer.h; sourceTree = "<group>"; };
@@ -185,6 +186,7 @@
 				8E1855831BDBF64500E6AEB5 /* PreviewController.m */,
 				8EB620341C7885FF00F8C007 /* CustomLayoutParser.h */,
 				8EB620351C7885FF00F8C007 /* CustomLayoutParser.m */,
+				8EB620371C78C54300F8C007 /* Errors.h */,
 				8E1853761BBC57DA00F25E9F /* SplitShowDocument.h */,
 				8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */,
 				8E2CE7FC1C3007F800CA462F /* Utilities.h */,

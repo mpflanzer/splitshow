@@ -19,8 +19,6 @@
 #define kSplitShowNotificationWindowDidResignMain @"kSplitShowNotificationWindowDidResignMain"
 #define kSplitShowNotificationWindowWillClose @"kSplitShowNotificationWindowWillClose"
 
-#define kSplitShowErrorDomain @"eu.pflanzer.SplitShow.ErrorDomain"
-
 typedef enum : NSUInteger
 {
     SplitShowPresentationModeInterleave,
@@ -37,13 +35,6 @@ typedef enum : NSUInteger
     SplitShowChangeSlideActionNext,
     SplitShowChangeSlideActionGoTo,
 } SplitShowChangeSlideAction;
-
-typedef enum : NSInteger
-{
-    SplitShowErrorCodeExport,
-    SplitShowErrorCodeImport,
-    SplitShowErrorCodeImportCorrupted,
-} SplitShowErrorCode;
 
 @interface PreviewController : NSWindowController <NSWindowDelegate>
 

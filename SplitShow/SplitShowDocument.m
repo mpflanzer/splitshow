@@ -13,6 +13,7 @@
 #import "CustomLayoutController.h"
 #import "DisplayController.h"
 #import "Utilities.h"
+#import "Errors.h"
 
 #define kSplitShowDocumentEncodeCustomLayoutMode @"kSplitShowDocumentEncodeCustomLayoutMode"
 #define kSplitShowDocumentEncodeCustomLayouts @"kSplitShowDocumentEncodeCustomLayouts"
@@ -94,7 +95,9 @@
     {
         if(outError != NULL)
         {
-            *outError = [NSError errorWithDomain:NSCocoaErrorDomain code:SplitShowPresentationLoadError userInfo:nil];
+            NSDictionary *info = @{NSLocalizedDescriptionKey:NSLocalizedString(@"The presentation could not be loaded.", @"The presentation could not be loaded."), NSFilePathErrorKey: url.path};
+
+            *outError = [NSError errorWithDomain:kSplitShowErrorDomain code:SplitShowErrorCodeLoadPresentation userInfo:info];
         }
 
         return NO;

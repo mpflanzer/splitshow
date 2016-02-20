@@ -9,6 +9,7 @@
 #import "CustomLayoutParser.h"
 #import "PreviewController.h"
 #import "SplitShowDocument.h"
+#import "Errors.h"
 
 @interface CustomLayoutParser ()
 
@@ -46,7 +47,14 @@
 
 - (BOOL)isValidMode:(id)mode
 {
-    return ([kSplitShowSlideModeNormal isEqual:mode] || [kSplitShowSlideModeSplit isEqual:mode]);
+    if(![mode isKindOfClass:NSNumber.class])
+    {
+        return NO;
+    }
+
+    SplitShowSlideMode slideMode = [mode integerValue];
+
+    return (slideMode == SplitShowSlideModeNormal || slideMode == SplitShowSlideModeSplit);
 }
 
 - (BOOL)parseDisplayID:(id)displayID

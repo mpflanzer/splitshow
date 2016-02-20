@@ -12,6 +12,7 @@
 #import "DisplayController.h"
 #import "TimerController.h"
 #import "CustomLayoutParser.h"
+#import "Errors.h"
 
 #define kObserverCustomLayouts @"customLayouts"
 #define kObserverPresentationMode @"selectedPresentationMode"
@@ -513,7 +514,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
             if(self.splitShowDocument.customLayoutMode)
             {
-                [JSONObject setObject:self.splitShowDocument.customLayoutMode forKey:@"customLayoutMode"];
+                [JSONObject setObject:@(self.splitShowDocument.customLayoutMode) forKey:@"customLayoutMode"];
             }
 
             if(self.splitShowDocument.customLayouts)
@@ -602,7 +603,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
                 return;
             }
 
-            self.splitShowDocument.customLayoutMode = [JSONObject objectForKey:@"customLayoutMode"];
+            self.splitShowDocument.customLayoutMode = [[JSONObject objectForKey:@"customLayoutMode"] integerValue];
             self.splitShowDocument.customLayouts = parsedLayouts;
         }
     }];

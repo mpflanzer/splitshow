@@ -20,12 +20,6 @@
 
 #define kNoSelectedDisplay -1
 
-typedef enum : NSUInteger
-{
-    SplitShowSlideModeNormal,
-    SplitShowSlideModeSplit,
-} SplitShowSlideMode;
-
 @interface CustomLayoutController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
@@ -36,7 +30,6 @@ typedef enum : NSUInteger
 @property IBOutlet NSTableView *layoutTableView;
 @property NSMutableSet<NSIndexPath*> *selectedSlides;
 @property NSMutableSet<NSNumber*> *selectedDisplays;
-@property NSInteger selectedLayoutMode;
 
 - (void)removeSelectedSlides;
 - (void)generatePreviewImages;
@@ -75,7 +68,6 @@ typedef enum : NSUInteger
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
     self.selectedDisplays = [NSMutableSet set];
-    self.selectedLayoutMode = SplitShowSlideModeNormal;
     self.layoutController = [NSArrayController new];
     [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
 
@@ -114,20 +106,15 @@ typedef enum : NSUInteger
 {
     [super setDocument:document];
 
-    if([kSplitShowSlideModeNormal isEqualToString:self.splitShowDocument.customLayoutMode])
+    switch(self.splitShowDocument.customLayoutMode)
     {
-        self.pdfDocument = [self.splitShowDocument createMirroredDocument];
-        self.selectedLayoutMode = SplitShowSlideModeNormal;
-    }
-    else if([kSplitShowSlideModeSplit isEqualToString:self.splitShowDocument.customLayoutMode])
-    {
-        self.pdfDocument = [self.splitShowDocument createSplitDocument];
-        self.selectedLayoutMode = SplitShowSlideModeSplit;
-    }
-    else
-    {
-        self.pdfDocument = [self.splitShowDocument createMirroredDocument];
-        self.selectedLayoutMode = SplitShowSlideModeNormal;
+        case SplitShowSlideModeNormal:
+            self.pdfDocument = [self.splitShowDocument createMirroredDocument];
+            break;
+
+        case SplitShowSlideModeSplit:
+            self.pdfDocument = [self.splitShowDocument createSplitDocument];
+            break;
     }
 
     [self.selectedSlides removeAllObjects];
@@ -224,23 +211,11 @@ typedef enum : NSUInteger
 {
     switch(button.selectedTag)
     {
-        case 0:
-            if([kSplitShowSlideModeNormal isEqualToString:self.splitShowDocument.customLayoutMode])
-            {
-                return;
-            }
-
-            self.splitShowDocument.customLayoutMode = kSplitShowSlideModeNormal;
+        case SplitShowSlideModeNormal:
             self.pdfDocument = [self.splitShowDocument createMirroredDocument];
             break;
 
-        case 1:
-            if([kSplitShowSlideModeSplit isEqualToString:self.splitShowDocument.customLayoutMode])
-            {
-                return;
-            }
-
-            self.splitShowDocument.customLayoutMode = kSplitShowSlideModeSplit;
+        case SplitShowSlideModeSplit:
             self.pdfDocument = [self.splitShowDocument createSplitDocument];
             break;
     }

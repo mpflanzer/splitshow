@@ -17,15 +17,15 @@
 #define kSplitShowSlideGroupContent @"kSplitShowSlideGroupContent"
 #define kSplitShowSlideGroupNotes @"kSplitShowSlideGroupNotes"
 
-enum SplitShowError
-{
-    SplitShowPresentationLoadError,
-};
+typedef enum : NSInteger {
+    SplitShowSlideModeNormal,
+    SplitShowSlideModeSplit,
+} SplitShowSlideMode;
 
 @interface SplitShowDocument : NSDocument
 
 @property NSMutableArray<NSMutableDictionary*> *customLayouts;
-@property NSString *customLayoutMode;
+@property SplitShowSlideMode customLayoutMode;
 
 @property (readonly) NSString *name;
 @property (readonly) BOOL hasInterleavedLayout;
@@ -35,7 +35,7 @@ enum SplitShowError
 - (PDFDocument*)createSplitDocumentForGroup:(NSString*)group;
 - (PDFDocument*)createSplitDocument;
 - (PDFDocument*)createMirroredDocument;
-- (PDFDocument*)createDocumentFromIndices:(NSArray*)indices inMode:(NSString*)mode;
+- (PDFDocument*)createDocumentFromIndices:(NSArray*)indices inMode:(SplitShowSlideMode)slideMode;
 
 @end
 
