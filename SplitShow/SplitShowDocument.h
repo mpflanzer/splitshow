@@ -11,9 +11,6 @@
 @class PDFDocument;
 @class CustomLayoutController;
 
-#define kSplitShowSlideModeNormal @"kSplitShowSlideModeNormal"
-#define kSplitShowSlideModeSplit @"kSplitShowSlideModeSplit"
-
 #define kSplitShowSlideGroupContent @"kSplitShowSlideGroupContent"
 #define kSplitShowSlideGroupNotes @"kSplitShowSlideGroupNotes"
 

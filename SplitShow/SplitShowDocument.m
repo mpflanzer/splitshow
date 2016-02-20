@@ -21,13 +21,13 @@
 @interface SplitShowDocument ()
 
 @property PDFDocument *pdfDocument;
-@property NSDictionary *presentations;
+@property NSDictionary<NSNumber*, PDFDocument*> *presentations;
 @property NSDictionary *interleavedIndices;
 @property NSString *navFileContent;
 
-@property NSSet *supportedSlideModes;
+@property NSSet<NSNumber*> *supportedSlideModes;
 
-- (NSUInteger)pageCountForSlideMode:(NSString*)mode;
+- (NSUInteger)pageCountForSlideMode:(SplitShowSlideMode)slideMode;
 
 - (NSDictionary*)generatePresentationsForModes:(NSSet*)modes fromPDFDocument:(PDFDocument *)document;
 
@@ -46,7 +46,7 @@
 
     if(self)
     {
-        self.supportedSlideModes = [NSSet setWithObjects:kSplitShowSlideModeNormal, kSplitShowSlideModeSplit, nil];
+        self.supportedSlideModes = [NSSet setWithObjects:@(SplitShowSlideModeNormal), @(SplitShowSlideModeSplit), nil];
     }
 
     return self;
@@ -87,6 +87,7 @@
     self.pdfDocument = [[PDFDocument alloc] initWithURL:url];
     self.presentations = [self generatePresentationsForModes:self.supportedSlideModes fromPDFDocument:self.pdfDocument];
     self.customLayouts = [NSMutableArray array];
+    self.customLayoutMode = SplitShowSlideModeNormal;
     self.navFileContent = [self readNAVFileForDocument:self.pdfDocument];
 
     self.interleavedIndices = [self createInterleavedIndicesFromNavFileContent:self.navFileContent];
@@ -111,9 +112,9 @@
     return YES;
 }
 
-- (NSUInteger)pageCountForSlideMode:(NSString*)mode
+- (NSUInteger)pageCountForSlideMode:(SplitShowSlideMode)slideMode
 {
-    return [self.presentations[mode] pageCount];
+    return [[self.presentations objectForKey:@(slideMode)] pageCount];
 }
 
 - (NSSize)pageSize
@@ -133,7 +134,7 @@
 {
     NSMutableDictionary *presentations = [NSMutableDictionary dictionaryWithCapacity:modes.count];
 
-    for(NSString *mode in modes)
+    for(NSNumber *mode in modes)
     {
         PDFDocument *tmpDocument = [[PDFDocument alloc] init];
 
@@ -141,24 +142,27 @@
         {
             PDFPage *page = [document pageAtIndex:i];
 
-            if([kSplitShowSlideModeNormal isEqualToString:mode])
+            switch(mode.integerValue)
             {
-                [tmpDocument insertPage:[page copy] atIndex:i];
-            }
-            else if([kSplitShowSlideModeSplit isEqualToString:mode])
-            {
-                NSRect cropBounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
-                PDFPage *tmpPage = [page copy];
+                case SplitShowSlideModeNormal:
+                    [tmpDocument insertPage:[page copy] atIndex:i];
+                    break;
 
-                // Insert left half
-                cropBounds.size.width /= 2;
-                [tmpPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                [tmpDocument insertPage:[tmpPage copy] atIndex:(2 * i)];
+                case SplitShowSlideModeSplit:
+                {
+                    NSRect cropBounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
+                    PDFPage *tmpPage = [page copy];
 
-                // Insert right half
-                cropBounds.origin.x += cropBounds.size.width;
-                [tmpPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                [tmpDocument insertPage:tmpPage atIndex:(2 * i + 1)];
+                    // Insert left half
+                    cropBounds.size.width /= 2;
+                    [tmpPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
+                    [tmpDocument insertPage:[tmpPage copy] atIndex:(2 * i)];
+
+                    // Insert right half
+                    cropBounds.origin.x += cropBounds.size.width;
+                    [tmpPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
+                    [tmpDocument insertPage:tmpPage atIndex:(2 * i + 1)];
+                }
             }
         }
 
@@ -337,7 +341,7 @@
     }
 
     // Add notes after last slide
-    while(currentFrameIndex < [self pageCountForSlideMode:kSplitShowSlideModeNormal])
+    while(currentFrameIndex < [self pageCountForSlideMode:SplitShowSlideModeNormal])
     {
         [noteFrames addObject:@(currentFrameIndex)];
         ++currentFrameIndex;
@@ -350,7 +354,7 @@
 {
     NSArray *indices = [self.interleavedIndices objectForKey:group];
 
-    return [self createDocumentFromIndices:indices inMode:kSplitShowSlideModeNormal];
+    return [self createDocumentFromIndices:indices inMode:SplitShowSlideModeNormal];
 }
 
 - (PDFDocument *)createSplitDocumentForGroup:(NSString *)group
@@ -366,25 +370,25 @@
         start = 1;
     }
 
-    NSArray *indices = [Utilities makeArrayFrom:start to:[self pageCountForSlideMode:kSplitShowSlideModeSplit] step:2];
+    NSArray *indices = [Utilities makeArrayFrom:start to:[self pageCountForSlideMode:SplitShowSlideModeSplit] step:2];
 
-    return [self createDocumentFromIndices:indices inMode:kSplitShowSlideModeSplit];
+    return [self createDocumentFromIndices:indices inMode:SplitShowSlideModeSplit];
 }
 
 - (PDFDocument *)createSplitDocument
 {
-    return [[self.presentations objectForKey:kSplitShowSlideModeSplit] copy];
+    return [[self.presentations objectForKey:@(SplitShowSlideModeSplit)] copy];
 }
 
 - (PDFDocument *)createMirroredDocument
 {
-    return [[self.presentations objectForKey:kSplitShowSlideModeNormal] copy];
+    return [[self.presentations objectForKey:@(SplitShowSlideModeNormal)] copy];
 }
 
-- (PDFDocument *)createDocumentFromIndices:(NSArray *)indices inMode:(NSString *)mode
+- (PDFDocument *)createDocumentFromIndices:(NSArray *)indices inMode:(SplitShowSlideMode)slideMode
 {
     PDFDocument *document = [[PDFDocument alloc] init];
-    PDFDocument *presentation = [self.presentations objectForKey:mode];
+    PDFDocument *presentation = [self.presentations objectForKey:@(slideMode)];
     NSUInteger newIndex = 0;
 
     for(NSNumber *index in indices)
@@ -406,7 +410,7 @@
 {
     [super encodeRestorableStateWithCoder:coder];
 
-    [coder encodeObject:self.customLayoutMode forKey:kSplitShowDocumentEncodeCustomLayoutMode];
+    [coder encodeObject:@(self.customLayoutMode) forKey:kSplitShowDocumentEncodeCustomLayoutMode];
     [coder encodeObject:self.customLayouts forKey:kSplitShowDocumentEncodeCustomLayouts];
 }
 
@@ -414,7 +418,7 @@
 {
     [super restoreStateWithCoder:coder];
 
-    self.customLayoutMode = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayoutMode];
+    self.customLayoutMode = [[coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayoutMode] integerValue];
     self.customLayouts = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayouts];
 }
 
