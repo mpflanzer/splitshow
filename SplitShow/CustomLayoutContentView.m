@@ -321,18 +321,4 @@
     }
 }
 
-//- (void)removeSlideAtIndex:(NSInteger)slideIndex
-//{
-//    CALayer *selectedLayer = [self.slidesLayer.sublayers objectAtIndex:slideIndex];
-//    [selectedLayer removeFromSuperlayer];
-//
-//    for(NSUInteger i = slideIndex; i < self.slidesLayer.sublayers.count; ++i)
-//    {
-//        CALayer *layer = [self.slidesLayer.sublayers objectAtIndex:i];
-//        layer.position = NSMakePoint(layer.position.x - (IMAGE_WIDTH + IMAGE_SPACING_X), layer.position.y);
-//    }
-//
-//    [self updateColumnWidth];
-//}
-//
 @end

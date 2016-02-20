@@ -22,7 +22,6 @@
 - (BOOL)isValidMode:(id)mode;
 - (BOOL)parseDisplayID:(id)displayID;
 - (BOOL)parseName:(id)name;
-//- (BOOL)parseObject:(id)obj forKey:(NSString*)key ofClass:(Class)class optional:(BOOL)optional;
 - (BOOL)isValidSlide:(id)slide;
 - (BOOL)parseSlides:(id)slides;
 - (BOOL)parseLayouts:(id)layouts;
@@ -86,24 +85,6 @@
 
     return YES;
 }
-
-//- (BOOL)parseObject:(id)obj forKey:(NSString*)key ofClass:(Class)class optional:(BOOL)optional
-//{
-//    if(obj)
-//    {
-//        if([obj isKindOfClass:class])
-//        {
-//            [self.currentLayout setObject:obj forKey:key];
-//            return YES;
-//        }
-//        else
-//        {
-//            return NO;
-//        }
-//    }
-//
-//    return YES;
-//}
 
 - (BOOL)isValidSlide:(id)slide
 {
