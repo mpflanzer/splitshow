@@ -19,6 +19,8 @@
 #define kSplitShowNotificationWindowDidResignMain @"kSplitShowNotificationWindowDidResignMain"
 #define kSplitShowNotificationWindowWillClose @"kSplitShowNotificationWindowWillClose"
 
+#define kSplitShowErrorDomain @"eu.pflanzer.SplitShow.ErrorDomain"
+
 typedef enum : NSUInteger
 {
     SplitShowPresentationModeInterleave,
@@ -36,6 +38,13 @@ typedef enum : NSUInteger
     SplitShowChangeSlideActionGoTo,
 } SplitShowChangeSlideAction;
 
+typedef enum : NSInteger
+{
+    SplitShowErrorCodeExport,
+    SplitShowErrorCodeImport,
+    SplitShowErrorCodeImportCorrupted,
+} SplitShowErrorCode;
+
 @interface PreviewController : NSWindowController <NSWindowDelegate>
 
 @property IBOutlet NSToolbarItem *mainDisplayItem;
@@ -50,5 +59,7 @@ typedef enum : NSUInteger
 
 - (IBAction)toggleCustomFullScreen:(id)sender;
 - (IBAction)swapDisplays:(id)sender;
+- (IBAction)importCustomLayout:(id)sender;
+- (IBAction)exportCustomLayout:(id)sender;
 
 @end

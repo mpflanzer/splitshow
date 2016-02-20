@@ -11,6 +11,7 @@
 #import "NSScreen+Name.h"
 #import "DisplayController.h"
 #import "TimerController.h"
+#import "CustomLayoutParser.h"
 
 #define kObserverCustomLayouts @"customLayouts"
 #define kObserverPresentationMode @"selectedPresentationMode"
@@ -487,6 +488,126 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     return (self.fullScreenControllers != nil);
 }
 
+- (void)exportCustomLayout:(id)sender
+{
+    if(self.splitShowDocument.customLayouts.count == 0)
+    {
+        return;
+    }
+
+    NSSavePanel *savePanel = [NSSavePanel savePanel];
+
+    savePanel.title = NSLocalizedString(@"Export", @"to export");
+    savePanel.prompt = NSLocalizedString(@"Export", @"to export");
+    savePanel.nameFieldLabel = NSLocalizedString(@"Export As:", @"Export As:");
+    savePanel.canCreateDirectories = YES;
+    savePanel.allowsOtherFileTypes = NO;
+    savePanel.allowedFileTypes = @[@"ssl"];
+
+    [savePanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+        if(result == NSFileHandlingPanelOKButton)
+        {
+            NSError *JSONError;
+
+            NSMutableDictionary *JSONObject =[NSMutableDictionary dictionary];
+
+            if(self.splitShowDocument.customLayoutMode)
+            {
+                [JSONObject setObject:self.splitShowDocument.customLayoutMode forKey:@"customLayoutMode"];
+            }
+
+            if(self.splitShowDocument.customLayouts)
+            {
+                [JSONObject setObject:self.splitShowDocument.customLayouts forKey:@"customLayouts"];
+            }
+
+            NSData *JSONData = [NSJSONSerialization dataWithJSONObject:JSONObject options:0 error:&JSONError];
+
+            if(JSONError != nil)
+            {
+                [self presentError:JSONError];
+                return;
+            }
+
+            BOOL success = [[NSFileManager defaultManager] createFileAtPath:savePanel.URL.path contents:JSONData attributes:nil];
+
+            if(success == NO)
+            {
+                NSDictionary *info = @{NSFilePathErrorKey: savePanel.URL.path,
+                                       NSLocalizedDescriptionKey:NSLocalizedString(@"Export failed because the layout file could not be created.", @"Export failed because the layout file could not be created.")};
+
+                NSError *error = [NSError errorWithDomain:kSplitShowErrorDomain
+                                                     code:SplitShowErrorCodeExport
+                                                 userInfo:info];
+
+                [savePanel orderOut:nil];
+
+                [self presentError:error modalForWindow:self.window delegate:nil didPresentSelector:NULL contextInfo:nil];
+            }
+        }
+    }];
+}
+
+- (void)importCustomLayout:(id)sender
+{
+    NSOpenPanel *openPanel = [NSOpenPanel openPanel];
+
+    openPanel.prompt = NSLocalizedString(@"Import", @"to import");
+    openPanel.canChooseFiles = YES;
+    openPanel.canChooseDirectories = NO;
+    openPanel.allowsOtherFileTypes = NO;
+    openPanel.allowedFileTypes = @[@"ssl"];
+
+    [openPanel beginSheetModalForWindow:self.window completionHandler:^(NSInteger result) {
+        if(result == NSFileHandlingPanelOKButton)
+        {
+            NSError *JSONError;
+
+            NSData *layoutData = [[NSFileManager defaultManager] contentsAtPath:openPanel.URL.path];
+
+            if(!layoutData)
+            {
+                NSDictionary *info = @{NSFilePathErrorKey: openPanel.URL.path,
+                                       NSLocalizedDescriptionKey:NSLocalizedString(@"Import failed because the layout file could not be loaded.", @"Import failed because the layout file could not be loaded.")};
+
+                NSError *error = [NSError errorWithDomain:kSplitShowErrorDomain
+                                                     code:SplitShowErrorCodeImport
+                                                 userInfo:info];
+
+                [openPanel orderOut:nil];
+
+                [self presentError:error modalForWindow:self.window delegate:nil didPresentSelector:NULL contextInfo:nil];
+                return;
+            }
+
+            id JSONObject = [NSJSONSerialization JSONObjectWithData:layoutData options:NSJSONReadingMutableContainers error:&JSONError];
+
+            if(!JSONObject)
+            {
+                [openPanel orderOut:nil];
+                [self presentError:JSONError modalForWindow:self.window delegate:nil didPresentSelector:NULL contextInfo:nil];
+                return;
+            }
+
+            NSError *layoutError;
+            CustomLayoutParser *validator = [CustomLayoutParser new];
+
+            NSMutableArray *parsedLayouts = [validator parseCustomLayout:JSONObject error:&layoutError];
+
+            if(!parsedLayouts)
+            {
+                [openPanel orderOut:nil];
+
+                [self presentError:layoutError modalForWindow:self.window delegate:nil didPresentSelector:NULL contextInfo:nil];
+                return;
+            }
+
+            self.splitShowDocument.customLayoutMode = [JSONObject objectForKey:@"customLayoutMode"];
+            self.splitShowDocument.customLayouts = parsedLayouts;
+        }
+    }];
+}
+
 - (IBAction)toggleCustomFullScreen:(id)sender
 {
     if(self.isFullScreen)
@@ -582,8 +703,12 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
         return self.canEnterFullScreen;
     }
+    else if(menuItem.action == @selector(exportCustomLayout:))
+    {
+        return 1 |(self.splitShowDocument.customLayouts.count > 0);
+    }
 
-    return [super validateMenuItem:menuItem];
+    return YES;
 }
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder

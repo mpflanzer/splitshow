@@ -108,6 +108,17 @@
                                     <action selector="revertDocumentToSaved:" target="-1" id="ycc-4n-Y7v"/>
                                 </connections>
                             </menuItem>
+                            <menuItem isSeparatorItem="YES" id="V3v-dT-mfD"/>
+                            <menuItem title="Import custom layout..." keyEquivalent="I" id="Wal-8h-UzU">
+                                <connections>
+                                    <action selector="importCustomLayout:" target="-1" id="tGL-CM-25i"/>
+                                </connections>
+                            </menuItem>
+                            <menuItem title="Export custom layout..." keyEquivalent="E" id="uGW-HN-ItH">
+                                <connections>
+                                    <action selector="exportCustomLayout:" target="-1" id="Xl2-Am-1IC"/>
+                                </connections>
+                            </menuItem>
                             <menuItem isSeparatorItem="YES" id="zST-Wt-CZN"/>
                             <menuItem title="Page Setup…" keyEquivalent="P" id="GXM-wn-ExI">
                                 <modifierMask key="keyEquivalentModifierMask" shift="YES" command="YES"/>

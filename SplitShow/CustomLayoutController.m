@@ -293,6 +293,11 @@ typedef enum : NSUInteger
 
 - (NSImage *)previewImageForSlide:(NSInteger)slide
 {
+    if(slide < 0 || slide >= self.previewImages.count)
+    {
+        return nil;
+    }
+    
     return [self.previewImages objectAtIndex:slide];
 }
 
