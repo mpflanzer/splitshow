@@ -8,7 +8,7 @@
 
 #import "PreviewController.h"
 #import "SplitShowDocument.h"
-#import "NSScreen+Name.h"
+#import "SplitShowScreen.h"
 #import "DisplayController.h"
 #import "TimerController.h"
 #import "CustomLayoutParser.h"
@@ -19,7 +19,10 @@
 #define kObserverMainDisplayMenu @"selectedMainDisplayIndex"
 #define kObserverHelperDisplayMenu @"selectedHelperDisplayIndex"
 
-#define kNoSelectedDisplay -1
+//TODO: Use screen controller
+//TODO: Bind to screens instead of display IDs
+//TODO: Gte rid of NoSelectedDisplay
+#define kNoSelectedDisplay 0
 
 @interface PreviewController ()
 
@@ -343,7 +346,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         {
             for(NSDictionary *info in self.splitShowDocument.customLayouts)
             {
-                [screens addObject:@{@"display" : [NSScreen screenWithDisplayID:[[info objectForKey:@"displayID"] intValue]],
+                [screens addObject:@{@"display" : [SplitShowScreen screenWithDisplayID:[[info objectForKey:@"displayID"] intValue]],
                                      @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
@@ -358,19 +361,25 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
 {
     NSDictionary *bindingContentOptions = @{NSInsertsNullPlaceholderBindingOption : @YES};
+
     NSDictionary *bindingValuesOptions = @{NSNullPlaceholderBindingOption : NSLocalizedString(@"No display", @"No display")};
+
     NSDictionary *bindingSelectionOptions = @{NSNullPlaceholderBindingOption : @kNoSelectedDisplay};
 
     [self setValue:@kNoSelectedDisplay forKey:property];
 
     [button setAutoenablesItems:NO];
-    [button bind:@"content" toObject:self.displayController withKeyPath:@"arrangedObjects" options:bindingContentOptions];
-    [button bind:@"contentValues" toObject:self.displayController withKeyPath:@"arrangedObjects.name" options:bindingValuesOptions];
-    [button bind:@"selectedIndex" toObject:self withKeyPath:property options:bindingSelectionOptions];
+
+    [button bind:NSContentBinding toObject:self.displayController withKeyPath:@"arrangedObjects" options:bindingContentOptions];
+
+    [button bind:NSContentValuesBinding toObject:self.displayController withKeyPath:@"arrangedObjects.name" options:bindingValuesOptions];
+
+    [button bind:NSSelectedIndexBinding toObject:self withKeyPath:property options:bindingSelectionOptions];
 }
 
 - (void)setNilValueForKey:(NSString *)key
 {
+    //TODO: Check why this is needed
     if([kObserverMainDisplayMenu isEqualToString:key] || [kObserverHelperDisplayMenu isEqualToString:key])
     {
         [self setValue:@kNoSelectedDisplay forKey:key];

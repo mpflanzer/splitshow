@@ -14,41 +14,6 @@
 
 @implementation NSScreen (Name)
 
-+ (NSScreen *)screenWithDisplayID:(CGDirectDisplayID)displayID
-{
-    for(NSScreen *screen in [NSScreen screens])
-    {
-        if(screen.displayID == displayID)
-        {
-            return screen;
-        }
-    }
-
-    return nil;
-}
-
-+ (CGDirectDisplayID)displayIDForScreenAtIndex:(NSInteger)index
-{
-    return [[[NSScreen screens] objectAtIndex:index] displayID];
-}
-
-+ (NSInteger)indexOfScreenWithDisplayID:(CGDirectDisplayID)displayID
-{
-    NSInteger index = 0;
-
-    for(NSScreen *screen in [NSScreen screens])
-    {
-        if(screen.displayID == displayID)
-        {
-            return index;
-        }
-
-        ++index;
-    }
-
-    return NSNotFound;
-}
-
 - (CGDirectDisplayID)displayID
 {
     return [[self.deviceDescription objectForKey:@"NSScreenNumber"] unsignedIntValue];

@@ -7,7 +7,7 @@
 //
 
 #import "CustomLayoutHeaderView.h"
-#import "NSScreen+Name.h"
+#import "SplitShowScreen.h"
 
 @implementation CustomLayoutHeaderView
 
@@ -20,7 +20,7 @@
 {
     NSNumber *displayID = [objectValue objectForKey:@"displayID"];
 
-    if(displayID && ![NSScreen screenWithDisplayID:displayID.intValue])
+    if(displayID && ![displayID isEqual:[NSNull null]] && ![SplitShowScreen isPseudoDisplayID:displayID.intValue] && ![SplitShowScreen screenWithDisplayID:displayID.intValue])
     {
         [objectValue removeObjectForKey:@"displayID"];
     }

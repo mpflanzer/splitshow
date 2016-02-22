@@ -16,16 +16,15 @@
 #import "NSScreen+Name.h"
 #import "CustomLayoutHeaderView.h"
 #import "CustomLayoutContentView.h"
-#import "DisplayIDTransformer.h"
-
-#define kNoSelectedDisplay -1
+#import "SplitShowScreenArrayController.h"
+#import "SplitShowScreen.h"
 
 @interface CustomLayoutController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
 @property NSMutableArray *previewImages;
 @property IBOutlet NSArrayController *previewImageController;
-@property NSArrayController *displayController;
+@property SplitShowScreenArrayController *screenController;
 @property IBOutlet NSCollectionView *sourceView;
 @property IBOutlet NSTableView *layoutTableView;
 @property NSMutableSet<NSIndexPath*> *selectedSlides;
@@ -62,9 +61,9 @@
 
     self.window.restorationClass = [[[NSApplication sharedApplication] delegate] class];
 
-    NSSortDescriptor *sortScreenByName = [[NSSortDescriptor alloc] initWithKey:@"name" ascending:YES selector:@selector(localizedCaseInsensitiveCompare:)];
-    NSArray *sortedScreens = [[NSScreen screens] sortedArrayUsingDescriptors:@[sortScreenByName]];
-    self.displayController = [[NSArrayController alloc] initWithContent:sortedScreens];
+    self.screenController = [[SplitShowScreenArrayController alloc] initWithContent:[NSScreen screens]];
+    self.screenController.staticScreens = @[[[SplitShowScreen alloc] initWithName:NSLocalizedString(@"New window", @"New window") andDisplayID:SplitShowPseudoDisplayIDNewWindow]];
+
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
     self.selectedDisplays = [NSMutableSet set];
@@ -129,7 +128,7 @@
         NSDictionary *info = [self.layoutController.arrangedObjects objectAtIndex:i];
         NSNumber *displayID = [info objectForKey:@"displayID"];
 
-        if(displayID)
+        if(displayID && ![displayID isEqual:[NSNull null]] && ![SplitShowScreen isPseudoDisplayID:displayID.intValue])
         {
             [self.selectedDisplays addObject:displayID];
         }
@@ -143,20 +142,20 @@
         NSNumber *oldDisplayID = [change objectForKey:NSKeyValueChangeOldKey];
         NSNumber *newDisplayID = [change objectForKey:NSKeyValueChangeNewKey];
 
-        if(oldDisplayID)
+        NSLog(@"Old display ID: %@", oldDisplayID);
+        NSLog(@"New display ID: %@", newDisplayID);
+
+        if(oldDisplayID && ![oldDisplayID isEqual:[NSNull null]])
         {
             [self.selectedDisplays removeObject:oldDisplayID];
         }
 
-        if(newDisplayID)
+        if(newDisplayID && ![newDisplayID isEqual:[NSNull null]] && ![SplitShowScreen isPseudoDisplayID:newDisplayID.intValue])
         {
             [self.selectedDisplays addObject:newDisplayID];
         }
 
-        if(oldDisplayID || newDisplayID)
-        {
-            [self.document invalidateRestorableState];
-        }
+        [self.document invalidateRestorableState];
     }
     else
     {
@@ -168,15 +167,8 @@
 {
     if(menuItem.action == @selector(changeSelectedDisplay:))
     {
-        if(menuItem.tag == kNoSelectedDisplay)
-        {
-            return YES;
-        }
-        else
-        {
-            BOOL alreadySelected = [self.selectedDisplays containsObject:menuItem.representedObject];
-            return (!alreadySelected || menuItem.state == 1);
-        }
+        BOOL alreadySelected = [self.selectedDisplays containsObject:menuItem.representedObject];
+        return (!alreadySelected || menuItem.state == 1);
     }
 
     return YES;
@@ -184,14 +176,17 @@
 
 - (void)bindHeaderView:(CustomLayoutHeaderView*)view;
 {
-    NSDictionary *bindingContentOptions = @{NSInsertsNullPlaceholderBindingOption : @YES};
-    NSDictionary *bindingValuesOptions = @{NSNullPlaceholderBindingOption : NSLocalizedString(@"No display", @"No display")};
+    NSDictionary *bindingContentOptions = @{NSInsertsNullPlaceholderBindingOption: @YES,
+                                            NSNullPlaceholderBindingOption: NSLocalizedString(@"No display", @"No display")};
     NSDictionary *bindingSelectionOptions = @{NSValidatesImmediatelyBindingOption : @YES};
 
-    [view.displayButton bind:@"content" toObject:self.displayController withKeyPath:@"arrangedObjects" options:bindingContentOptions];
-    [view.displayButton bind:@"contentObjects" toObject:self.displayController withKeyPath:@"arrangedObjects.displayID" options:nil];
-    [view.displayButton bind:@"contentValues" toObject:self.displayController withKeyPath:@"arrangedObjects.name" options:bindingValuesOptions];
-    [view.displayButton bind:@"selectedObject" toObject:view withKeyPath:@"objectValue.displayID" options:bindingSelectionOptions];
+    [view.displayButton bind:NSContentBinding toObject:self.screenController withKeyPath:@"arrangedObjects" options:bindingContentOptions];
+
+    [view.displayButton bind:NSContentObjectsBinding toObject:self.screenController withKeyPath:@"arrangedObjects.displayID" options:nil];
+
+    [view.displayButton bind:NSContentValuesBinding toObject:self.screenController withKeyPath:@"arrangedObjects.name" options:nil];
+
+    [view.displayButton bind:NSSelectedObjectBinding toObject:view withKeyPath:@"objectValue.displayID" options:bindingSelectionOptions];
 
     [view addObserver:self forKeyPath:@"objectValue.displayID" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
 
@@ -377,30 +372,18 @@
 
 #pragma mark - CustomLayout Action
 
+//TODO: Use add and remove?
 - (IBAction)addLayout:(id)sender
 {
-    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-
     NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"slides",
                                  [NSString stringWithFormat:@"%@ #%lu", NSLocalizedString(@"Layout", @"Layout"), self.splitShowDocument.customLayouts.count + 1], @"name",
                                  nil];
-    [self.splitShowDocument.customLayouts addObject:info];
-
-    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-
-    [self.layoutTableView reloadData];
+    [self.layoutController addObject:info];
 }
 
 - (IBAction)removeLayouts:(id)sender
 {
-    if(self.layoutTableView.selectedRowIndexes.count > 0)
-    {
-        [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
-        [self.splitShowDocument.customLayouts removeObjectsAtIndexes:self.layoutTableView.selectedRowIndexes];
-        [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
-    }
-
-    [self.layoutTableView reloadData];
+    [self.layoutController removeObjectsAtArrangedObjectIndexes:self.layoutTableView.selectedRowIndexes];
 }
 
 #pragma mark - CollectionView Delegate

@@ -122,14 +122,13 @@
                                                                 </textField>
                                                                 <popUpButton verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="UVz-0U-qKR">
                                                                     <rect key="frame" x="17" y="33" width="138" height="22"/>
-                                                                    <popUpButtonCell key="cell" type="push" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" borderStyle="borderAndBezel" imageScaling="proportionallyDown" inset="2" id="H88-Lr-7ss">
+                                                                    <popUpButtonCell key="cell" type="push" title="New window" bezelStyle="rounded" alignment="left" controlSize="small" lineBreakMode="truncatingTail" state="on" borderStyle="borderAndBezel" tag="2" imageScaling="proportionallyDown" inset="2" selectedItem="gEW-wF-sqE" id="H88-Lr-7ss">
                                                                         <behavior key="behavior" lightByBackground="YES" lightByGray="YES"/>
                                                                         <font key="font" metaFont="smallSystem"/>
                                                                         <menu key="menu" id="dq4-EW-jOQ">
                                                                             <items>
-                                                                                <menuItem title="Item 1" id="gPb-Gl-L93"/>
-                                                                                <menuItem title="Item 2" id="McJ-Uy-Ih7"/>
-                                                                                <menuItem title="Item 3" id="CRU-oE-tYr"/>
+                                                                                <menuItem title="No display" tag="1" id="CRU-oE-tYr"/>
+                                                                                <menuItem title="New window" state="on" tag="2" id="gEW-wF-sqE"/>
                                                                             </items>
                                                                         </menu>
                                                                     </popUpButtonCell>
