@@ -9,16 +9,34 @@
 #import "SplitShowScreen.h"
 #import "NSScreen+Name.h"
 
+#define kSplitShowScreenEncodeDisplayID @"kSplitShowScreenEncodeDisplayID"
+#define kSplitShowScreenEncodePseudoName @"kSplitShowScreenEncodePseudoName"
+
 @interface SplitShowScreen ()
 
-@property NSScreen *screen;
-@property NSString *pseudoName;
-@property (readwrite) BOOL pseudoScreen;
-@property CGDirectDisplayID pseudoDisplayID;
+@property (readwrite) CGDirectDisplayID displayID;
+
+- (void)customInit;
 
 @end
 
 @implementation SplitShowScreen
+
+static NSDictionary* pseudoScreenNames = nil;
+
+- (instancetype)initWithCoder:(NSCoder *)aDecoder
+{
+    self = [super init];
+
+    if(self)
+    {
+        self.displayID = [[aDecoder decodeObjectForKey:kSplitShowScreenEncodeDisplayID] intValue];
+
+        [self customInit];
+    }
+
+    return self;
+}
 
 - (instancetype)initWithScreen:(NSScreen *)screen
 {
@@ -26,44 +44,69 @@
 
     if(self)
     {
-        self.screen = screen;
+        self.displayID = screen.displayID;
+
+        [self customInit];
     }
 
     return self;
 }
 
-- (instancetype)initWithName:(NSString *)name andDisplayID:(CGDirectDisplayID)displayID
+- (instancetype)initWithDisplayID:(CGDirectDisplayID)displayID
 {
     self = [super init];
 
     if(self)
     {
-        self.pseudoName = name;
-        self.pseudoDisplayID = displayID;
-        self.pseudoScreen = YES;
+        self.displayID = displayID;
+
+        [self customInit];
     }
 
     return self;
 }
 
-- (NSString *)name
+- (void)customInit
 {
-    if(self.pseudoName)
-    {
-        return self.pseudoName;
-    }
+    static dispatch_once_t onceToken;
 
-    return self.screen.name;
+    dispatch_once(&onceToken, ^{
+        pseudoScreenNames = @{@(SplitShowPseudoDisplayIDNewWindow): NSLocalizedString(@"New window", @"New window")};
+    });
 }
 
-- (CGDirectDisplayID)displayID
+- (NSString *)name
 {
-    if(self.pseudoDisplayID)
+    NSString *pseudoName = [pseudoScreenNames objectForKey:@(self.displayID)];
+
+    if(pseudoName)
     {
-        return  self.pseudoDisplayID;
+        return pseudoName;
     }
 
-    return self.screen.displayID;
+    NSScreen *screen = [NSScreen screenWithDisplayID:self.displayID];
+
+    return screen.name;
+}
+
+- (NSScreen*)screen
+{
+    return [NSScreen screenWithDisplayID:self.displayID];
+}
+
+- (BOOL)isPseudoScreen
+{
+    return ([pseudoScreenNames objectForKey:@(self.displayID)] != nil);
+}
+
+- (BOOL)isAvailable
+{
+    if(self.isPseudoScreen)
+    {
+        return YES;
+    }
+
+    return ([NSScreen screenWithDisplayID:self.displayID] != nil);
 }
 
 + (BOOL)isPseudoDisplayID:(CGDirectDisplayID)displayID
@@ -71,39 +114,39 @@
     return (displayID == SplitShowPseudoDisplayIDNewWindow);
 }
 
-+ (SplitShowScreen*)screenWithDisplayID:(CGDirectDisplayID)displayID
+-(void)encodeWithCoder:(NSCoder *)aCoder
 {
-    for(NSScreen *screen in [NSScreen screens])
-    {
-        if(screen.displayID == displayID)
-        {
-            return [[SplitShowScreen alloc] initWithScreen:screen];
-        }
-    }
-
-    return nil;
+    [aCoder encodeObject:@(self.displayID) forKey:kSplitShowScreenEncodeDisplayID];
 }
 
-+ (CGDirectDisplayID)displayIDForScreenAtIndex:(NSInteger)index
+- (BOOL)isEqual:(id)object
 {
-    return [[[NSScreen screens] objectAtIndex:index] displayID];
-}
-
-+ (NSInteger)indexOfScreenWithDisplayID:(CGDirectDisplayID)displayID
-{
-    NSInteger index = 0;
-
-    for(NSScreen *screen in [NSScreen screens])
+    if(object == self)
     {
-        if(screen.displayID == displayID)
-        {
-            return index;
-        }
-
-        ++index;
+        return YES;
     }
 
-    return NSNotFound;
+    if(!object || ![object isKindOfClass:self.class])
+    {
+        return NO;
+    }
+
+    return [self isEqualToSplitShowScreen:object];
+}
+
+- (BOOL)isEqualToSplitShowScreen:(SplitShowScreen*)screen
+{
+    if(self == screen)
+    {
+        return YES;
+    }
+
+    return (self.displayID == screen.displayID);
+}
+
+- (NSUInteger)hash
+{
+    return self.displayID;
 }
 
 @end

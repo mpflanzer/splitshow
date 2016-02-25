@@ -28,6 +28,8 @@
 
 - (IBAction)addLayout:(id)sender;
 - (IBAction)removeLayouts:(id)sender;
-- (IBAction)changeSelectedDisplay:(NSPopUpButton*)button;
+
+//FIXME: Hack to enable menu validation
+- (IBAction)changeSelectedScreen:(id)sender;
 
 @end

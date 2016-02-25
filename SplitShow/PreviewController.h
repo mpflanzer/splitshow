@@ -48,6 +48,9 @@ typedef enum : NSUInteger
 @property IBOutlet DisplayController *mainPreview;
 @property IBOutlet DisplayController *helperPreview;
 
+//FIXME: Hack to enable menu validation
+- (void)changeSelectedScreen:(id)sender;
+
 - (IBAction)toggleCustomFullScreen:(id)sender;
 - (IBAction)swapDisplays:(id)sender;
 - (IBAction)importCustomLayout:(id)sender;

@@ -28,7 +28,6 @@
 @property IBOutlet NSCollectionView *sourceView;
 @property IBOutlet NSTableView *layoutTableView;
 @property NSMutableSet<NSIndexPath*> *selectedSlides;
-@property NSMutableSet<NSNumber*> *selectedDisplays;
 
 - (void)removeSelectedSlides;
 - (void)generatePreviewImages;
@@ -61,12 +60,11 @@
 
     self.window.restorationClass = [[[NSApplication sharedApplication] delegate] class];
 
-    self.screenController = [[SplitShowScreenArrayController alloc] initWithContent:[NSScreen screens]];
-    self.screenController.staticScreens = @[[[SplitShowScreen alloc] initWithName:NSLocalizedString(@"New window", @"New window") andDisplayID:SplitShowPseudoDisplayIDNewWindow]];
+    self.screenController = [SplitShowScreenArrayController new];
+    self.screenController.staticScreens = @[[[SplitShowScreen alloc] initWithDisplayID:SplitShowPseudoDisplayIDNewWindow]];
 
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
-    self.selectedDisplays = [NSMutableSet set];
     self.layoutController = [NSArrayController new];
     [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
 
@@ -123,37 +121,18 @@
 
 - (void)initSelectedDisplays
 {
-    for(unsigned int i = 0; i < [self.layoutController.arrangedObjects count]; ++i)
+    for(NSDictionary *info in self.layoutController.arrangedObjects)
     {
-        NSDictionary *info = [self.layoutController.arrangedObjects objectAtIndex:i];
-        NSNumber *displayID = [info objectForKey:@"displayID"];
-
-        if(displayID && ![displayID isEqual:[NSNull null]] && ![SplitShowScreen isPseudoDisplayID:displayID.intValue])
-        {
-            [self.selectedDisplays addObject:displayID];
-        }
+        [self.screenController selectScreen:[info objectForKey:@"screen"]];
     }
 }
 
 - (void)observeValueForKeyPath:(NSString *)keyPath ofObject:(id)object change:(NSDictionary<NSString *,id> *)change context:(void *)context
 {
-    if([@"objectValue.displayID" isEqualToString:keyPath])
+    if([@"objectValue.screen" isEqualToString:keyPath])
     {
-        NSNumber *oldDisplayID = [change objectForKey:NSKeyValueChangeOldKey];
-        NSNumber *newDisplayID = [change objectForKey:NSKeyValueChangeNewKey];
-
-        NSLog(@"Old display ID: %@", oldDisplayID);
-        NSLog(@"New display ID: %@", newDisplayID);
-
-        if(oldDisplayID && ![oldDisplayID isEqual:[NSNull null]])
-        {
-            [self.selectedDisplays removeObject:oldDisplayID];
-        }
-
-        if(newDisplayID && ![newDisplayID isEqual:[NSNull null]] && ![SplitShowScreen isPseudoDisplayID:newDisplayID.intValue])
-        {
-            [self.selectedDisplays addObject:newDisplayID];
-        }
+        [self.screenController unselectScreen:[change objectForKey:NSKeyValueChangeOldKey]];
+        [self.screenController selectScreen:[change objectForKey:NSKeyValueChangeNewKey]];
 
         [self.document invalidateRestorableState];
     }
@@ -165,10 +144,10 @@
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    if(menuItem.action == @selector(changeSelectedDisplay:))
+    if(menuItem.action == @selector(changeSelectedScreen:))
     {
-        BOOL alreadySelected = [self.selectedDisplays containsObject:menuItem.representedObject];
-        return (!alreadySelected || menuItem.state == 1);
+        BOOL isSelectable = [self.screenController isSelectableScreen:menuItem.representedObject];
+        return (isSelectable || menuItem.state == 1);
     }
 
     return YES;
@@ -182,22 +161,20 @@
 
     [view.displayButton bind:NSContentBinding toObject:self.screenController withKeyPath:@"arrangedObjects" options:bindingContentOptions];
 
-    [view.displayButton bind:NSContentObjectsBinding toObject:self.screenController withKeyPath:@"arrangedObjects.displayID" options:nil];
-
     [view.displayButton bind:NSContentValuesBinding toObject:self.screenController withKeyPath:@"arrangedObjects.name" options:nil];
 
-    [view.displayButton bind:NSSelectedObjectBinding toObject:view withKeyPath:@"objectValue.displayID" options:bindingSelectionOptions];
+    [view.displayButton bind:NSSelectedObjectBinding toObject:view withKeyPath:@"objectValue.screen" options:bindingSelectionOptions];
 
-    [view addObserver:self forKeyPath:@"objectValue.displayID" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
+    [view addObserver:self forKeyPath:@"objectValue.screen" options:(NSKeyValueObservingOptionOld | NSKeyValueObservingOptionNew) context:NULL];
 
     //FIXME: Hack to enable menu validation
     view.displayButton.target = self;
-    view.displayButton.action = @selector(changeSelectedDisplay:);
+    view.displayButton.action = @selector(changeSelectedScreen:);
 
     view.delegate = self;
 }
 
-- (void)changeSelectedDisplay:(NSPopUpButton *)button
+- (void)changeSelectedScreen:(id)sender
 {
     //FIXME: Hack to enable menu validation
 }

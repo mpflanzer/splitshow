@@ -123,4 +123,17 @@ static io_service_t IOServicePortFromCGDisplayID(CGDirectDisplayID displayID)
     return servicePort;
 }
 
++ (NSScreen*)screenWithDisplayID:(CGDirectDisplayID)displayID
+{
+    for(NSScreen *screen in [NSScreen screens])
+    {
+        if(screen.displayID == displayID)
+        {
+            return screen;
+        }
+    }
+
+    return nil;
+}
+
 @end

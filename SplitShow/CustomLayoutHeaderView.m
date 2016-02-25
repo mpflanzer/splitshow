@@ -18,11 +18,11 @@
 
 - (void)setObjectValue:(id)objectValue
 {
-    NSNumber *displayID = [objectValue objectForKey:@"displayID"];
+    SplitShowScreen *screen = [objectValue objectForKey:@"screen"];
 
-    if(displayID && ![displayID isEqual:[NSNull null]] && ![SplitShowScreen isPseudoDisplayID:displayID.intValue] && ![SplitShowScreen screenWithDisplayID:displayID.intValue])
+    if(![screen isAvailable])
     {
-        [objectValue removeObjectForKey:@"displayID"];
+        [objectValue removeObjectForKey:@"screen"];
     }
 
     [super setObjectValue:objectValue];
@@ -48,10 +48,9 @@
     {
         [self.displayButton unbind:@"content"];
         [self.displayButton unbind:@"contentValues"];
-        [self.displayButton unbind:@"contentObjects"];
         [self.displayButton unbind:@"selectedObject"];
 
-        [self removeObserver:self.delegate forKeyPath:@"objectValue.displayID"];
+        [self removeObserver:self.delegate forKeyPath:@"objectValue.screen"];
     }
 }
 

@@ -14,4 +14,14 @@
 
 @property (nonatomic) NSArray<SplitShowScreen*> *staticScreens;
 
+- (BOOL)isSelectableScreen:(SplitShowScreen*)screen;
+
+- (BOOL)selectScreen:(SplitShowScreen*)screen;
+- (BOOL)unselectScreen:(SplitShowScreen*)screen;
+
+//TODO: Use custom wrapper class instead?!
+- (instancetype)initWithContent:(id)content __attribute__((unavailable("initWithContent not available, call init instead")));
+
+- (void)reloadScreens;
+
 @end

@@ -12,18 +12,20 @@ typedef enum : NSUInteger {
     SplitShowPseudoDisplayIDNewWindow = 1,
 } SplitShowPseudoDisplayID;
 
-@interface SplitShowScreen : NSObject
+@interface SplitShowScreen : NSObject<NSCoding>
 
-@property (readonly) BOOL pseudoScreen;
 @property (readonly) NSString *name;
 @property (readonly) CGDirectDisplayID displayID;
+@property (readonly) NSScreen *screen;
 
+- (instancetype)initWithDisplayID:(CGDirectDisplayID)displayID;
 - (instancetype)initWithScreen:(NSScreen*)screen;
-- (instancetype)initWithName:(NSString*)name andDisplayID:(CGDirectDisplayID)displayID;
+
+- (BOOL)isPseudoScreen;
+- (BOOL)isAvailable;
+
+- (BOOL)isEqualToSplitShowScreen:(SplitShowScreen*)screen;
 
 + (BOOL)isPseudoDisplayID:(CGDirectDisplayID)displayID;
-+ (SplitShowScreen*)screenWithDisplayID:(CGDirectDisplayID)displayID;
-+ (NSInteger)indexOfScreenWithDisplayID:(CGDirectDisplayID)displayID;
-+ (CGDirectDisplayID)displayIDForScreenAtIndex:(NSInteger)index;
 
 @end

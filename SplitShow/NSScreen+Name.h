@@ -16,4 +16,6 @@
 @property (readonly) NSString *name;
 @property (readonly) CGDirectDisplayID displayID;
 
++ (NSScreen*)screenWithDisplayID:(CGDirectDisplayID)displayID;
+
 @end

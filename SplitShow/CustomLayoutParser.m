@@ -10,6 +10,7 @@
 #import "PreviewController.h"
 #import "SplitShowDocument.h"
 #import "Errors.h"
+#import "SplitShowScreen.h"
 
 @interface CustomLayoutParser ()
 
@@ -68,8 +69,14 @@
         return NO;
     }
 
-    [self.currentLayout setObject:(NSNumber*)displayID forKey:@"displayID"];
-    [self.parsedDisplayIDs addObject:displayID];
+    SplitShowScreen *screen = [[SplitShowScreen alloc] initWithDisplayID:[displayID intValue]];
+
+    [self.currentLayout setObject:screen forKey:@"screen"];
+
+    if(![screen isPseudoScreen])
+    {
+        [self.parsedDisplayIDs addObject:displayID];
+    }
 
     return YES;
 }
