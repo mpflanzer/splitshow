@@ -110,21 +110,21 @@
                         </popUpButton>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="NSToolbarSeparatorItem" id="bLJ-Db-RyV"/>
-                    <toolbarItem implicitItemIdentifier="BBA87A26-57D7-417E-8302-230887EDA1FC" label="" paletteLabel="" id="UEn-b6-dMO">
+                    <toolbarItem implicitItemIdentifier="BBA87A26-57D7-417E-8302-230887EDA1FC" label="" paletteLabel="" id="UEn-b6-dMO" userLabel="Present!">
                         <nil key="toolTip"/>
                         <size key="minSize" width="82" height="32"/>
                         <size key="maxSize" width="189" height="32"/>
                         <button key="view" verticalHuggingPriority="750" id="i1f-1h-yey">
                             <rect key="frame" x="0.0" y="14" width="180" height="32"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <buttonCell key="cell" type="push" title="Full Screen" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sbo-Bg-fMx">
+                            <buttonCell key="cell" type="push" title="Present!" bezelStyle="rounded" alignment="center" lineBreakMode="truncatingTail" enabled="NO" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="sbo-Bg-fMx">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="system"/>
+                                <connections>
+                                    <action selector="togglePresentation:" target="-1" id="qeK-dq-POB"/>
+                                    <binding destination="-2" name="enabled" keyPath="canStartPresentation" id="izA-Ta-Wy0"/>
+                                </connections>
                             </buttonCell>
-                            <connections>
-                                <action selector="toggleCustomFullScreen:" target="-1" id="cZ8-hj-0r2"/>
-                                <binding destination="-2" name="enabled" keyPath="canEnterFullScreen" id="EsF-Yk-fnY"/>
-                            </connections>
                         </button>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="F042616E-13F1-491F-8AA3-FF4BD6316811" label="Main display" paletteLabel="Main display" id="zPX-KS-bWb">

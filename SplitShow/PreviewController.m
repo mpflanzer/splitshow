@@ -13,6 +13,7 @@
 #import "DisplayController.h"
 #import "TimerController.h"
 #import "CustomLayoutParser.h"
+#import "CustomLayoutController.h"
 #import "Errors.h"
 
 #define kObserverCustomLayouts @"customLayouts"
@@ -23,7 +24,7 @@
 @interface PreviewController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
-@property BOOL canEnterFullScreen;
+@property BOOL canStartPresentation;
 
 @property SplitShowScreenArrayController *screenController;
 @property TimerController *timerController;
@@ -35,9 +36,9 @@
 @property (readonly) NSInteger maxDocumentPageCount;
 @property NSInteger currentSlideIndex;
 
-@property (readonly) BOOL isFullScreen;
-@property NSSet *fullScreenControllers;
-@property NSArray *screens;
+@property (readonly) BOOL isPresenting;
+@property NSMutableSet *presentationControllers;
+@property NSArray *presentationScreens;
 
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
 
@@ -51,8 +52,8 @@
 - (void)updatePreviewLayouts;
 - (void)updatePresentationLayouts;
 
-- (void)enterFullScreen;
-- (void)exitFullScreen;
+- (void)startPresentation;
+- (void)stopPresentation;
 
 @end
 
@@ -65,7 +66,7 @@
     //TODO: Get rid of this init thing. It should not be neccessary to pass the screens as argument.
     self.screenController = [SplitShowScreenArrayController new];
     self.timerController = [[TimerController alloc] initWithNibName:@"TimerView" bundle:nil];
-
+    self.presentationControllers = [NSMutableSet set];
     self.selectedPresentationMode = [self guessPresentationMode];
     self.currentSlideIndex = 0;
 
@@ -140,7 +141,7 @@
 {
     NSUInteger max = 0;
 
-    for(NSDictionary *slides in self.screens)
+    for(NSDictionary *slides in self.presentationScreens)
     {
         max = MAX(max, [[slides objectForKey:@"document"] pageCount]);
     }
@@ -271,7 +272,7 @@
 
             if([self.selectedScreenHelper isAvailable])
             {
-                [screens addObject:@{@"display" : self.selectedScreenHelper,
+                [screens addObject:@{@"screen" : self.selectedScreenHelper,
                                      @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupNotes],
                                      @"timer" : @YES}];
             }
@@ -288,7 +289,7 @@
 
             if([self.selectedScreenHelper isAvailable])
             {
-                [screens addObject:@{@"display" : self.selectedScreenHelper,
+                [screens addObject:@{@"screen" : self.selectedScreenHelper,
                                      @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes],
                                      @"timer" : @YES}];
             }
@@ -305,7 +306,7 @@
 
             if([self.selectedScreenHelper isAvailable])
             {
-                [screens addObject:@{@"display" : self.selectedScreenHelper,
+                [screens addObject:@{@"screen" : self.selectedScreenHelper,
                                      @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent],
                                      @"timer" : @YES}];
             }
@@ -322,7 +323,7 @@
 
             if([self.selectedScreenHelper isAvailable])
             {
-                [screens addObject:@{@"display" : self.selectedScreenHelper,
+                [screens addObject:@{@"screen" : self.selectedScreenHelper,
                                      @"document" : [self.splitShowDocument createMirroredDocument],
                                      @"timer" : @YES}];
             }
@@ -333,7 +334,7 @@
         {
             for(NSDictionary *info in self.splitShowDocument.customLayouts)
             {
-                [screens addObject:@{@"display" : [info objectForKey:@"screen"],
+                [screens addObject:@{@"screen" : [info objectForKey:@"screen"],
                                      @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
@@ -342,7 +343,7 @@
         }
     }
 
-    self.screens = screens;
+    self.presentationScreens = screens;
 }
 
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
@@ -424,7 +425,7 @@
         [self.screenController unselectScreen:[change objectForKey:NSKeyValueChangeOldKey]];
         [self.screenController selectScreen:[change objectForKey:NSKeyValueChangeNewKey]];
 
-        self.canEnterFullScreen = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
+        self.canStartPresentation = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
     }
     else if([kObserverCustomLayouts isEqualToString:keyPath])
     {
@@ -453,9 +454,9 @@
 }
 
 //TODO: Rename to presentation mode
-- (BOOL)isFullScreen
+- (BOOL)isPresenting
 {
-    return (self.fullScreenControllers != nil);
+    return (self.presentationControllers.count > 0);
 }
 
 - (void)exportCustomLayout:(id)sender
@@ -581,100 +582,107 @@
     }];
 }
 
-- (IBAction)toggleCustomFullScreen:(id)sender
+- (IBAction)togglePresentation:(id)sender
 {
-    if(self.isFullScreen)
+    if(self.isPresenting)
     {
-        [self exitFullScreen];
+        [self stopPresentation];
     }
     else
     {
-        [self enterFullScreen];
+        [self startPresentation];
     }
 }
 
-- (void)enterFullScreen
+- (void)startPresentation
 {
-    if(self.isFullScreen)
+    if(self.isPresenting)
     {
         return;
     }
+
+    [[CustomLayoutController sharedCustomLayoutController] close];
 
     [self updatePresentationLayouts];
 
-    NSMutableSet *fullScreenControllers = [NSMutableSet set];
-
-    for(NSDictionary *screen in self.screens)
+    for(NSDictionary *info in self.presentationScreens)
     {
-        NSScreen *fullScreen = [screen objectForKey:@"display"];
-        PDFDocument *document = [screen objectForKey:@"document"];
-        BOOL wantsTimer = [[screen objectForKey:@"timer"] boolValue];
+        SplitShowScreen *screen = [info objectForKey:@"screen"];
+        PDFDocument *document = [info objectForKey:@"document"];
+        BOOL wantsTimer = [[info objectForKey:@"timer"] boolValue];
 
-        NSRect fullScreenBounds = fullScreen.frame;
-        fullScreenBounds.origin = CGPointZero;
+        NSWindow *presentationWindow;
+        DisplayController *presentationViewController;
 
-        DisplayController *fullScreenViewController = [[DisplayController alloc] initWithFrame:fullScreenBounds];
-        fullScreenViewController.document = document;
-        [fullScreenViewController bindToWindowController:self];
-
-        if(wantsTimer)
+        if([screen isPseudoScreen])
         {
-            [fullScreenViewController.view addSubview:self.timerController.view];
+            //FIXME: Implement
+        }
+        else
+        {
+            NSRect fullScreenBounds = screen.screen.frame;
+            fullScreenBounds.origin = CGPointZero;
+
+            presentationViewController = [[DisplayController alloc] initWithFrame:fullScreenBounds];
+            presentationViewController.document = document;
+            [presentationViewController bindToWindowController:self];
+
+            if(wantsTimer)
+            {
+                [presentationViewController.view addSubview:self.timerController.view];
+            }
+
+            presentationWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
+                                                                     styleMask:NSBorderlessWindowMask
+                                                                       backing:NSBackingStoreBuffered
+                                                                         defer:YES
+                                                                        screen:screen.screen];
+
+            [presentationWindow setContentView:presentationViewController.view];
+            [presentationWindow setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
         }
 
-        NSWindow *fullScreenWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
-                                                                 styleMask:NSBorderlessWindowMask
-                                                                   backing:NSBackingStoreBuffered
-                                                                     defer:YES
-                                                                    screen:fullScreen];
+        NSWindowController *presentationWindowController = [[NSWindowController alloc] initWithWindow:presentationWindow];
 
-        [fullScreenWindow setContentView:fullScreenViewController.view];
-        [fullScreenWindow setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
-
-        NSWindowController *fullScreenWindowController = [[NSWindowController alloc] initWithWindow:fullScreenWindow];
-
-        [fullScreenControllers addObject:@{@"viewController" : fullScreenViewController, @"windowController" : fullScreenWindowController}];
-//        [self.document addWindowController:fullScreenWindowController];
-        [fullScreenWindowController.window toggleFullScreen:fullScreenWindowController];
+        [self.presentationControllers addObject:@{@"viewController" : presentationViewController, @"windowController" : presentationWindowController}];
+//        [self.document addWindowController:presentationWindowController];
+        [presentationWindowController.window toggleFullScreen:presentationWindowController];
     }
-
-    self.fullScreenControllers = fullScreenControllers;
-
 }
 
-- (void)exitFullScreen
+- (void)stopPresentation
 {
-    if(!self.isFullScreen)
+    if(!self.isPresenting)
     {
         return;
     }
 
-    for(NSDictionary *fullScreenController in self.fullScreenControllers)
+    for(NSDictionary *info in self.presentationControllers)
     {
-        NSWindowController *fullScreenWindowController = fullScreenController[@"windowController"];
-        DisplayController *fullScreenViewController = fullScreenController[@"viewController"];
+        NSWindowController *presentationWindowController = info[@"windowController"];
+        DisplayController *presentationViewController = info[@"viewController"];
 
-        [fullScreenViewController unbind];
-        [fullScreenWindowController close];
+        [presentationViewController unbind];
+        [presentationWindowController close];
     }
 
-    self.fullScreenControllers = nil;
+    [self.presentationControllers removeAllObjects];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
-    if(menuItem.action == @selector(toggleCustomFullScreen:))
+    if(menuItem.action == @selector(togglePresentation:))
     {
-        if(self.isFullScreen)
+        if(self.isPresenting)
         {
-            menuItem.title = NSLocalizedString(@"Exit Full Screen", @"Exit Full Screen");
+            menuItem.title = NSLocalizedString(@"Stop presentation", @"Stop presentation");
         }
         else
         {
-            menuItem.title = NSLocalizedString(@"Enter Full Screen", @"Enter Full Screen");
+            menuItem.title = NSLocalizedString(@"Start presentation", @"Start presentation");
         }
 
-        return self.canEnterFullScreen;
+        return self.canStartPresentation;
     }
     else if(menuItem.action == @selector(exportCustomLayout:))
     {
@@ -717,7 +725,7 @@
 
 - (void)cancel:(id)sender
 {
-    [self exitFullScreen];
+    [self stopPresentation];
 }
 
 - (void)pageUp:(id)sender

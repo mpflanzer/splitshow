@@ -134,7 +134,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
     {
         [controller reloadScreens];
 
-        //            [controller exitFullScreen];
+        //            [controller stopPresentation];
         //            controller.mainDisplay = BeamerDisplayNoDisplay;
         //            controller.helperDisplay = BeamerDisplayNoDisplay;
     }

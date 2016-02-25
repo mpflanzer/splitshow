@@ -51,7 +51,7 @@ typedef enum : NSUInteger
 //FIXME: Hack to enable menu validation
 - (void)changeSelectedScreen:(id)sender;
 
-- (IBAction)toggleCustomFullScreen:(id)sender;
+- (IBAction)togglePresentation:(id)sender;
 - (IBAction)swapDisplays:(id)sender;
 - (IBAction)importCustomLayout:(id)sender;
 - (IBAction)exportCustomLayout:(id)sender;

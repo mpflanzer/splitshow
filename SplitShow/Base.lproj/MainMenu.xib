@@ -599,10 +599,10 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <menu key="submenu" title="View" id="V0d-Ux-u5i">
                         <items>
-                            <menuItem title="Enter Full Screen" keyEquivalent="f" id="Dq7-vu-jzo">
+                            <menuItem title="Start presentation" keyEquivalent="p" id="Dq7-vu-jzo">
                                 <modifierMask key="keyEquivalentModifierMask" control="YES" command="YES"/>
                                 <connections>
-                                    <action selector="toggleCustomFullScreen:" target="-1" id="imm-la-i1R"/>
+                                    <action selector="togglePresentation:" target="-1" id="W89-W5-jot"/>
                                 </connections>
                             </menuItem>
                             <menuItem title="Show Toolbar" keyEquivalent="t" id="fc3-Fp-RoJ">
