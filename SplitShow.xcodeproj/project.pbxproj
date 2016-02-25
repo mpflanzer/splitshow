@@ -32,6 +32,7 @@
 		8E2CE8AE1C33E93A00CA462F /* CustomLayout.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E2CE8B01C33E93A00CA462F /* CustomLayout.xib */; };
 		8E7D7B881C7A25DE005CC416 /* SplitShowScreenArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D7B871C7A25DE005CC416 /* SplitShowScreenArrayController.m */; };
 		8E7D7B8B1C7A317E005CC416 /* SplitShowScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D7B8A1C7A317E005CC416 /* SplitShowScreen.m */; };
+		8E7D7B8D1C7FA767005CC416 /* PresentationWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E7D7B8C1C7FA767005CC416 /* PresentationWindow.xib */; };
 		8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA178711C41B6E20025C9FD /* AppDelegate.m */; };
 		8EA71BC41C48E1B60025BDB3 /* CustomLayoutHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */; };
 		8EB620361C7885FF00F8C007 /* CustomLayoutParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EB620351C7885FF00F8C007 /* CustomLayoutParser.m */; };
@@ -106,6 +107,7 @@
 		8E7D7B871C7A25DE005CC416 /* SplitShowScreenArrayController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitShowScreenArrayController.m; sourceTree = "<group>"; };
 		8E7D7B891C7A317E005CC416 /* SplitShowScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitShowScreen.h; sourceTree = "<group>"; };
 		8E7D7B8A1C7A317E005CC416 /* SplitShowScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitShowScreen.m; sourceTree = "<group>"; };
+		8E7D7B8C1C7FA767005CC416 /* PresentationWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PresentationWindow.xib; sourceTree = "<group>"; };
 		8EA178701C41B6E20025C9FD /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8EA178711C41B6E20025C9FD /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutHeaderView.h; sourceTree = "<group>"; };
@@ -250,6 +252,7 @@
 				8E2CE8401C30704E00CA462F /* Localizable.strings */,
 				8E1853791BBC57DA00F25E9F /* SplitShow.xcassets */,
 				8E2CE8321C30628600CA462F /* swap.png */,
+				8E7D7B8C1C7FA767005CC416 /* PresentationWindow.xib */,
 				8E2CE8391C306E5500CA462F /* TimerView.xib */,
 				8E2CE83C1C306E5D00CA462F /* Main.xib */,
 				8E2CE8361C306E3A00CA462F /* MainMenu.xib */,
@@ -372,6 +375,7 @@
 				8E2CE83A1C306E5D00CA462F /* Main.xib in Resources */,
 				8E2CE8341C306E3A00CA462F /* MainMenu.xib in Resources */,
 				8E2CE8AE1C33E93A00CA462F /* CustomLayout.xib in Resources */,
+				8E7D7B8D1C7FA767005CC416 /* PresentationWindow.xib in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

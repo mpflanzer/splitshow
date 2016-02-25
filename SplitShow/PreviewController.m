@@ -335,6 +335,7 @@
             for(NSDictionary *info in self.splitShowDocument.customLayouts)
             {
                 [screens addObject:@{@"screen" : [info objectForKey:@"screen"],
+                                     @"name" : [info objectForKey:@"name"],
                                      @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
@@ -453,7 +454,6 @@
     self.selectedScreenHelper = tmp;
 }
 
-//TODO: Rename to presentation mode
 - (BOOL)isPresenting
 {
     return (self.presentationControllers.count > 0);
@@ -596,6 +596,7 @@
 
 - (void)startPresentation
 {
+    //TODO: Reopen windows if already presenting
     if(self.isPresenting)
     {
         return;
@@ -616,7 +617,18 @@
 
         if([screen isPseudoScreen])
         {
-            //FIXME: Implement
+            presentationViewController = [[DisplayController alloc] initWithFrame:self.window.frame];
+            presentationViewController.title = [info objectForKey:@"name"];
+            presentationViewController.document = document;
+
+            [presentationViewController bindToWindowController:self];
+
+            if(wantsTimer)
+            {
+                [presentationViewController.view addSubview:self.timerController.view];
+            }
+
+            presentationWindow = [NSWindow windowWithContentViewController:presentationViewController];
         }
         else
         {
@@ -646,7 +658,15 @@
 
         [self.presentationControllers addObject:@{@"viewController" : presentationViewController, @"windowController" : presentationWindowController}];
 //        [self.document addWindowController:presentationWindowController];
-        [presentationWindowController.window toggleFullScreen:presentationWindowController];
+
+        if([screen isPseudoScreen])
+        {
+            [presentationWindowController showWindow:nil];
+        }
+        else
+        {
+            [presentationWindowController.window toggleFullScreen:nil];
+        }
     }
 }
 
