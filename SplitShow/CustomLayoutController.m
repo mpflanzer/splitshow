@@ -37,6 +37,7 @@
 
 - (void)bindHeaderView:(CustomLayoutHeaderView*)view;
 - (void)initSelectedDisplays;
+- (void)setupViews;
 
 - (IBAction)changeLayoutMode:(NSPopUpButton*)button;
 
@@ -91,6 +92,7 @@
 - (void)documentActivateNotification:(NSNotification *)notification
 {
     self.document = notification.object;
+
 }
 
 - (void)documentDeactivateNotification:(NSNotification *)notification
@@ -100,8 +102,22 @@
 
 - (void)setDocument:(id)document
 {
+    if(document == nil)
+    {
+        [self.document removeObserver:self forKeyPath:@"customLayoutMode"];
+    }
+    else
+    {
+        [document addObserver:self forKeyPath:@"customLayoutMode" options:NSKeyValueObservingOptionNew context:NULL];
+    }
+
     [super setDocument:document];
 
+    [self setupViews];
+}
+
+- (void)setupViews
+{
     switch(self.splitShowDocument.customLayoutMode)
     {
         case SplitShowSlideModeNormal:
@@ -134,6 +150,10 @@
         [self.screenController selectScreen:[change objectForKey:NSKeyValueChangeNewKey]];
 
         [self.document invalidateRestorableState];
+    }
+    else if([@"customLayoutMode" isEqualToString:keyPath])
+    {
+        [self setupViews];
     }
     else
     {

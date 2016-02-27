@@ -593,8 +593,8 @@
                 return;
             }
 
-            self.splitShowDocument.customLayoutMode = [[JSONObject objectForKey:@"customLayoutMode"] integerValue];
-            self.splitShowDocument.customLayouts = parsedLayouts;
+            ((SplitShowDocument*)self.document).customLayoutMode = [[JSONObject objectForKey:@"customLayoutMode"] integerValue];
+            ((SplitShowDocument*)self.document).customLayouts = parsedLayouts;
         }
     }];
 }
