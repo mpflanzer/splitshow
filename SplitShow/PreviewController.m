@@ -75,7 +75,6 @@
 {
     [super windowDidLoad];
 
-    //TODO: Get rid of this init thing. It should not be neccessary to pass the screens as argument.
     self.screenController = [SplitShowScreenArrayController new];
     self.timerController = [[TimerController alloc] initWithNibName:@"TimerView" bundle:nil];
     self.presentationControllers = [NSMutableSet set];
