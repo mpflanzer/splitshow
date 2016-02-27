@@ -33,6 +33,7 @@
 		8E7D7B881C7A25DE005CC416 /* SplitShowScreenArrayController.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D7B871C7A25DE005CC416 /* SplitShowScreenArrayController.m */; };
 		8E7D7B8B1C7A317E005CC416 /* SplitShowScreen.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D7B8A1C7A317E005CC416 /* SplitShowScreen.m */; };
 		8E7D7B8D1C7FA767005CC416 /* PresentationWindow.xib in Resources */ = {isa = PBXBuildFile; fileRef = 8E7D7B8C1C7FA767005CC416 /* PresentationWindow.xib */; };
+		8E7D7C2A1C81087E005CC416 /* SplitShowPresentationWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D7C291C81087E005CC416 /* SplitShowPresentationWindow.m */; };
 		8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA178711C41B6E20025C9FD /* AppDelegate.m */; };
 		8EA71BC41C48E1B60025BDB3 /* CustomLayoutHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */; };
 		8EB620361C7885FF00F8C007 /* CustomLayoutParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EB620351C7885FF00F8C007 /* CustomLayoutParser.m */; };
@@ -108,6 +109,8 @@
 		8E7D7B891C7A317E005CC416 /* SplitShowScreen.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitShowScreen.h; sourceTree = "<group>"; };
 		8E7D7B8A1C7A317E005CC416 /* SplitShowScreen.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitShowScreen.m; sourceTree = "<group>"; };
 		8E7D7B8C1C7FA767005CC416 /* PresentationWindow.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = PresentationWindow.xib; sourceTree = "<group>"; };
+		8E7D7C281C81087E005CC416 /* SplitShowPresentationWindow.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SplitShowPresentationWindow.h; sourceTree = "<group>"; };
+		8E7D7C291C81087E005CC416 /* SplitShowPresentationWindow.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SplitShowPresentationWindow.m; sourceTree = "<group>"; };
 		8EA178701C41B6E20025C9FD /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AppDelegate.h; sourceTree = "<group>"; };
 		8EA178711C41B6E20025C9FD /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutHeaderView.h; sourceTree = "<group>"; };
@@ -170,6 +173,8 @@
 			children = (
 				8ECF769A1C4B0C8D00451FFE /* CustomLayoutTableView.h */,
 				8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */,
+				8E7D7C281C81087E005CC416 /* SplitShowPresentationWindow.h */,
+				8E7D7C291C81087E005CC416 /* SplitShowPresentationWindow.m */,
 				8EA178701C41B6E20025C9FD /* AppDelegate.h */,
 				8EA178711C41B6E20025C9FD /* AppDelegate.m */,
 				8E1853A31BBC633300F25E9F /* SlideView.h */,
@@ -401,6 +406,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				8E23BE621C2C5A82008BEFE9 /* NSScreen+Name.m in Sources */,
+				8E7D7C2A1C81087E005CC416 /* SplitShowPresentationWindow.m in Sources */,
 				8E7D7B8B1C7A317E005CC416 /* SplitShowScreen.m in Sources */,
 				8E2CE88C1C30A89B00CA462F /* PDFPreviewItem.m in Sources */,
 				8E1853781BBC57DA00F25E9F /* SplitShowDocument.m in Sources */,

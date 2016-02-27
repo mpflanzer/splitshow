@@ -8,6 +8,7 @@
 
 #import "PreviewController.h"
 #import "SplitShowDocument.h"
+#import "SplitShowPresentationWindow.h"
 #import "SplitShowScreen.h"
 #import "SplitShowScreenArrayController.h"
 #import "DisplayController.h"
@@ -24,7 +25,6 @@
 @interface PreviewController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
-@property BOOL canStartPresentation;
 
 @property SplitShowScreenArrayController *screenController;
 @property TimerController *timerController;
@@ -32,6 +32,18 @@
 @property SplitShowScreen *selectedScreenMain;
 @property SplitShowScreen *selectedScreenHelper;
 @property SplitShowPresentationMode selectedPresentationMode;
+@property BOOL canStartPresentation;
+
+@property IBOutlet NSToolbarItem *mainDisplayItem;
+@property IBOutlet NSToolbarItem *helperDisplayItem;
+
+@property IBOutlet NSPopUpButton *mainDisplayButton;
+@property IBOutlet NSPopUpButton *helperDisplayButton;
+@property IBOutlet NSButton *swapDisplaysButton;
+@property IBOutlet NSButton *presentationButton;
+
+@property IBOutlet DisplayController *mainPreview;
+@property IBOutlet DisplayController *helperPreview;
 
 @property (readonly) NSInteger maxDocumentPageCount;
 @property NSInteger currentSlideIndex;
@@ -408,12 +420,17 @@
             self.mainDisplayItem.enabled = NO;
             self.helperDisplayItem.enabled = NO;
             self.swapDisplaysButton.enabled = NO;
+
+            //TODO: Better check
+            self.canStartPresentation = YES;
         }
         else
         {
             self.mainDisplayItem.enabled = YES;
             self.helperDisplayItem.enabled = YES;
             self.swapDisplaysButton.enabled = YES;
+
+            self.canStartPresentation = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
         }
 
         [self updatePreviewLayouts];
@@ -586,17 +603,18 @@
 {
     if(self.isPresenting)
     {
+        self.presentationButton.title = NSLocalizedString(@"Start presentation", @"Start presentation");
         [self stopPresentation];
     }
     else
     {
+        self.presentationButton.title = NSLocalizedString(@"Stop presentation", @"Stop presentation");
         [self startPresentation];
     }
 }
 
 - (void)startPresentation
 {
-    //TODO: Reopen windows if already presenting
     if(self.isPresenting)
     {
         return;
@@ -610,54 +628,43 @@
     {
         SplitShowScreen *screen = [info objectForKey:@"screen"];
         PDFDocument *document = [info objectForKey:@"document"];
+        NSString *title = [info objectForKey:@"name"];
         BOOL wantsTimer = [[info objectForKey:@"timer"] boolValue];
 
-        NSWindow *presentationWindow;
+        SplitShowPresentationWindow *presentationWindow;
         DisplayController *presentationViewController;
+
+        NSRect windowFrame;
 
         if([screen isPseudoScreen])
         {
-            presentationViewController = [[DisplayController alloc] initWithFrame:self.window.frame];
-            presentationViewController.title = [info objectForKey:@"name"];
-            presentationViewController.document = document;
-
-            [presentationViewController bindToWindowController:self];
-
-            if(wantsTimer)
-            {
-                [presentationViewController.view addSubview:self.timerController.view];
-            }
-
-            presentationWindow = [NSWindow windowWithContentViewController:presentationViewController];
+            windowFrame = self.window.frame;
         }
         else
         {
-            NSRect fullScreenBounds = screen.screen.frame;
-            fullScreenBounds.origin = CGPointZero;
-
-            presentationViewController = [[DisplayController alloc] initWithFrame:fullScreenBounds];
-            presentationViewController.document = document;
-            [presentationViewController bindToWindowController:self];
-
-            if(wantsTimer)
-            {
-                [presentationViewController.view addSubview:self.timerController.view];
-            }
-
-            presentationWindow = [[NSWindow alloc] initWithContentRect:fullScreenBounds
-                                                                     styleMask:NSBorderlessWindowMask
-                                                                       backing:NSBackingStoreBuffered
-                                                                         defer:YES
-                                                                        screen:screen.screen];
-
-            [presentationWindow setContentView:presentationViewController.view];
-            [presentationWindow setCollectionBehavior:NSWindowCollectionBehaviorFullScreenPrimary];
+            windowFrame = screen.screen.frame;
         }
+
+        presentationViewController = [[DisplayController alloc] initWithFrame:windowFrame];
+        presentationViewController.document = document;
+        presentationViewController.title = title;
+        [presentationViewController bindToWindowController:self];
+
+        if(wantsTimer)
+        {
+            [presentationViewController.view addSubview:self.timerController.view];
+        }
+
+        NSUInteger mask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
+
+        presentationWindow = [[SplitShowPresentationWindow alloc] initWithContentRect:windowFrame styleMask:mask backing:NSBackingStoreBuffered defer:NO screen:screen.screen];
+        presentationWindow.contentViewController = presentationViewController;
+        presentationWindow.releasedWhenClosed = YES;
+        presentationWindow.collectionBehavior = NSWindowCollectionBehaviorFullScreenDisallowsTiling | NSWindowCollectionBehaviorFullScreenPrimary;
 
         NSWindowController *presentationWindowController = [[NSWindowController alloc] initWithWindow:presentationWindow];
 
-        [self.presentationControllers addObject:@{@"viewController" : presentationViewController, @"windowController" : presentationWindowController}];
-//        [self.document addWindowController:presentationWindowController];
+        [self.presentationControllers addObject:presentationWindowController];
 
         if([screen isPseudoScreen])
         {
@@ -677,12 +684,9 @@
         return;
     }
 
-    for(NSDictionary *info in self.presentationControllers)
+    for(NSWindowController *presentationWindowController in self.presentationControllers)
     {
-        NSWindowController *presentationWindowController = info[@"windowController"];
-        DisplayController *presentationViewController = info[@"viewController"];
-
-        [presentationViewController unbind];
+        [((DisplayController*)presentationWindowController.contentViewController) unbind];
         [presentationWindowController close];
     }
 
@@ -745,6 +749,7 @@
 
 - (void)cancel:(id)sender
 {
+    self.presentationButton.title = NSLocalizedString(@"Start presentation", @"Start presentation");
     [self stopPresentation];
 }
 

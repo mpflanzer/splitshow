@@ -38,16 +38,6 @@ typedef enum : NSUInteger
 
 @interface PreviewController : NSWindowController <NSWindowDelegate>
 
-@property IBOutlet NSToolbarItem *mainDisplayItem;
-@property IBOutlet NSToolbarItem *helperDisplayItem;
-
-@property IBOutlet NSPopUpButton *mainDisplayButton;
-@property IBOutlet NSPopUpButton *helperDisplayButton;
-@property IBOutlet NSButton *swapDisplaysButton;
-
-@property IBOutlet DisplayController *mainPreview;
-@property IBOutlet DisplayController *helperPreview;
-
 //FIXME: Hack to enable menu validation
 - (void)changeSelectedScreen:(id)sender;
 
