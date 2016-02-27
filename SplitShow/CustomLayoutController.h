@@ -16,7 +16,6 @@
 @interface CustomLayoutController : NSWindowController <NSCollectionViewDelegate, NSTableViewDelegate, NSWindowDelegate, CustomLayoutDelegate>
 
 @property PDFDocument *pdfDocument;
-@property NSArrayController *layoutController;
 
 - (IBAction)selectItems:(NSPopUpButton*)button;
 
@@ -27,7 +26,6 @@
 + (instancetype) new    __attribute__((unavailable("new not available, call sharedCustomLayoutController instead")));
 
 - (IBAction)addLayout:(id)sender;
-- (IBAction)removeLayouts:(id)sender;
 
 //FIXME: Hack to enable menu validation
 - (IBAction)changeSelectedScreen:(id)sender;

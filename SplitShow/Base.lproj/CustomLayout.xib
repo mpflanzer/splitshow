@@ -7,6 +7,7 @@
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="CustomLayoutController">
             <connections>
+                <outlet property="layoutController" destination="a7d-mj-izn" id="35c-eF-Sqe"/>
                 <outlet property="layoutTableView" destination="xcu-HU-CXr" id="YiA-vc-HlG"/>
                 <outlet property="previewImageController" destination="Gu5-5E-1YS" id="cLf-ku-SVE"/>
                 <outlet property="sourceView" destination="akK-a9-fZx" id="7lI-EV-7UT"/>
@@ -163,6 +164,7 @@
                                             </tableColumns>
                                             <connections>
                                                 <binding destination="-2" name="content" keyPath="layoutController.arrangedObjects" id="6ZZ-99-uDb"/>
+                                                <binding destination="-2" name="selectionIndexes" keyPath="layoutController.selectionIndexes" previousBinding="6ZZ-99-uDb" id="wWX-S2-jiN"/>
                                                 <outlet property="delegate" destination="-2" id="PdB-UP-GcG"/>
                                             </connections>
                                         </tableView>
@@ -271,7 +273,8 @@
                                 <font key="font" metaFont="system"/>
                             </buttonCell>
                             <connections>
-                                <action selector="removeLayouts:" target="-2" id="7dj-ul-yn8"/>
+                                <action selector="remove:" target="a7d-mj-izn" id="rCp-cz-X0H"/>
+                                <binding destination="a7d-mj-izn" name="enabled" keyPath="canRemove" id="Xum-CO-I2V"/>
                             </connections>
                         </button>
                     </toolbarItem>
@@ -289,6 +292,11 @@
             </connections>
             <point key="canvasLocation" x="887" y="470"/>
         </window>
+        <arrayController preservesSelection="NO" avoidsEmptySelection="NO" id="a7d-mj-izn">
+            <connections>
+                <binding destination="-2" name="contentArray" keyPath="self.document.customLayouts" id="ku2-67-bNT"/>
+            </connections>
+        </arrayController>
     </objects>
     <resources>
         <image name="NSAddTemplate" width="11" height="11"/>

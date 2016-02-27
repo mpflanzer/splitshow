@@ -24,6 +24,7 @@
 @property (readonly) SplitShowDocument *splitShowDocument;
 @property NSMutableArray *previewImages;
 @property IBOutlet NSArrayController *previewImageController;
+@property IBOutlet NSArrayController *layoutController;
 @property SplitShowScreenArrayController *screenController;
 @property IBOutlet NSCollectionView *sourceView;
 @property IBOutlet NSTableView *layoutTableView;
@@ -65,8 +66,6 @@
 
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
-    self.layoutController = [NSArrayController new];
-    [self.layoutController bind:NSContentArrayBinding toObject:self withKeyPath:@"document.customLayouts" options:nil];
 
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentActivateNotification:) name:kSplitShowNotificationWindowDidBecomeMain object:nil];
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(documentDeactivateNotification:) name:kSplitShowNotificationWindowDidResignMain object:nil];
@@ -349,18 +348,13 @@
 
 #pragma mark - CustomLayout Action
 
-//TODO: Use add and remove?
+//TODO: Use add?
 - (IBAction)addLayout:(id)sender
 {
     NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"slides",
                                  [NSString stringWithFormat:@"%@ #%lu", NSLocalizedString(@"Layout", @"Layout"), self.splitShowDocument.customLayouts.count + 1], @"name",
                                  nil];
     [self.layoutController addObject:info];
-}
-
-- (IBAction)removeLayouts:(id)sender
-{
-    [self.layoutController removeObjectsAtArrangedObjectIndexes:self.layoutTableView.selectedRowIndexes];
 }
 
 #pragma mark - CollectionView Delegate
