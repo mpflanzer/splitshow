@@ -76,6 +76,7 @@
     [super windowDidLoad];
 
     self.screenController = [SplitShowScreenArrayController new];
+    self.screenController.staticScreens = @[[[SplitShowScreen alloc] initWithDisplayID:SplitShowPseudoDisplayIDNewWindow]];
     self.timerController = [[TimerController alloc] initWithNibName:@"TimerView" bundle:nil];
     self.presentationControllers = [NSMutableSet set];
     self.selectedPresentationMode = [self guessPresentationMode];
