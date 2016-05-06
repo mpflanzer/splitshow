@@ -136,37 +136,41 @@
 
     for(NSNumber *mode in modes)
     {
-        PDFDocument *tmpDocument = [[PDFDocument alloc] init];
+        PDFDocument *newDocument;
 
-        for(NSUInteger i = 0; i < document.pageCount; ++i)
+        switch(mode.integerValue)
         {
-            PDFPage *page = [document pageAtIndex:i];
+            case SplitShowSlideModeNormal:
+                newDocument = [document copy];
+                break;
 
-            switch(mode.integerValue)
+            case SplitShowSlideModeSplit:
             {
-                case SplitShowSlideModeNormal:
-                    [tmpDocument insertPage:[page copy] atIndex:i];
-                    break;
+                newDocument = [[PDFDocument alloc] init];
+                PDFDocument *leftDocument = [document copy];
+                PDFDocument *rightDocument = [document copy];
 
-                case SplitShowSlideModeSplit:
+                for(NSUInteger i = 0; i < document.pageCount; ++i)
                 {
+                    PDFPage *page = [document pageAtIndex:i];
+                    PDFPage *leftPage = [leftDocument pageAtIndex:i];
+                    PDFPage *rightPage = [rightDocument pageAtIndex:i];
                     NSRect cropBounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
-                    PDFPage *tmpPage = [page copy];
 
-                    // Insert left half
+                    // Crop and insert left half
                     cropBounds.size.width /= 2;
-                    [tmpPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                    [tmpDocument insertPage:[tmpPage copy] atIndex:(2 * i)];
+                    [leftPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
+                    [newDocument insertPage:rightPage atIndex:(2 * i)];
 
-                    // Insert right half
+                    // Crop and insert right half
                     cropBounds.origin.x += cropBounds.size.width;
-                    [tmpPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                    [tmpDocument insertPage:tmpPage atIndex:(2 * i + 1)];
+                    [rightPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
+                    [newDocument insertPage:rightPage atIndex:(2 * i + 1)];
                 }
             }
         }
 
-        [presentations setObject:tmpDocument forKey:mode];
+        [presentations setObject:newDocument forKey:mode];
     }
 
     return presentations;
@@ -359,7 +363,7 @@
 
 - (PDFDocument *)createSplitDocumentForGroup:(NSString *)group
 {
-    NSInteger start;
+    NSInteger start = 0;
 
     if([kSplitShowSlideGroupContent isEqualToString:group])
     {
@@ -387,17 +391,30 @@
 
 - (PDFDocument *)createDocumentFromIndices:(NSArray *)indices inMode:(SplitShowSlideMode)slideMode
 {
-    PDFDocument *document = [[PDFDocument alloc] init];
     PDFDocument *presentation = [self.presentations objectForKey:@(slideMode)];
-    NSUInteger newIndex = 0;
+    PDFDocument *document = [presentation copy];
 
-    for(NSNumber *index in indices)
+    NSEnumerator *indexEnumerator = indices.reverseObjectEnumerator;
+    NSNumber *keepIndex = [indexEnumerator nextObject];
+    NSInteger pageIndex = document.pageCount - 1;
+
+    while(pageIndex > keepIndex.integerValue)
     {
-        PDFPage *slide = [[presentation pageAtIndex:index.unsignedIntegerValue] copy];
-        [document insertPage:slide atIndex:newIndex];
-        ++newIndex;
+        [document removePageAtIndex:pageIndex];
+        --pageIndex;
     }
-    
+
+    for(;pageIndex >= 0 && keepIndex; --pageIndex)
+    {
+        if(pageIndex != keepIndex.integerValue)
+        {
+            [document removePageAtIndex:pageIndex];
+            continue;
+        }
+
+        keepIndex = [indexEnumerator nextObject];
+    }
+
     return document;
 }
 
