@@ -134,14 +134,14 @@
     NSSize pageSize = self.splitShowDocument.pageSize;
     float aspectRatio = pageSize.width / pageSize.height;
 
-    if(self.splitShowDocument.hasInterleavedLayout)
-    {
-        return SplitShowPresentationModeInterleave;
-    }
-    else if(aspectRatio > 2.39)
+    if(aspectRatio > 2.39)
     {
         // Consider 2.39:1 the widest commonly found aspect ratio of a single frame
         return SplitShowPresentationModeSplit;
+    }
+    else if(self.splitShowDocument.hasInterleavedLayout)
+    {
+        return SplitShowPresentationModeInterleave;
     }
     else
     {
