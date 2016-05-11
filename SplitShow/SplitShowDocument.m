@@ -160,7 +160,7 @@
                     // Crop and insert left half
                     cropBounds.size.width /= 2;
                     [leftPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                    [newDocument insertPage:rightPage atIndex:(2 * i)];
+                    [newDocument insertPage:leftPage atIndex:(2 * i)];
 
                     // Crop and insert right half
                     cropBounds.origin.x += cropBounds.size.width;
@@ -413,6 +413,12 @@
         }
 
         keepIndex = [indexEnumerator nextObject];
+    }
+
+    while(pageIndex >= 0)
+    {
+        [document removePageAtIndex:pageIndex];
+        --pageIndex;
     }
 
     return document;
