@@ -10,6 +10,7 @@
 #import <Quartz/Quartz.h>
 #import "NavFile.h"
 #import "PDFDocument+Presentation.h"
+#import "PDFDocument+CopyFix.h"
 #import "PreviewController.h"
 #import "CustomLayoutController.h"
 #import "DisplayController.h"
