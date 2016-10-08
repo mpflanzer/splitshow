@@ -106,11 +106,11 @@
     if(self)
     {
         BOOL isDirectory;
-        BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:url.absoluteString isDirectory:&isDirectory];
+        BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:url.path isDirectory:&isDirectory];
 
         if(fileExists == YES && isDirectory == NO)
         {
-            NSString *content = [NSString stringWithContentsOfFile:url.absoluteString usedEncoding:NULL error:NULL];
+            NSString *content = [NSString stringWithContentsOfFile:url.path usedEncoding:NULL error:NULL];
             [self parse:content];
         }
     }
@@ -123,14 +123,19 @@
     NSInteger slideCount = 0;
     NSMutableArray *slides = [NSMutableArray array];
 
+    if(!content)
+    {
+        return;
+    }
+
     NSString *framePatternStart = [NSRegularExpression escapedPatternForString:@"\\headcommand {\\beamer@framepages {"];
     NSString *framePatternMiddle = [NSRegularExpression escapedPatternForString:@"}{"];
     NSString *framePatternEnd = [NSRegularExpression escapedPatternForString:@"}}"];
-    NSString *framePattern = [NSString stringWithFormat:@"%@\\d+%@\\d+%@", framePatternStart, framePatternMiddle, framePatternEnd];
+    NSString *framePattern = [NSString stringWithFormat:@"%@(\\d+)%@(\\d+)%@", framePatternStart, framePatternMiddle, framePatternEnd];
 
     NSString *countPatternStart = [NSRegularExpression escapedPatternForString:@"\\headcommand {\\beamer@documentpages {"];
     NSString *countPatternEnd = [NSRegularExpression escapedPatternForString:@"}}"];
-    NSString *countPattern = [NSString stringWithFormat:@"%@\\d+%@", countPatternStart, countPatternEnd];
+    NSString *countPattern = [NSString stringWithFormat:@"%@(\\d+)%@", countPatternStart, countPatternEnd];
 
     NSRegularExpression *frameRegex = [NSRegularExpression regularExpressionWithPattern:framePattern options:0 error:nil];
 
