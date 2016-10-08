@@ -35,6 +35,8 @@
 		8E7D7C2A1C81087E005CC416 /* SplitShowPresentationWindow.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E7D7C291C81087E005CC416 /* SplitShowPresentationWindow.m */; };
 		8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA178711C41B6E20025C9FD /* AppDelegate.m */; };
 		8EA71BC41C48E1B60025BDB3 /* CustomLayoutHeaderView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */; };
+		8EA748AF1DA77E34007AC851 /* PDFDocument+CopyFix.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA748AE1DA77E34007AC851 /* PDFDocument+CopyFix.m */; };
+		8EA748B21DA91CBF007AC851 /* NavFile.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA748B11DA91CBF007AC851 /* NavFile.m */; };
 		8EB620361C7885FF00F8C007 /* CustomLayoutParser.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EB620351C7885FF00F8C007 /* CustomLayoutParser.m */; };
 		8ECF769C1C4B0C8D00451FFE /* CustomLayoutTableView.m in Sources */ = {isa = PBXBuildFile; fileRef = 8ECF769B1C4B0C8D00451FFE /* CustomLayoutTableView.m */; };
 /* End PBXBuildFile section */
@@ -113,6 +115,10 @@
 		8EA178711C41B6E20025C9FD /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AppDelegate.m; sourceTree = "<group>"; };
 		8EA71BC21C48E1B60025BDB3 /* CustomLayoutHeaderView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutHeaderView.h; sourceTree = "<group>"; };
 		8EA71BC31C48E1B60025BDB3 /* CustomLayoutHeaderView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutHeaderView.m; sourceTree = "<group>"; };
+		8EA748AD1DA77E34007AC851 /* PDFDocument+CopyFix.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "PDFDocument+CopyFix.h"; sourceTree = "<group>"; };
+		8EA748AE1DA77E34007AC851 /* PDFDocument+CopyFix.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "PDFDocument+CopyFix.m"; sourceTree = "<group>"; };
+		8EA748B01DA91CBF007AC851 /* NavFile.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = NavFile.h; sourceTree = "<group>"; };
+		8EA748B11DA91CBF007AC851 /* NavFile.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = NavFile.m; sourceTree = "<group>"; };
 		8EB620331C73A80D00F8C007 /* CustomLayoutDelegateProtocol.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = CustomLayoutDelegateProtocol.h; sourceTree = "<group>"; };
 		8EB620341C7885FF00F8C007 /* CustomLayoutParser.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CustomLayoutParser.h; sourceTree = "<group>"; };
 		8EB620351C7885FF00F8C007 /* CustomLayoutParser.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CustomLayoutParser.m; sourceTree = "<group>"; };
@@ -199,6 +205,8 @@
 				8EB620371C78C54300F8C007 /* Errors.h */,
 				8E1853761BBC57DA00F25E9F /* SplitShowDocument.h */,
 				8E1853771BBC57DA00F25E9F /* SplitShowDocument.m */,
+				8EA748B01DA91CBF007AC851 /* NavFile.h */,
+				8EA748B11DA91CBF007AC851 /* NavFile.m */,
 				8E2CE7FC1C3007F800CA462F /* Utilities.h */,
 				8E2CE7FA1C3007D800CA462F /* Utilities.m */,
 				8E2CE8041C30485B00CA462F /* TimerController.h */,
@@ -239,6 +247,8 @@
 		8E2CE82E1C30546500CA462F /* Categories */ = {
 			isa = PBXGroup;
 			children = (
+				8EA748AD1DA77E34007AC851 /* PDFDocument+CopyFix.h */,
+				8EA748AE1DA77E34007AC851 /* PDFDocument+CopyFix.m */,
 				8E2CE7FE1C30233900CA462F /* PDFView+GoToPageAtIndex.h */,
 				8E2CE7FF1C30233900CA462F /* PDFView+GoToPageAtIndex.m */,
 				8E23BE601C2C5A82008BEFE9 /* NSScreen+Name.h */,
@@ -327,7 +337,7 @@
 		8E1853621BBC57DA00F25E9F /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0700;
+				LastUpgradeCheck = 0800;
 				ORGANIZATIONNAME = "Moritz Pflanzer";
 				TargetAttributes = {
 					8E1853691BBC57DA00F25E9F = {
@@ -408,11 +418,13 @@
 				8E1853781BBC57DA00F25E9F /* SplitShowDocument.m in Sources */,
 				8E2CE8031C30293800CA462F /* DisplayController.m in Sources */,
 				8E2CE8001C30233900CA462F /* PDFView+GoToPageAtIndex.m in Sources */,
+				8EA748B21DA91CBF007AC851 /* NavFile.m in Sources */,
 				8E7D7B881C7A25DE005CC416 /* SplitShowScreenArrayController.m in Sources */,
 				8E1855841BDBF64500E6AEB5 /* PreviewController.m in Sources */,
 				8EA178721C41B6E20025C9FD /* AppDelegate.m in Sources */,
 				8E2CE7FB1C3007D800CA462F /* Utilities.m in Sources */,
 				8E2CE8AA1C32AB3800CA462F /* CustomLayoutContentView.m in Sources */,
+				8EA748AF1DA77E34007AC851 /* PDFDocument+CopyFix.m in Sources */,
 				8EB620361C7885FF00F8C007 /* CustomLayoutParser.m in Sources */,
 				8E1853721BBC57DA00F25E9F /* main.m in Sources */,
 				8E1853A51BBC633300F25E9F /* SlideView.m in Sources */,
@@ -508,6 +520,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -517,8 +530,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";
@@ -553,6 +568,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++0x";
 				CLANG_CXX_LIBRARY = "libc++";
 				CLANG_ENABLE_MODULES = YES;
@@ -562,8 +578,10 @@
 				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
 				CLANG_WARN_EMPTY_BODY = YES;
 				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
 				CLANG_WARN_INT_CONVERSION = YES;
 				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_IDENTITY = "-";

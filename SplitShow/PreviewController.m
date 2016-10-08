@@ -139,7 +139,7 @@
         // Consider 2.39:1 the widest commonly found aspect ratio of a single frame
         return SplitShowPresentationModeSplit;
     }
-    else if(self.splitShowDocument.hasInterleavedLayout)
+    else if([self.splitShowDocument hasInterleavedLayout])
     {
         return SplitShowPresentationModeInterleave;
     }
@@ -155,7 +155,8 @@
 
     for(NSDictionary *slides in self.presentationScreens)
     {
-        max = MAX(max, [[slides objectForKey:@"document"] pageCount]);
+        PDFDocument *doc = [slides objectForKey:@"document"];
+        max = MAX(max, doc.pageCount);
     }
 
     max = MAX(max, self.mainPreview.document.pageCount);
@@ -217,22 +218,22 @@
     {
         case SplitShowPresentationModeInterleave:
         {
-            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupContent];
-            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupNotes];
+            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeContent];
+            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeNotes];
             break;
         }
 
         case SplitShowPresentationModeSplit:
         {
-            self.mainPreview.document = [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent];
-            self.helperPreview.document = [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes];
+            self.mainPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft];
+            self.helperPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight];
             break;
         }
 
         case SplitShowPresentationModeInverseSplit:
         {
-            self.mainPreview.document = [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes];
-            self.helperPreview.document = [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent];
+            self.mainPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight];
+            self.helperPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft];
             break;
         }
 
@@ -253,13 +254,13 @@
             {
                 info = [self.splitShowDocument.customLayouts objectAtIndex:0];
 
-                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode];
+                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
 
                 if(self.splitShowDocument.customLayouts.count > 1)
                 {
                     info = [self.splitShowDocument.customLayouts objectAtIndex:1];
-                    
-                    self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode];
+
+                    self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
                 }
             }
 
@@ -279,13 +280,13 @@
             if([self.selectedScreenMain isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupContent]}];
+                                     @"document" : [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeContent]}];
             }
 
             if([self.selectedScreenHelper isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:kSplitShowSlideGroupNotes],
+                                     @"document" : [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeNotes],
                                      @"timer" : @YES}];
             }
             break;
@@ -296,13 +297,13 @@
             if([self.selectedScreenMain isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent]}];
+                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft]}];
             }
 
             if([self.selectedScreenHelper isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes],
+                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight],
                                      @"timer" : @YES}];
             }
             break;
@@ -313,13 +314,13 @@
             if([self.selectedScreenMain isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupNotes]}];
+                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight]}];
             }
 
             if([self.selectedScreenHelper isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForGroup:kSplitShowSlideGroupContent],
+                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft],
                                      @"timer" : @YES}];
             }
             break;
@@ -348,7 +349,7 @@
             {
                 [screens addObject:@{@"screen" : [info objectForKey:@"screen"],
                                      @"name" : [info objectForKey:@"name"],
-                                     @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] inMode:self.splitShowDocument.customLayoutMode],
+                                     @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode],
                                      @"timer" : @NO}];
             }
 

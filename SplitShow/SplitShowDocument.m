@@ -8,6 +8,7 @@
 
 #import "SplitShowDocument.h"
 #import <Quartz/Quartz.h>
+#import "NavFile.h"
 #import "PDFDocument+Presentation.h"
 #import "PreviewController.h"
 #import "CustomLayoutController.h"
@@ -21,21 +22,11 @@
 @interface SplitShowDocument ()
 
 @property PDFDocument *pdfDocument;
-@property NSDictionary<NSNumber*, PDFDocument*> *presentations;
-@property NSDictionary *interleavedIndices;
-@property NSString *navFileContent;
-
+//@property NSDictionary<NSNumber*, PDFDocument*> *documents;
+@property NavFile *navFile;
 @property NSSet<NSNumber*> *supportedSlideModes;
 
-- (NSUInteger)pageCountForSlideMode:(SplitShowSlideMode)slideMode;
-
-- (NSDictionary*)generatePresentationsForModes:(NSSet*)modes fromPDFDocument:(PDFDocument *)document;
-
-- (NSDictionary*)createInterleavedIndicesFromNavFileContent:(NSString*)content;
-
-- (NSString*)readNAVFileForDocument:(PDFDocument*)document;
-- (NSString*)readEmbeddedNAVFileForDocument:(PDFDocument*)document;
-- (NSString*)readExternalNAVFileForDocument:(PDFDocument*)document;
+- (void)cropPage:(PDFPage*)page forMode:(SplitShowSplitMode)mode;
 
 @end
 
@@ -84,15 +75,11 @@
 
 - (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError
 {
-    self.pdfDocument = [[PDFDocument alloc] initWithURL:url];
-    self.presentations = [self generatePresentationsForModes:self.supportedSlideModes fromPDFDocument:self.pdfDocument];
     self.customLayouts = [NSMutableArray array];
     self.customLayoutMode = SplitShowSlideModeNormal;
-    self.navFileContent = [self readNAVFileForDocument:self.pdfDocument];
+    self.pdfDocument = [[PDFDocument alloc] initWithURL:url];
 
-    self.interleavedIndices = [self createInterleavedIndicesFromNavFileContent:self.navFileContent];
-
-    if(!self.presentations)
+    if(!self.pdfDocument)
     {
         if(outError != NULL)
         {
@@ -103,6 +90,14 @@
 
         return NO;
     }
+    
+    self.navFile = [[NavFile alloc] initWithPDFDocument:self.pdfDocument];
+
+    if(!self.navFile)
+    {
+        NSString *path = [[self.pdfDocument.documentURL.path stringByDeletingPathExtension] stringByAppendingPathExtension:@"nav"];
+        self.navFile = [[NavFile alloc] initWithURL:[NSURL fileURLWithPath:path]];
+    }
 
     return YES;
 }
@@ -112,313 +107,155 @@
     return YES;
 }
 
-- (NSUInteger)pageCountForSlideMode:(SplitShowSlideMode)slideMode
+- (BOOL)hasInterleavedLayout
 {
-    return [[self.presentations objectForKey:@(slideMode)] pageCount];
+    return [self.navFile hasInterleavedLayout];
 }
 
 - (NSSize)pageSize
 {
-    PDFPage *firstPage = [self.pdfDocument pageAtIndex:0];
-    NSRect pageBounds = [firstPage boundsForBox:kPDFDisplayBoxMediaBox];
+    NSSize size = NSZeroSize;
 
-    return pageBounds.size;
+    if(self.pdfDocument)
+    {
+        PDFPage *firstPage = [self.pdfDocument pageAtIndex:0];
+        NSRect pageBounds = [firstPage boundsForBox:kPDFDisplayBoxMediaBox];
+        size = pageBounds.size;
+    }
+
+    return size;
 }
 
-- (NSString *)name
+- (NSString*)name
 {
     return self.pdfDocument.title;
 }
 
-- (NSDictionary*)generatePresentationsForModes:(NSSet*)modes fromPDFDocument:(PDFDocument *)document
+- (void)cropPage:(PDFPage*)page forMode:(SplitShowSplitMode)mode
 {
-    NSMutableDictionary *presentations = [NSMutableDictionary dictionaryWithCapacity:modes.count];
+    NSRect cropBounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
 
-    for(NSNumber *mode in modes)
+    switch(mode)
     {
-        PDFDocument *newDocument;
+        case SplitShowSplitModeLeft:
+            // Crop to left half
+            cropBounds.size.width /= 2;
+            break;
+        case SplitShowSplitModeRight:
+            // Crop to right half
+            cropBounds.size.width /= 2;
+            cropBounds.origin.x += cropBounds.size.width;
+            break;
+        case SplitShowSplitModeBoth:
+            break;
+        default:
+            NSAssert(0, @"Unknown split slide mode");
+            break;
+    }
 
-        switch(mode.integerValue)
+    [page setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
+}
+
+- (PDFDocument*)createMirroredDocument
+{
+    return [self.pdfDocument copy];
+}
+
+- (PDFDocument*)createInterleavedDocumentForMode:(SplitShowInterleaveMode)mode
+{
+    PDFDocument *document;
+
+    if([self.navFile hasInterleavedLayout])
+    {
+        NSArray *indices;
+
+        switch(mode)
+        {
+            case SplitShowInterleaveModeContent:
+                indices = self.navFile.indices[kNavFileSlideGroupContent];
+                break;
+            case SplitShowInterleaveModeNotes:
+                indices = self.navFile.indices[kNavFileSlideGroupNotes];
+                break;
+            default:
+                NSAssert(0, @"Unknown interleaved slide mode");
+                break;
+        }
+
+        document = [self createDocumentFromIndices:indices forMode:SplitShowSlideModeNormal];
+    }
+
+    return document;
+}
+
+- (PDFDocument*)createSplitDocumentForMode:(SplitShowSplitMode)mode
+{
+    PDFDocument *document = [self.pdfDocument copy];
+
+    switch(mode)
+    {
+        case SplitShowSplitModeLeft:
+        case SplitShowSplitModeRight:
+        {
+            for(NSUInteger i = 0; i < document.pageCount; ++i)
+            {
+                PDFPage *page = [document pageAtIndex:i];
+                [self cropPage:page forMode:mode];
+            }
+            break;
+        }
+        case SplitShowSplitModeBoth:
+        {
+            NSUInteger pageCount = 2 * document.pageCount;
+
+            for(NSUInteger i = 0; i < pageCount; i += 2)
+            {
+                PDFPage *leftPage = [document pageAtIndex:i];
+                PDFPage *rightPage = [[document pageAtIndex:i] copy];
+
+                [self cropPage:leftPage forMode:SplitShowSplitModeLeft];
+                [self cropPage:rightPage forMode:SplitShowSplitModeRight];
+
+                [document insertPage:rightPage atIndex:i+1];
+            }
+            break;
+        }
+        default:
+            NSAssert(0, @"Unknown split slide mode");
+            break;
+    }
+
+    return document;
+}
+
+- (PDFDocument*)createDocumentFromIndices:(NSArray*)indices forMode:(SplitShowSlideMode)mode
+{
+    PDFDocument *document = [[PDFDocument alloc] init];
+
+    for(NSUInteger i = 0; i < indices.count; ++i)
+    {
+        NSUInteger slideIndex = [indices[i] unsignedIntegerValue];
+        PDFPage *page;
+
+        switch(mode)
         {
             case SplitShowSlideModeNormal:
-                newDocument = [document copy];
+                page = [[self.pdfDocument pageAtIndex:slideIndex] copy];
                 break;
-
             case SplitShowSlideModeSplit:
             {
-                newDocument = [[PDFDocument alloc] init];
-                PDFDocument *leftDocument = [document copy];
-                PDFDocument *rightDocument = [document copy];
-
-                for(NSUInteger i = 0; i < document.pageCount; ++i)
-                {
-                    PDFPage *page = [document pageAtIndex:i];
-                    PDFPage *leftPage = [leftDocument pageAtIndex:i];
-                    PDFPage *rightPage = [rightDocument pageAtIndex:i];
-                    NSRect cropBounds = [page boundsForBox:kPDFDisplayBoxMediaBox];
-
-                    // Crop and insert left half
-                    cropBounds.size.width /= 2;
-                    [leftPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                    [newDocument insertPage:leftPage atIndex:(2 * i)];
-
-                    // Crop and insert right half
-                    cropBounds.origin.x += cropBounds.size.width;
-                    [rightPage setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
-                    [newDocument insertPage:rightPage atIndex:(2 * i + 1)];
-                }
+                SplitShowSplitMode mode = (slideIndex % 2 == 0) ? SplitShowSplitModeLeft : SplitShowSplitModeRight;
+                slideIndex /= 2;
+                page = [[self.pdfDocument pageAtIndex:slideIndex] copy];
+                [self cropPage:page forMode:mode];
+                break;
             }
+            default:
+                NSAssert(0, @"Unknown slide mode");
+                break;
         }
 
-        [presentations setObject:newDocument forKey:mode];
-    }
-
-    return presentations;
-}
-
-- (NSString*)readNAVFileForDocument:(PDFDocument*)document;
-{
-    NSString *navContent;
-
-    // First check for embedded file
-    navContent = [self readEmbeddedNAVFileForDocument:document];
-
-    // If not found check for external file
-    if(navContent == nil)
-    {
-        navContent = [self readExternalNAVFileForDocument:document];
-    }
-
-    return navContent;
-}
-
-- (NSString *)readEmbeddedNAVFileForDocument:(PDFDocument*)document;
-{
-    CGPDFDictionaryRef namesDict;
-    CGPDFDictionaryRef embeddedFilesDict;
-    CGPDFArrayRef embeddedFilesArray;
-    CGPDFDictionaryRef fileSpecDict;
-    CGPDFStringRef cgPdfFilename;
-    NSString *fileName;
-    CGPDFDictionaryRef embeddedFileItemDict;
-    CGPDFStreamRef fileStream;
-    NSData *fileData;
-
-    // Traverse through PDF hierarchy
-    CGPDFDictionaryRef catalog = CGPDFDocumentGetCatalog(document.documentRef);
-
-    if(CGPDFDictionaryGetDictionary(catalog, "Names", &namesDict) == NO)
-    {
-        return nil;
-    }
-
-    if(CGPDFDictionaryGetDictionary(namesDict, "EmbeddedFiles", &embeddedFilesDict) == NO)
-    {
-        return nil;
-    }
-
-    if(CGPDFDictionaryGetArray(embeddedFilesDict, "Names", &embeddedFilesArray) == NO)
-    {
-        return nil;
-    }
-
-    NSUInteger count = CGPDFArrayGetCount(embeddedFilesArray);
-
-    // Iterate over all embedded files and search for a .nav file
-    for(size_t i = 0; i < count; ++i)
-    {
-        // Get attributes for file and skip files without attributes
-        if(CGPDFArrayGetDictionary(embeddedFilesArray, i, &fileSpecDict) == NO)
-        {
-            continue;
-        }
-
-        // Get file name and skip files without name
-        if(CGPDFDictionaryGetString(fileSpecDict, "F", &cgPdfFilename) == NO)
-        {
-            continue;
-        }
-
-        // Check file extension and skip non .nav files
-        fileName = CFBridgingRelease(CGPDFStringCopyTextString(cgPdfFilename));
-
-        if([[fileName pathExtension] caseInsensitiveCompare:@"nav"] != NSOrderedSame)
-        {
-            continue;
-        }
-
-        if(CGPDFDictionaryGetDictionary(fileSpecDict, "EF", &embeddedFileItemDict) == NO)
-        {
-            continue;
-        }
-
-        if(CGPDFDictionaryGetStream(embeddedFileItemDict, "F", &fileStream) == NO)
-        {
-            continue;
-        }
-
-        fileData = CFBridgingRelease(CGPDFStreamCopyData(fileStream, NULL));
-
-        return [[NSString alloc] initWithData:fileData encoding:NSUTF8StringEncoding];
-    }
-
-    return nil;
-}
-
-- (NSString*)readExternalNAVFileForDocument:(PDFDocument*)document;
-{
-    NSString *navFile = [[document.documentURL.path stringByDeletingPathExtension] stringByAppendingPathExtension:@"nav"];
-
-    BOOL isDirectory;
-    BOOL fileExists = [[NSFileManager defaultManager] fileExistsAtPath:navFile isDirectory:&isDirectory];
-
-    if(fileExists == YES && isDirectory == NO)
-    {
-        return [NSString stringWithContentsOfFile:navFile usedEncoding:NULL error:NULL];
-    }
-    
-    return nil;
-}
-
-- (BOOL)hasInterleavedLayout
-{
-    return (self.interleavedIndices != nil);
-}
-
-- (NSDictionary *)createInterleavedIndicesFromNavFileContent:(NSString*)content
-{
-    if(content == nil)
-    {
-        return nil;
-    }
-
-    NSScanner *framePagesScanner = [NSScanner scannerWithString:content];
-    NSString *FRAMEPAGES_PATTERN = @"\\headcommand {\\beamer@framepages {";
-    NSString *FRAMEPAGES_SEPARATOR = @"}{";
-    NSInteger firstFrame;
-    NSInteger lastFrame;
-    NSMutableArray *slides = [NSMutableArray array];
-
-    while([framePagesScanner isAtEnd] == NO)
-    {
-        if([framePagesScanner scanUpToString:FRAMEPAGES_PATTERN intoString:NULL] &&
-           [framePagesScanner scanString:FRAMEPAGES_PATTERN intoString:NULL] &&
-           [framePagesScanner scanInteger:&firstFrame] &&
-           [framePagesScanner scanString:FRAMEPAGES_SEPARATOR intoString:NULL] &&
-           [framePagesScanner scanInteger:&lastFrame])
-        {
-            [slides addObject:@{@"firstFrame" : @(firstFrame), @"lastFrame" : @(lastFrame)}];
-        }
-    }
-
-    NSInteger nextFrame = 1;
-    NSInteger currentFrameIndex = 0;
-    NSMutableArray *contentFrames = [NSMutableArray array];
-    NSMutableArray *noteFrames = [NSMutableArray array];
-
-    for(NSDictionary *slide in slides)
-    {
-        firstFrame = [slide[@"firstFrame"] integerValue];
-        lastFrame = [slide[@"lastFrame"] integerValue];
-
-        // Add notes between two slides
-        for(; nextFrame < firstFrame; ++nextFrame)
-        {
-            [noteFrames addObject:@(currentFrameIndex)];
-            ++currentFrameIndex;
-        }
-
-        // Add interleaved content and notes within a slide
-        for(BOOL isNote = NO; nextFrame <= lastFrame; ++nextFrame, isNote ^= YES)
-        {
-            if(isNote)
-            {
-                [noteFrames addObject:@(currentFrameIndex)];
-            }
-            else
-            {
-                [contentFrames addObject:@(currentFrameIndex)];
-            }
-
-            ++currentFrameIndex;
-        }
-    }
-
-    // Add notes after last slide
-    while(currentFrameIndex < [self pageCountForSlideMode:SplitShowSlideModeNormal])
-    {
-        [noteFrames addObject:@(currentFrameIndex)];
-        ++currentFrameIndex;
-    }
-
-    return @{kSplitShowSlideGroupContent : contentFrames, kSplitShowSlideGroupNotes : noteFrames};
-}
-
-- (PDFDocument *)createInterleavedDocumentForGroup:(NSString *)group
-{
-    NSArray *indices = [self.interleavedIndices objectForKey:group];
-
-    return [self createDocumentFromIndices:indices inMode:SplitShowSlideModeNormal];
-}
-
-- (PDFDocument *)createSplitDocumentForGroup:(NSString *)group
-{
-    NSInteger start = 0;
-
-    if([kSplitShowSlideGroupContent isEqualToString:group])
-    {
-        start = 0;
-    }
-    else if([kSplitShowSlideGroupNotes isEqualToString:group])
-    {
-        start = 1;
-    }
-
-    NSArray *indices = [Utilities makeArrayFrom:start to:[self pageCountForSlideMode:SplitShowSlideModeSplit] step:2];
-
-    return [self createDocumentFromIndices:indices inMode:SplitShowSlideModeSplit];
-}
-
-- (PDFDocument *)createSplitDocument
-{
-    return [[self.presentations objectForKey:@(SplitShowSlideModeSplit)] copy];
-}
-
-- (PDFDocument *)createMirroredDocument
-{
-    return [[self.presentations objectForKey:@(SplitShowSlideModeNormal)] copy];
-}
-
-- (PDFDocument *)createDocumentFromIndices:(NSArray *)indices inMode:(SplitShowSlideMode)slideMode
-{
-    PDFDocument *presentation = [self.presentations objectForKey:@(slideMode)];
-    PDFDocument *document = [presentation copy];
-
-    NSEnumerator *indexEnumerator = indices.reverseObjectEnumerator;
-    NSNumber *keepIndex = [indexEnumerator nextObject];
-    NSInteger pageIndex = document.pageCount - 1;
-
-    while(pageIndex > keepIndex.integerValue)
-    {
-        [document removePageAtIndex:pageIndex];
-        --pageIndex;
-    }
-
-    for(;pageIndex >= 0 && keepIndex; --pageIndex)
-    {
-        if(pageIndex != keepIndex.integerValue)
-        {
-            [document removePageAtIndex:pageIndex];
-            continue;
-        }
-
-        keepIndex = [indexEnumerator nextObject];
-    }
-
-    while(pageIndex >= 0)
-    {
-        [document removePageAtIndex:pageIndex];
-        --pageIndex;
+        [document insertPage:page atIndex:i];
     }
 
     return document;

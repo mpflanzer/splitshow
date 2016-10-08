@@ -125,7 +125,7 @@
             break;
 
         case SplitShowSlideModeSplit:
-            self.pdfDocument = [self.splitShowDocument createSplitDocument];
+            self.pdfDocument = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeBoth];
             break;
     }
 
@@ -207,7 +207,8 @@
             break;
 
         case SplitShowSlideModeSplit:
-            self.pdfDocument = [self.splitShowDocument createSplitDocument];
+            //FIXME
+            //self.pdfDocument = [self.splitShowDocument createSplitDocument];
             break;
     }
 

@@ -11,13 +11,21 @@
 @class PDFDocument;
 @class CustomLayoutController;
 
-#define kSplitShowSlideGroupContent @"kSplitShowSlideGroupContent"
-#define kSplitShowSlideGroupNotes @"kSplitShowSlideGroupNotes"
-
 typedef enum : NSInteger {
     SplitShowSlideModeNormal,
     SplitShowSlideModeSplit,
 } SplitShowSlideMode;
+
+typedef enum : NSInteger {
+    SplitShowInterleaveModeContent,
+    SplitShowInterleaveModeNotes,
+} SplitShowInterleaveMode;
+
+typedef enum : NSInteger {
+    SplitShowSplitModeBoth,
+    SplitShowSplitModeLeft,
+    SplitShowSplitModeRight,
+} SplitShowSplitMode;
 
 @interface SplitShowDocument : NSDocument
 
@@ -25,14 +33,14 @@ typedef enum : NSInteger {
 @property SplitShowSlideMode customLayoutMode;
 
 @property (readonly) NSString *name;
-@property (readonly) BOOL hasInterleavedLayout;
 @property (readonly) NSSize pageSize;
 
-- (PDFDocument*)createInterleavedDocumentForGroup:(NSString*)group;
-- (PDFDocument*)createSplitDocumentForGroup:(NSString*)group;
-- (PDFDocument*)createSplitDocument;
 - (PDFDocument*)createMirroredDocument;
-- (PDFDocument*)createDocumentFromIndices:(NSArray*)indices inMode:(SplitShowSlideMode)slideMode;
+- (PDFDocument*)createInterleavedDocumentForMode:(SplitShowInterleaveMode)mode;
+- (PDFDocument*)createSplitDocumentForMode:(SplitShowSplitMode)mode;
+- (PDFDocument*)createDocumentFromIndices:(NSArray*)indices forMode:(SplitShowSlideMode)mode;
+
+- (BOOL)hasInterleavedLayout;
 
 @end
 

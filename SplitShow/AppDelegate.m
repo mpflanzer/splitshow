@@ -45,7 +45,7 @@
 
 + (void)restoreWindowWithIdentifier:(NSString *)identifier state:(NSCoder *)state completionHandler:(void (^)(NSWindow * _Nullable, NSError * _Nullable))completionHandler
 {
-    AppDelegate *delegate = [[NSApplication sharedApplication] delegate];
+    AppDelegate *delegate = (AppDelegate*)[[NSApplication sharedApplication] delegate];
 
     completionHandler(delegate.layoutController.window, nil);
 }
