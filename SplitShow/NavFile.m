@@ -9,11 +9,26 @@
 #import "NavFile.h"
 #import "Quartz/Quartz.h"
 
+@interface NavFileFrame : NSObject
+
+@property NSInteger firstPage;
+@property NSInteger lastPage;
+
+@end
+
+@implementation NavFileFrame
+
+@end
+
 @interface NavFile ()
 
-@property (readwrite) NSDictionary *indices;
+@property NSInteger pageCount;
+@property NSArray *frames;
 
 - (void)parse:(NSString*)content;
+- (NSDictionary*)generatePageIndicesFromFrames:(NSArray<NavFileFrame*>*)frames withPageCount:(NSInteger)pageCount forMode:(NavFileNoteMode)mode;
+- (void)extractInsideContentSlides:(NSMutableArray *)contentSlides andNoteSlides:(NSMutableArray *)noteSlides fromFrame:(NavFileFrame *)frame;
+- (void)extractOutsideContentSlides:(NSMutableArray *)contentSlides andNoteSlides:(NSMutableArray *)noteSlides fromFrame:(NavFileFrame *)frame;
 
 @end
 
@@ -118,10 +133,125 @@
     return self;
 }
 
+- (void)extractInsideContentSlides:(NSMutableArray *)contentSlides andNoteSlides:(NSMutableArray *)noteSlides fromFrame:(NavFileFrame *)frame
+{
+    // For inside notes the number of pages per frame has to be even as every overlay creates one content and one note slide.
+    // The reported number of frame pages, however, is always odd in this case.
+    // This is because the last inside note is not counted as frame page.
+    if((frame.lastPage - frame.firstPage) % 2 == 0)
+    {
+        // Potentially inside notes
+        // Use alternate content and note overlays
+        for(NSInteger currentPage = frame.firstPage - 1; currentPage < frame.lastPage; currentPage += 2)
+        {
+            [contentSlides addObject:@(currentPage)];
+            [noteSlides addObject:@(currentPage + 1)];
+        }
+    }
+    else
+    {
+        // Outside note
+        // Frame pages start counting by 1, slides by 0
+        for(NSInteger currentPage = frame.firstPage - 1; currentPage < frame.lastPage; ++currentPage)
+        {
+            [contentSlides addObject:@(currentPage)];
+            // Frame pages start counting by 1, slides by 0
+            [noteSlides addObject:@(frame.lastPage)];
+        }
+    }
+}
+
+- (void)extractOutsideContentSlides:(NSMutableArray *)contentSlides andNoteSlides:(NSMutableArray *)noteSlides fromFrame:(NavFileFrame *)frame
+{
+    // Frame pages start counting by 1, slides by 0
+    for(NSInteger currentPage = frame.firstPage - 1; currentPage < frame.lastPage; ++currentPage)
+    {
+        [contentSlides addObject:@(currentPage)];
+        // Frame pages start counting by 1, slides by 0
+        [noteSlides addObject:@(frame.lastPage)];
+    }
+}
+
+- (NSDictionary*)generatePageIndicesFromFrames:(NSArray<NavFileFrame*>*)frames withPageCount:(NSInteger)pageCount forMode:(NavFileNoteMode)mode
+{
+    NSMutableArray *contentSlides = [NSMutableArray array];
+    NSMutableArray *noteSlides = [NSMutableArray array];
+
+    NSInteger currentFrameIdx;
+    NavFileFrame *currentFrame;
+    NavFileFrame *nextFrame;
+
+    for(currentFrameIdx = 0; currentFrameIdx < frames.count - 1; ++currentFrameIdx)
+    {
+        currentFrame = frames[currentFrameIdx];
+        nextFrame = frames[currentFrameIdx + 1];
+
+        // The current frame does not have notes if the next one starts right after
+        // because neither the last inside note nor any outside notes are included in the frame pages
+        if(nextFrame.firstPage - currentFrame.lastPage == 1)
+        {
+            // Mirror overlays
+            for(NSInteger currentPage = currentFrame.firstPage - 1; currentPage < currentFrame.lastPage; ++currentPage)
+            {
+                [contentSlides addObject:@(currentPage)];
+                [noteSlides addObject:@(currentPage)];
+            }
+        }
+        else if(nextFrame.firstPage - currentFrame.lastPage == 2)
+        {
+            switch(mode)
+            {
+                case NavFileNoteModeInside:
+                    [self extractInsideContentSlides:contentSlides andNoteSlides:noteSlides fromFrame:currentFrame];
+                    break;
+                case NavFileNoteModeOutside:
+                    [self extractOutsideContentSlides:contentSlides andNoteSlides:noteSlides fromFrame:currentFrame];
+                    break;
+            }
+        }
+        else
+        {
+            // Cannot handle presentations with mote than one outside note per frame
+            return nil;
+        }
+    }
+
+    currentFrame = frames[currentFrameIdx];
+
+    // The last frame does not have notes if the last page is the last page of the document
+    if(currentFrame.lastPage == pageCount)
+    {
+        // Mirror overlays
+        for(NSInteger currentPage = currentFrame.firstPage - 1; currentPage < currentFrame.lastPage; ++currentPage)
+        {
+            [contentSlides addObject:@(currentPage)];
+            [noteSlides addObject:@(currentPage)];
+        }
+    }
+    else if(currentFrame.lastPage + 1 == pageCount)
+    {
+        switch(mode)
+        {
+            case NavFileNoteModeInside:
+                [self extractInsideContentSlides:contentSlides andNoteSlides:noteSlides fromFrame:currentFrame];
+                break;
+            case NavFileNoteModeOutside:
+                [self extractOutsideContentSlides:contentSlides andNoteSlides:noteSlides fromFrame:currentFrame];
+                break;
+        }
+    }
+    else
+    {
+        // Cannot handle presentations with mote than one outside note per frame
+        return nil;
+    }
+
+    return @{kNavFileSlideGroupContent : contentSlides, kNavFileSlideGroupNotes : noteSlides};
+}
+
 - (void)parse:(NSString*)content
 {
-    NSInteger slideCount = 0;
-    NSMutableArray *slides = [NSMutableArray array];
+    NSMutableArray *frames = [NSMutableArray array];
 
     if(!content)
     {
@@ -139,10 +269,12 @@
 
     NSRegularExpression *frameRegex = [NSRegularExpression regularExpressionWithPattern:framePattern options:0 error:nil];
 
+
     [frameRegex enumerateMatchesInString:content options:0 range:NSMakeRange(0, content.length) usingBlock:^(NSTextCheckingResult * _Nullable result, NSMatchingFlags flags, BOOL * _Nonnull stop) {
-        NSString *firstFrame = [content substringWithRange:[result rangeAtIndex:1]];
-        NSString *lastFrame = [content substringWithRange:[result rangeAtIndex:2]];
-        [slides addObject:@{@"firstFrame" : firstFrame, @"lastFrame" : lastFrame}];
+        NavFileFrame *frame = [[NavFileFrame alloc] init];
+        frame.firstPage = [[content substringWithRange:[result rangeAtIndex:1]] integerValue];
+        frame.lastPage = [[content substringWithRange:[result rangeAtIndex:2]] integerValue];
+        [frames addObject:frame];
     }];
 
     NSRegularExpression *slideCountRegex = [NSRegularExpression regularExpressionWithPattern:countPattern options:0 error:nil];
@@ -151,57 +283,26 @@
 
     if(match)
     {
-        slideCount = [[content substringWithRange:[match rangeAtIndex:1]] integerValue];
+        self.pageCount = [[content substringWithRange:[match rangeAtIndex:1]] integerValue];
+        self.frames = frames;
     }
-
-    NSInteger firstFrame;
-    NSInteger lastFrame;
-    NSInteger nextFrame = 1;
-    NSInteger currentFrameIndex = 0;
-    NSMutableArray *contentFrames = [NSMutableArray array];
-    NSMutableArray *noteFrames = [NSMutableArray array];
-
-    for(NSDictionary *slide in slides)
+    else
     {
-        firstFrame = [slide[@"firstFrame"] integerValue];
-        lastFrame = [slide[@"lastFrame"] integerValue];
-
-        // Add notes between two slides
-        for(; nextFrame < firstFrame; ++nextFrame)
-        {
-            [noteFrames addObject:@(currentFrameIndex)];
-            ++currentFrameIndex;
-        }
-
-        // Add interleaved content and notes within a slide
-        for(BOOL isNote = NO; nextFrame <= lastFrame; ++nextFrame, isNote ^= YES)
-        {
-            if(isNote)
-            {
-                [noteFrames addObject:@(currentFrameIndex)];
-            }
-            else
-            {
-                [contentFrames addObject:@(currentFrameIndex)];
-            }
-
-            ++currentFrameIndex;
-        }
+        self.pageCount = 0;
+        self.frames = @[];
     }
-
-    // Add notes after last slide
-    while(currentFrameIndex < slideCount)
-    {
-        [noteFrames addObject:@(currentFrameIndex)];
-        ++currentFrameIndex;
-    }
-
-    self.indices = @{kNavFileSlideGroupContent : contentFrames, kNavFileSlideGroupNotes : noteFrames};
 }
 
-- (BOOL)hasInterleavedLayout
+- (NSDictionary*)insideIndices
 {
-    return (self.indices != nil);
+    // TODO: Add caching mechanism
+    return [self generatePageIndicesFromFrames:self.frames withPageCount:self.pageCount forMode:NavFileNoteModeInside];
+}
+
+- (NSDictionary*)outsideIndices
+{
+    // TODO: Add caching mechanism
+    return [self generatePageIndicesFromFrames:self.frames withPageCount:self.pageCount forMode:NavFileNoteModeOutside];
 }
 
 @end

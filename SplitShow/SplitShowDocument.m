@@ -108,11 +108,6 @@
     return YES;
 }
 
-- (BOOL)hasInterleavedLayout
-{
-    return [self.navFile hasInterleavedLayout];
-}
-
 - (NSSize)pageSize
 {
     NSSize size = NSZeroSize;
@@ -157,34 +152,55 @@
     [page setBounds:cropBounds forBox:kPDFDisplayBoxMediaBox];
 }
 
+- (BOOL)hasInterleavedInsideDocument
+{
+    return self.navFile.insideIndices != nil;
+}
+
+- (BOOL)hasInterleavedOutsideDocument
+{
+    return self.navFile.outsideIndices != nil;
+}
+
 - (PDFDocument*)createMirroredDocument
 {
     return [self.pdfDocument copy];
 }
 
-- (PDFDocument*)createInterleavedDocumentForMode:(SplitShowInterleaveMode)mode
+- (PDFDocument*)createInterleavedDocumentForGroup:(SplitShowInterleaveGroup)group inMode:(SplitShowInterleaveMode)mode
 {
+    // TODO: Add caching
     PDFDocument *document;
+    NSString *groupKey;
+    NSDictionary *indices;
 
-    if([self.navFile hasInterleavedLayout])
+    switch(group)
     {
-        NSArray *indices;
-
-        switch(mode)
-        {
-            case SplitShowInterleaveModeContent:
-                indices = self.navFile.indices[kNavFileSlideGroupContent];
-                break;
-            case SplitShowInterleaveModeNotes:
-                indices = self.navFile.indices[kNavFileSlideGroupNotes];
-                break;
-            default:
-                NSAssert(0, @"Unknown interleaved slide mode");
-                break;
-        }
-
-        document = [self createDocumentFromIndices:indices forMode:SplitShowSlideModeNormal];
+        case SplitShowInterleaveGroupContent:
+            groupKey = kNavFileSlideGroupContent;
+            break;
+        case SplitShowInterleaveGroupNotes:
+            groupKey = kNavFileSlideGroupNotes;
+            break;
+        default:
+            NSAssert(0, @"Unknown interleaved slide group");
+            break;
     }
+
+    switch(mode)
+    {
+        case SplitShowInterleaveModeInside:
+            indices = self.navFile.insideIndices;
+            break;
+        case SplitShowInterleaveModeOutside:
+            indices = self.navFile.outsideIndices;
+            break;
+        default:
+            NSAssert(0, @"Unknown interleaved note mode");
+            break;
+    }
+
+    document = [self createDocumentFromIndices:indices[groupKey] forMode:SplitShowSlideModeNormal];
 
     return document;
 }

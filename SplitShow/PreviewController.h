@@ -21,7 +21,8 @@
 
 typedef enum : NSUInteger
 {
-    SplitShowPresentationModeInterleave,
+    SplitShowPresentationModeInterleaveInside,
+    SplitShowPresentationModeInterleaveOutside,
     SplitShowPresentationModeSplit,
     SplitShowPresentationModeInverseSplit,
     SplitShowPresentationModeMirror,

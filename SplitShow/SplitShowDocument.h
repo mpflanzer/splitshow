@@ -17,8 +17,13 @@ typedef enum : NSInteger {
 } SplitShowSlideMode;
 
 typedef enum : NSInteger {
-    SplitShowInterleaveModeContent,
-    SplitShowInterleaveModeNotes,
+    SplitShowInterleaveGroupContent,
+    SplitShowInterleaveGroupNotes,
+} SplitShowInterleaveGroup;
+
+typedef enum : NSInteger {
+    SplitShowInterleaveModeInside,
+    SplitShowInterleaveModeOutside,
 } SplitShowInterleaveMode;
 
 typedef enum : NSInteger {
@@ -35,12 +40,13 @@ typedef enum : NSInteger {
 @property (readonly) NSString *name;
 @property (readonly) NSSize pageSize;
 
+@property (readonly) BOOL hasInterleavedInsideDocument;
+@property (readonly) BOOL hasInterleavedOutsideDocument;
+
 - (PDFDocument*)createMirroredDocument;
-- (PDFDocument*)createInterleavedDocumentForMode:(SplitShowInterleaveMode)mode;
+- (PDFDocument*)createInterleavedDocumentForGroup:(SplitShowInterleaveGroup)mode inMode:(SplitShowInterleaveMode)mode;
 - (PDFDocument*)createSplitDocumentForMode:(SplitShowSplitMode)mode;
 - (PDFDocument*)createDocumentFromIndices:(NSArray*)indices forMode:(SplitShowSlideMode)mode;
-
-- (BOOL)hasInterleavedLayout;
 
 @end
 

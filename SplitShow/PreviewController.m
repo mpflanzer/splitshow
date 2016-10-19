@@ -139,9 +139,13 @@
         // Consider 2.39:1 the widest commonly found aspect ratio of a single frame
         return SplitShowPresentationModeSplit;
     }
-    else if([self.splitShowDocument hasInterleavedLayout])
+    else if(self.splitShowDocument.hasInterleavedInsideDocument)
     {
-        return SplitShowPresentationModeInterleave;
+        return SplitShowPresentationModeInterleaveInside;
+    }
+    else if(self.splitShowDocument.hasInterleavedOutsideDocument)
+    {
+        return SplitShowPresentationModeInterleaveOutside;
     }
     else
     {
@@ -216,10 +220,17 @@
 {
     switch(self.selectedPresentationMode)
     {
-        case SplitShowPresentationModeInterleave:
+        case SplitShowPresentationModeInterleaveInside:
         {
-            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeContent];
-            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeNotes];
+            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeInside];
+            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeInside];
+            break;
+        }
+
+        case SplitShowPresentationModeInterleaveOutside:
+        {
+            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeOutside];
+            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeOutside];
             break;
         }
 
@@ -275,23 +286,40 @@
 
     switch(self.selectedPresentationMode)
     {
-        case SplitShowPresentationModeInterleave:
+        case SplitShowPresentationModeInterleaveInside:
         {
             if([self.selectedScreenMain isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeContent]}];
+                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeInside]}];
             }
 
             if([self.selectedScreenHelper isAvailable])
             {
                 [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForMode:SplitShowInterleaveModeNotes],
+                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeInside],
                                      @"timer" : @YES}];
             }
             break;
         }
+            
+        case SplitShowPresentationModeInterleaveOutside:
+        {
+            if([self.selectedScreenMain isAvailable])
+            {
+                [screens addObject:@{@"screen" : self.selectedScreenMain,
+                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeOutside]}];
+            }
 
+            if([self.selectedScreenHelper isAvailable])
+            {
+                [screens addObject:@{@"screen" : self.selectedScreenHelper,
+                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeOutside],
+                                     @"timer" : @YES}];
+            }
+            break;
+        }
+            
         case SplitShowPresentationModeSplit:
         {
             if([self.selectedScreenMain isAvailable])
@@ -390,7 +418,8 @@
 
         switch(mode)
         {
-            case SplitShowPresentationModeInterleave:
+            case SplitShowPresentationModeInterleaveInside:
+            case SplitShowPresentationModeInterleaveOutside:
                 self.mainDisplayItem.label = NSLocalizedString(@"Main display", @"Main display");
                 self.helperDisplayItem.label = NSLocalizedString(@"Helper display", @"Helper display");
                 break;

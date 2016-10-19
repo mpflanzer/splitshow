@@ -13,12 +13,22 @@
 #define kNavFileSlideGroupContent @"kNavFileSlideGroupContent"
 #define kNavFileSlideGroupNotes @"kNavFileSlideGroupNotes"
 
+typedef enum : NSInteger {
+    NavFileSlideGroupContent,
+    NavFileSlideGroupNotes,
+} NavFileSlideGroup;
+
+typedef enum : NSInteger {
+    NavFileNoteModeInside,
+    NavFileNoteModeOutside,
+} NavFileNoteMode;
+
 @interface NavFile : NSObject
 
-@property (readonly) NSDictionary *indices;
+@property (readonly) NSDictionary *insideIndices;
+@property (readonly) NSDictionary *outsideIndices;
 
 - (instancetype)initWithURL:(NSURL*)url;
 - (instancetype)initWithPDFDocument:(PDFDocument*)document;
-- (BOOL)hasInterleavedLayout;
 
 @end

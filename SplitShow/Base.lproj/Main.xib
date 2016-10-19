@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="10116" systemVersion="15E65" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="11201" systemVersion="16A323" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
     <dependencies>
         <deployment identifier="macosx"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="10116"/>
-        <plugIn identifier="com.apple.pdfkit.ibplugin" version="10116"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="11201"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="11201"/>
     </dependencies>
     <objects>
         <customObject id="-2" userLabel="File's Owner" customClass="PreviewController">
@@ -74,27 +74,33 @@
                         <popUpButton key="view" verticalHuggingPriority="750" id="G8V-xJ-OCS" userLabel="presentationModeButton">
                             <rect key="frame" x="0.0" y="14" width="180" height="28"/>
                             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                            <popUpButtonCell key="cell" type="roundTextured" title="Interleave" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" selectedItem="12C-ZA-4Cx" id="plm-0B-aKP">
+                            <popUpButtonCell key="cell" type="roundTextured" title="Interleave 1" bezelStyle="texturedRounded" alignment="center" lineBreakMode="truncatingTail" state="on" borderStyle="border" imageScaling="proportionallyDown" inset="2" autoenablesItems="NO" selectedItem="12C-ZA-4Cx" id="plm-0B-aKP">
                                 <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
                                 <font key="font" metaFont="menu"/>
                                 <menu key="menu" autoenablesItems="NO" id="eft-LZ-3Js">
                                     <items>
-                                        <menuItem title="Interleave" state="on" id="12C-ZA-4Cx">
+                                        <menuItem title="Interleave 1" state="on" id="12C-ZA-4Cx">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                             <connections>
-                                                <binding destination="-2" name="enabled" keyPath="document.hasInterleavedLayout" id="TzN-aL-bVj"/>
+                                                <binding destination="-2" name="enabled" keyPath="document.hasInterleavedInsideDocument" id="8eN-Bw-ChA"/>
                                             </connections>
                                         </menuItem>
-                                        <menuItem title="Split" tag="1" id="kxV-sq-Jlb">
+                                        <menuItem title="Interleave 2" tag="1" id="DXa-em-6Ag">
+                                            <modifierMask key="keyEquivalentModifierMask"/>
+                                            <connections>
+                                                <binding destination="-2" name="enabled" keyPath="document.hasInterleavedOutsideDocument" id="YjY-u1-CX9"/>
+                                            </connections>
+                                        </menuItem>
+                                        <menuItem title="Split" tag="2" id="kxV-sq-Jlb">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
-                                        <menuItem title="Inverse split" tag="2" id="oWI-IF-CDL">
+                                        <menuItem title="Inverse split" tag="3" id="oWI-IF-CDL">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
-                                        <menuItem title="Mirror" tag="3" id="Lzl-UZ-rzt">
+                                        <menuItem title="Mirror" tag="4" id="Lzl-UZ-rzt">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
-                                        <menuItem title="Custom" tag="4" id="4eC-YF-X0Q">
+                                        <menuItem title="Custom" tag="5" id="4eC-YF-X0Q">
                                             <modifierMask key="keyEquivalentModifierMask"/>
                                         </menuItem>
                                     </items>

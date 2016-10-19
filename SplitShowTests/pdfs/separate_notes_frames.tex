@@ -8,58 +8,25 @@
 \usepackage{embedfile}
 \IfFileExists{output/\jobname.nav}{\embedfile{output/\jobname.nav}}{}
 
-\title{What is SplitShow?}
-\subtitle{A short introduction}
-\author{Moritz Pflanzer}
-%\titlegraphic{\includegraphics[width=0.3\linewidth]{splitshow}}
-
 \begin{document}
 
-\begin{frame}[plain]
-    \titlepage
-\end{frame}
-
-\note[itemize]{
-    \item The audience sees the slides, but you see your notes.
-    \bigskip
-    \item Or, if your don't have notes, you can use mirror mode.
-}
-
-\section{No notes}
-
-\begin{frame}{Another Slide}
-    \begin{itemize}
-        \item Here is another slide.
-        \item This one doesn't have a note.
-        \item Slides without a note, are always shown on both displays.
-    \end{itemize}
-\end{frame}
-
-\section{Slide mode}
-
-\begin{frame}{Slides vs.\ Notes}
-    Your slides can be in one of three modes:
+\begin{frame}{Slide 1}
     \begin{itemize}[<+->]
-        \item Just slides, no notes
-        \item Slides and notes interleaved
-        \item Superwide pages: slides and notes side-by-side
+        \item Item 1.1 
+        \item Item 1.2
+        \item Item 1.3
     \end{itemize}
 \end{frame}
 
-\note[itemize]{
-    \item Just slides, no notes
-    \begin{itemize}
-        \item For presentations without any notes
+\note{Notes for slide 1.1}
+\note{Notes for slide 1.2}
+
+\begin{frame}{Slide 2}
+    \begin{itemize}[<+->]
+        \item Item 2.1
+        \item Item 2.2
+        \item Item 2.3
     \end{itemize}
-    \item Slides and notes interleaved
-    \begin{itemize}
-        \item BEAMER's .nav file is used to determine if a particular page is a slide or a note.
-        \item The .nav file can be either embedded into the PDF (like it is in this one) or next to it in the same directory
-    \end{itemize}
-    \item Superwide pages: slides and notes side-by-side
-    \begin{itemize}
-        \item For this mode, include the \texttt{\footnotesize pgfpages} package and change the BEAMER option ``\texttt{\footnotesize show notes}'' to ``\texttt{\footnotesize show notes on second screen}''.
-    \end{itemize}
-}
+\end{frame}
 
 \end{document}
