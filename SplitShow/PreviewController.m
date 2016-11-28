@@ -696,11 +696,9 @@
 
         [self.presentationControllers addObject:presentationWindowController];
 
-        if([screen isPseudoScreen])
-        {
-            [presentationWindowController showWindow:nil];
-        }
-        else
+        [presentationWindowController showWindow:nil];
+
+        if(![screen isPseudoScreen])
         {
             [presentationWindowController.window toggleFullScreen:nil];
         }
