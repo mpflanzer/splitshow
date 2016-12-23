@@ -10,7 +10,9 @@
 #import <Quartz/Quartz.h>
 #import "NavFile.h"
 #import "PDFDocument+Presentation.h"
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101202
 #import "PDFDocument+CopyFix.h"
+#endif
 #import "PreviewController.h"
 #import "CustomLayoutController.h"
 #import "DisplayController.h"

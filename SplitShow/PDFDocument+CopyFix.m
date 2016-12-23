@@ -6,6 +6,8 @@
 //  Copyright © 2016 Moritz Pflanzer. All rights reserved.
 //
 
+#if __MAC_OS_X_VERSION_MAX_ALLOWED < 101202
+
 #import "PDFDocument+CopyFix.h"
 
 @implementation PDFDocument (CopyFix)
@@ -17,3 +19,4 @@
 }
 
 @end
+#endif
