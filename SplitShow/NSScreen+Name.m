@@ -21,40 +21,68 @@
 
 - (NSString*)name
 {
-    CFDictionaryRef displayInfo, displayNames;
-    CFStringRef displayName;
+    NSString *displayName = NSLocalizedString(@"Unknown", @"Unknown");
 
     io_service_t servicePort = IOServicePortFromCGDisplayID(self.displayID);
 
     if(!servicePort)
     {
-        return NSLocalizedString(@"Unknown", nil);
+        return displayName;
     }
 
-    displayInfo = IODisplayCreateInfoDictionary(servicePort, kIODisplayOnlyPreferredName);
+    NSDictionary *displayInfo = CFBridgingRelease(IODisplayCreateInfoDictionary(servicePort, kIODisplayOnlyPreferredName));
+    NSDictionary *displayNames = [displayInfo valueForKey:@kDisplayProductName];
 
     IOObjectRelease(servicePort);
 
-    displayNames = CFDictionaryGetValue(displayInfo, CFSTR(kDisplayProductName));
+    if(displayNames && displayNames.count > 0)
+    {
+        NSLocale *userLocale = [NSLocale currentLocale];
+        NSLocale *systemLocale = [NSLocale systemLocale];
 
-    //TODO: Is 'en_US' alsways available?
-    if (!displayNames || !CFDictionaryGetValueIfPresent(displayNames, CFSTR("en_US"), (const void**)&displayName))
-    {
-        CFRelease(displayInfo);
-        return NSLocalizedString(@"Unknown", nil);
+        // Try display name for user locale
+        displayName = [displayNames valueForKey:userLocale.localeIdentifier];
+
+        // Try display name for system locale
+        if(!displayName)
+        {
+            displayName = [displayNames valueForKey:systemLocale.localeIdentifier];
+        }
+
+        // Try display name for user language
+        if(!displayName)
+        {
+            for(NSString *key in displayNames)
+            {
+                if([key containsString:userLocale.languageCode])
+                {
+                    displayName = [displayNames valueForKey:key];
+                    break;
+                }
+            }
+        }
+
+        // Try display name for system language
+        if(!displayName)
+        {
+            for(NSString *key in displayNames)
+            {
+                if([key containsString:systemLocale.languageCode])
+                {
+                    displayName = [displayNames valueForKey:key];
+                    break;
+                }
+            }
+        }
+
+        // Giving up: use first display name that is available
+        if(!displayName)
+        {
+            displayName = [[displayNames allValues] firstObject];
+        }
     }
 
-    if(displayName == NULL)
-    {
-        CFRelease(displayInfo);
-        return NSLocalizedString(@"Unknown", nil);
-    }
-    else
-    {
-        NSString *_displayName = [NSString stringWithString:(__bridge NSString*)displayName];
-        CFRelease(displayInfo);
-        return _displayName;
-    }
+    return displayName;
 }
 
 // Returns the io_service_t corresponding to a CG display ID, or 0 on failure.
