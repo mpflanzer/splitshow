@@ -9,17 +9,11 @@
 #import <Cocoa/Cocoa.h>
 #import <Quartz/Quartz.h>
 
-@class DisplayController;
-
-#define kSplitShowNotificationChangeSlide @"kSplitShowNotificationChangeSlide"
-#define kSplitShowNotificationChangeSlideAction @"kSplitShowNotificationChangeSlideAction"
-#define kSplitShowChangeSlideActionGoToIndex @"kSplitShowChangeSlideActionGoToIndex"
-
 #define kSplitShowNotificationWindowDidBecomeMain @"kSplitShowNotificationWindowDidBecomeMain"
 #define kSplitShowNotificationWindowDidResignMain @"kSplitShowNotificationWindowDidResignMain"
 #define kSplitShowNotificationWindowWillClose @"kSplitShowNotificationWindowWillClose"
 
-typedef enum : NSUInteger
+typedef enum : NSInteger
 {
     SplitShowPresentationModeInterleaveInside,
     SplitShowPresentationModeInterleaveOutside,
@@ -28,14 +22,6 @@ typedef enum : NSUInteger
     SplitShowPresentationModeMirror,
     SplitShowPresentationModeCustom,
 } SplitShowPresentationMode;
-
-typedef enum : NSUInteger
-{
-    SplitShowChangeSlideActionRestart,
-    SplitShowChangeSlideActionPrevious,
-    SplitShowChangeSlideActionNext,
-    SplitShowChangeSlideActionGoTo,
-} SplitShowChangeSlideAction;
 
 @interface PreviewController : NSWindowController <NSWindowDelegate>
 

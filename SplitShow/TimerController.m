@@ -8,19 +8,11 @@
 
 #import "TimerController.h"
 
+#import "Timer.h"
+
 @interface TimerController ()
 
-@property NSTimeInterval timerValue;
-@property NSTimeInterval initialValue;
-@property NSTimer *timer;
-
-- (void)startTimer;
-- (void)stopTimer;
-
-- (void)timerFired:(id)userDict;
-- (NSString*)timerValueAsString;
-
-- (void)updateView;
+- (NSString*)timeValueAsString:(NSTimeInterval)timeValue;
 
 @end
 
@@ -30,97 +22,45 @@
 {
     self.view.wantsLayer = YES;
     self.view.layer.backgroundColor = [[NSColor whiteColor] CGColor];
-    self.timerMode = SplitShowTimerModeForward;
-    self.timerValue = 0;
+    [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateView:) name:kSplitShowTimerPulse object:nil];
 }
 
-- (void)initTimer:(NSTimeInterval)initialValue withMode:(SplitShowTimerMode)mode
+- (void)viewDidDisappear
 {
-    self.initialValue = initialValue;
-    self.timerValue = initialValue;
-    self.timerMode = mode;
-
-    [self updateView];
-}
-
-- (void)startTimer
-{
-    [self.timer invalidate];
-
-    self.timer = [NSTimer scheduledTimerWithTimeInterval:1
-                                                  target:self
-                                                selector:@selector(timerFired:)
-                                                userInfo:nil
-                                                 repeats:YES];
-}
-
-- (void)stopTimer
-{
-    [self.timer invalidate];
-    self.timer = nil;
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 - (IBAction)resetTimer:(id)sender
 {
-    [self initTimer:self.initialValue withMode:self.timerMode];
+    [self.timer reset];
 }
 
 - (IBAction)toggleStartStopButton:(NSButton*)sender
 {
-    if(self.timer == nil)
+    switch(sender.state)
     {
-        [self startTimer];
-    }
-    else
-    {
-        [self stopTimer];
-    }
-
-    [self updateView];
-}
-
-- (void)timerFired:(id)userDict
-{
-    switch(self.timerMode)
-    {
-        case SplitShowTimerModeForward:
-            ++self.timerValue;
-            break;
-
-        case SplitShowTimerModeBackward:
-            --self.timerValue;
-            break;
-    }
-
-    if(self.timerValue <= 0)
-    {
-        [self stopTimer];
-    }
-
-    [self updateView];
-}
-
-- (NSString *)timerValueAsString
-{
-    return [NSString stringWithFormat:@"%02d:%02d:%02d", (int)self.timerValue / 3600, (int)(self.timerValue / 60) % 60, (int)self.timerValue % 60];
-}
-
-- (void)updateView
-{
-        self.timeLabel.stringValue = [self timerValueAsString];
-
-        if(self.timer != nil)
-        {
+        case NSOnState:
             self.startStopButton.title = NSLocalizedString(@"Stop", @"Stop");
-            self.startStopButton.state = NSOnState;
-        }
-        else
-        {
+            [self.timer start];
+            break;
+        case NSOffState:
             self.startStopButton.title = NSLocalizedString(@"Start", @"Start");
-            self.startStopButton.state = NSOffState;
-        }
+            [self.timer stop];
+            break;
+    }
+}
 
-        [self.view setNeedsLayout:YES];
+- (NSString*)timeValueAsString:(NSTimeInterval)timeValue
+{
+    return [NSString stringWithFormat:@"%02d:%02d:%02d", (int)timeValue / 3600, (int)(timeValue / 60) % 60, (int)timeValue % 60];
+}
+
+- (void)updateView:(NSNotification*)info
+{
+    NSTimeInterval timeValue = [info.object doubleValue];
+    self.timeLabel.stringValue = [self timeValueAsString:timeValue];
+
+    [self.view setNeedsLayout:YES];
 }
 
 @end

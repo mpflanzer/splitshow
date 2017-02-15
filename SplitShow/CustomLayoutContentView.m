@@ -65,7 +65,7 @@
 
 - (NSUInteger)maxContentWidth
 {
-    return self.delegate.maxSlidesPerLayout * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X + IMAGE_WIDTH;
+    return self.delegate.numberOfSlides * (IMAGE_WIDTH + IMAGE_SPACING_X) + IMAGE_SPACING_X + IMAGE_WIDTH;
 }
 
 - (BOOL)becomeFirstResponder

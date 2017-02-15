@@ -9,13 +9,14 @@
 #import <Cocoa/Cocoa.h>
 
 @class PDFDocument;
+@class PresentationController;
 
 @interface DisplayController : NSViewController
 
 @property PDFDocument *document;
 
 - (instancetype)initWithFrame:(NSRect)frame;
-- (void)bindToWindowController:(NSWindowController*)controller;
+- (void)bindToPresentationController:(PresentationController*)controller;
 - (void)unbind;
 
 @end

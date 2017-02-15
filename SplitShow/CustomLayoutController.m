@@ -22,6 +22,7 @@
 @interface CustomLayoutController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
+
 @property NSMutableArray *previewImages;
 @property IBOutlet NSArrayController *previewImageController;
 @property IBOutlet NSArrayController *layoutController;
@@ -63,7 +64,8 @@
     self.window.restorationClass = [[[NSApplication sharedApplication] delegate] class];
 
     self.screenController = [SplitShowScreenArrayController new];
-    self.screenController.staticScreens = @[[[SplitShowScreen alloc] initWithDisplayID:SplitShowPseudoDisplayIDNewWindow]];
+    //FIXME: Like this static screen can only be used once
+    self.screenController.staticScreens = @[[SplitShowScreen windowScreen]];
 
     self.previewImages = [NSMutableArray array];
     self.selectedSlides = [NSMutableSet set];
@@ -92,7 +94,6 @@
 - (void)documentActivateNotification:(NSNotification *)notification
 {
     self.document = notification.object;
-
 }
 
 - (void)documentDeactivateNotification:(NSNotification *)notification
@@ -148,6 +149,10 @@
     {
         [self.screenController unselectScreen:[change objectForKey:NSKeyValueChangeOldKey]];
         [self.screenController selectScreen:[change objectForKey:NSKeyValueChangeNewKey]];
+
+        NSLog(@"Screen changed");
+
+//        NSLog(@"%@", self.splitShowDocument.customLayouts[0][@"name"]);
 
         [self.document invalidateRestorableState];
     }
@@ -218,14 +223,14 @@
 
 #pragma mark - CustomLayoutDelegate
 
-- (NSInteger)maxSlidesPerLayout
+- (NSUInteger)numberOfSlides
 {
     NSInteger max = 0;
 
-    for(NSDictionary *info in self.splitShowDocument.customLayouts)
+    for(NSDictionary *info in self.splitShowDocument.customLayout)
     {
-        NSArray *slides = [info objectForKey:@"slides"];
-        max = MAX(max, slides.count);
+        PDFDocument *document = [info objectForKey:@"document"];
+        max = MAX(max, document.pageCount);
     }
 
     return max;
@@ -250,9 +255,9 @@
 {
     [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
 
-    for(NSMutableDictionary *info in self.splitShowDocument.customLayouts)
+    for(NSMutableDictionary *info in self.splitShowDocument.customLayout)
     {
-        [[info objectForKey:@"slides"] removeAllObjects];
+        [info setObject:[[PDFDocument alloc] init] forKey:@"document"];
     }
 
     [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
@@ -372,8 +377,9 @@
 //TODO: Use add?
 - (IBAction)addLayout:(id)sender
 {
-    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjectsAndKeys:[NSMutableArray array], @"slides",
-                                 [NSString stringWithFormat:@"%@ #%lu", NSLocalizedString(@"Layout", @"Layout"), self.splitShowDocument.customLayouts.count + 1], @"name",
+    NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjectsAndKeys:
+                                 [[PDFDocument alloc] init], @"document",
+                                 [NSString stringWithFormat:@"%@ #%lu", NSLocalizedString(@"Layout", @"Layout"), self.splitShowDocument.customLayout.count + 1], @"name",
                                  nil];
     [self.layoutController addObject:info];
 }
@@ -407,6 +413,7 @@
     {
         CustomLayoutHeaderView *view = [tableView makeViewWithIdentifier:@"CustomLayoutHeader" owner:self];
         [self bindHeaderView:view];
+        NSLog(@"Bind header");
 
         return view;
     }
@@ -454,8 +461,8 @@
 
     for(NSIndexPath *indexPath in sortedIndexPath)
     {
-        NSMutableDictionary *info = [self.splitShowDocument.customLayouts objectAtIndex:indexPath.section];
-        [[info objectForKey:@"slides"] removeObjectAtIndex:indexPath.item];
+        NSMutableDictionary *info = [self.splitShowDocument.customLayout objectAtIndex:indexPath.section];
+        [[info objectForKey:@"document"] removePageAtIndex:indexPath.item];
     }
 
     [self.splitShowDocument didChangeValueForKey:@"customLayouts"];

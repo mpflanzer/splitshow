@@ -8,19 +8,16 @@
 
 #import <Cocoa/Cocoa.h>
 
-typedef enum : NSUInteger {
-    SplitShowTimerModeForward,
-    SplitShowTimerModeBackward,
-} SplitShowTimerMode;
+@class Timer;
 
 @interface TimerController : NSViewController
+
+@property (weak) Timer *timer;
 
 @property IBOutlet NSTextField *timeLabel;
 @property IBOutlet NSButton *startStopButton;
 
-@property SplitShowTimerMode timerMode;
-
-- (void)initTimer:(NSTimeInterval)initialValue withMode:(SplitShowTimerMode)mode;
+- (void)updateView:(NSNotification*)info;
 
 - (IBAction)toggleStartStopButton:(NSButton*)sender;
 - (IBAction)resetTimer:(id)sender;

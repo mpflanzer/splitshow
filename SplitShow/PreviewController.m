@@ -7,8 +7,8 @@
 //
 
 #import "PreviewController.h"
+
 #import "SplitShowDocument.h"
-#import "SplitShowPresentationWindow.h"
 #import "SplitShowScreen.h"
 #import "SplitShowScreenArrayController.h"
 #import "DisplayController.h"
@@ -16,6 +16,7 @@
 #import "CustomLayoutParser.h"
 #import "CustomLayoutController.h"
 #import "Errors.h"
+#import "PresentationController.h"
 
 #define kObserverCustomLayouts @"customLayouts"
 #define kObserverPresentationMode @"selectedPresentationMode"
@@ -25,6 +26,7 @@
 @interface PreviewController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
+@property PresentationController *presentationController;
 
 @property SplitShowScreenArrayController *screenController;
 @property TimerController *timerController;
@@ -45,27 +47,16 @@
 @property IBOutlet DisplayController *mainPreview;
 @property IBOutlet DisplayController *helperPreview;
 
-@property (readonly) NSInteger maxDocumentPageCount;
-@property NSInteger currentSlideIndex;
+@property SplitShowScreen *mainScreen;
+@property SplitShowScreen *helperScreen;
 
-@property (readonly) BOOL isPresenting;
-@property NSMutableSet *presentationControllers;
 @property NSArray *presentationScreens;
 
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
 
-- (void)reloadPresentation;
-- (void)reloadCurrentSlide;
-- (void)presentPrevSlide;
-- (void)presentNextSlide;
-
 - (SplitShowPresentationMode)guessPresentationMode;
 
 - (void)updatePreviewLayouts;
-- (void)updatePresentationLayouts;
-
-- (void)startPresentation;
-- (void)stopPresentation;
 
 @end
 
@@ -75,12 +66,18 @@
 {
     [super windowDidLoad];
 
+    self.presentationController = [[PresentationController alloc] init];
+
+    self.mainScreen = [SplitShowScreen previewScreen];
+    self.helperScreen = [SplitShowScreen previewScreen];
+
     self.screenController = [SplitShowScreenArrayController new];
-    self.screenController.staticScreens = @[[[SplitShowScreen alloc] initWithDisplayID:SplitShowPseudoDisplayIDNewWindow]];
+    //FIXME: Like this static can only be used once 
+    self.screenController.staticScreens = @[[SplitShowScreen windowScreen]];
+
     self.timerController = [[TimerController alloc] initWithNibName:@"TimerView" bundle:nil];
-    self.presentationControllers = [NSMutableSet set];
+
     self.selectedPresentationMode = [self guessPresentationMode];
-    self.currentSlideIndex = 0;
 
     [self bindDisplayMenuButton:self.mainDisplayButton toProperty:kObserverSelectedScreenMain];
     [self bindDisplayMenuButton:self.helperDisplayButton toProperty:kObserverSelectedScreenHelper];
@@ -92,8 +89,16 @@
 
     [self.splitShowDocument addObserver:self forKeyPath:kObserverCustomLayouts options:NSKeyValueObservingOptionNew context:NULL];
 
-    [self.mainPreview bindToWindowController:self];
-    [self.helperPreview bindToWindowController:self];
+    [self.presentationController addObserver:self forKeyPath:@"presenting" options:NSKeyValueObservingOptionNew context:nil];
+
+    [self.mainPreview bindToPresentationController:self.presentationController];
+    [self.helperPreview bindToPresentationController:self.presentationController];
+
+    [self.mainPreview bind:@"document" toObject:self.mainScreen withKeyPath:@"document" options:nil];
+    [self.helperPreview bind:@"document" toObject:self.helperScreen withKeyPath:@"document" options:nil];
+
+    [self.presentationController addScreen:self.mainScreen];
+    [self.presentationController addScreen:self.helperScreen];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)notification
@@ -115,6 +120,7 @@
     [self removeObserver:self forKeyPath:kObserverSelectedScreenHelper];
     [self removeObserver:self forKeyPath:kObserverPresentationMode];
     [self.splitShowDocument removeObserver:self forKeyPath:kObserverCustomLayouts];
+    [self.presentationController removeObserver:self forKeyPath:@"presenting"];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationWindowWillClose object:self.splitShowDocument];
 }
@@ -153,239 +159,58 @@
     }
 }
 
-- (NSInteger)maxDocumentPageCount
-{
-    NSUInteger max = 0;
-
-    for(NSDictionary *slides in self.presentationScreens)
-    {
-        PDFDocument *doc = [slides objectForKey:@"document"];
-        max = MAX(max, doc.pageCount);
-    }
-
-    max = MAX(max, self.mainPreview.document.pageCount);
-    max = MAX(max, self.helperPreview.document.pageCount);
-
-    return max;
-}
-
-- (void)reloadPresentation
-{
-    if(self.currentSlideIndex >= self.maxDocumentPageCount)
-    {
-        self.currentSlideIndex = MAX(0, self.maxDocumentPageCount - 1);
-    }
-
-    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
-                                                        object:self
-                                                      userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
-                                                                 kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
-}
-
-- (void)reloadCurrentSlide
-{
-    [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
-                                                        object:self
-                                                      userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
-                                                                 kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
-}
-
-- (void)presentPrevSlide
-{
-    if(self.currentSlideIndex > 0)
-    {
-        --self.currentSlideIndex;
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
-                                                            object:self
-                                                          userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
-                                                                        kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
-    }
-}
-
-- (void)presentNextSlide
-{
-    if(self.currentSlideIndex < self.maxDocumentPageCount - 1)
-    {
-        ++self.currentSlideIndex;
-
-        [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationChangeSlide
-                                                            object:self
-                                                          userInfo:@{kSplitShowNotificationChangeSlideAction : @(SplitShowChangeSlideActionGoTo),
-                                                                        kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
-    }
-}
-
 - (void)updatePreviewLayouts
 {
     switch(self.selectedPresentationMode)
     {
         case SplitShowPresentationModeInterleaveInside:
-        {
-            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeInside];
-            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeInside];
+            self.mainScreen.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeInside];
+            self.helperScreen.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeInside];
             break;
-        }
 
         case SplitShowPresentationModeInterleaveOutside:
-        {
-            self.mainPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeOutside];
-            self.helperPreview.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeOutside];
+            self.mainScreen.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeOutside];
+            self.helperScreen.document = [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeOutside];
             break;
-        }
 
         case SplitShowPresentationModeSplit:
-        {
-            self.mainPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft];
-            self.helperPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight];
+            self.mainScreen.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft];
+            self.helperScreen.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight];
             break;
-        }
 
         case SplitShowPresentationModeInverseSplit:
-        {
-            self.mainPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight];
-            self.helperPreview.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft];
+            self.mainScreen.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight];
+            self.helperScreen.document = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft];
             break;
-        }
 
         case SplitShowPresentationModeMirror:
-        {
-            self.mainPreview.document = [self.splitShowDocument createMirroredDocument];
-            self.helperPreview.document = [self.splitShowDocument createMirroredDocument];
+            self.mainScreen.document = [self.splitShowDocument createMirroredDocument];
+            self.helperScreen.document = [self.splitShowDocument createMirroredDocument];
             break;
-        }
-            
+
         case SplitShowPresentationModeCustom:
         {
             NSDictionary *info;
-            self.mainPreview.document = nil;
-            self.helperPreview.document = nil;
+            self.mainScreen.document = nil;
+            self.helperScreen.document = nil;
 
-            if(self.splitShowDocument.customLayouts.count > 0)
+            if(self.splitShowDocument.customLayout.count > 0)
             {
-                info = [self.splitShowDocument.customLayouts objectAtIndex:0];
+                info = [self.splitShowDocument.customLayout objectAtIndex:0];
 
-                self.mainPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
+                self.mainScreen.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
 
-                if(self.splitShowDocument.customLayouts.count > 1)
+                if(self.splitShowDocument.customLayout.count > 1)
                 {
-                    info = [self.splitShowDocument.customLayouts objectAtIndex:1];
+                    info = [self.splitShowDocument.customLayout objectAtIndex:1];
 
-                    self.helperPreview.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
+                    self.helperScreen.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
                 }
             }
 
             break;
         }
     }
-}
-
-- (void)updatePresentationLayouts
-{
-    NSMutableArray *screens = [NSMutableArray array];
-
-    switch(self.selectedPresentationMode)
-    {
-        case SplitShowPresentationModeInterleaveInside:
-        {
-            if([self.selectedScreenMain isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeInside]}];
-            }
-
-            if([self.selectedScreenHelper isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeInside],
-                                     @"timer" : @YES}];
-            }
-            break;
-        }
-            
-        case SplitShowPresentationModeInterleaveOutside:
-        {
-            if([self.selectedScreenMain isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupContent inMode:SplitShowInterleaveModeOutside]}];
-            }
-
-            if([self.selectedScreenHelper isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createInterleavedDocumentForGroup:SplitShowInterleaveGroupNotes inMode:SplitShowInterleaveModeOutside],
-                                     @"timer" : @YES}];
-            }
-            break;
-        }
-            
-        case SplitShowPresentationModeSplit:
-        {
-            if([self.selectedScreenMain isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft]}];
-            }
-
-            if([self.selectedScreenHelper isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight],
-                                     @"timer" : @YES}];
-            }
-            break;
-        }
-
-        case SplitShowPresentationModeInverseSplit:
-        {
-            if([self.selectedScreenMain isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeRight]}];
-            }
-
-            if([self.selectedScreenHelper isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeLeft],
-                                     @"timer" : @YES}];
-            }
-            break;
-        }
-            
-        case SplitShowPresentationModeMirror:
-        {
-            if([self.selectedScreenMain isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenMain,
-                                     @"document" : [self.splitShowDocument createMirroredDocument]}];
-            }
-
-            if([self.selectedScreenHelper isAvailable])
-            {
-                [screens addObject:@{@"screen" : self.selectedScreenHelper,
-                                     @"document" : [self.splitShowDocument createMirroredDocument],
-                                     @"timer" : @YES}];
-            }
-            break;
-        }
-
-        case SplitShowPresentationModeCustom:
-        {
-            for(NSDictionary *info in self.splitShowDocument.customLayouts)
-            {
-                [screens addObject:@{@"screen" : [info objectForKey:@"screen"],
-                                     @"name" : [info objectForKey:@"name"],
-                                     @"document" : [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode],
-                                     @"timer" : @NO}];
-            }
-
-            break;
-        }
-    }
-
-    self.presentationScreens = screens;
 }
 
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
@@ -464,14 +289,32 @@
         }
 
         [self updatePreviewLayouts];
-        [self reloadPresentation];
+        [self.presentationController reloadPresentation];
     }
     // TODO: Use outlet collection
     else if([kObserverSelectedScreenMain isEqualToString:keyPath] ||
             [kObserverSelectedScreenHelper isEqualToString:keyPath])
     {
-        [self.screenController unselectScreen:[change objectForKey:NSKeyValueChangeOldKey]];
-        [self.screenController selectScreen:[change objectForKey:NSKeyValueChangeNewKey]];
+        SplitShowScreen *oldScreen = [change objectForKey:NSKeyValueChangeOldKey];
+        SplitShowScreen *newScreen = [change objectForKey:NSKeyValueChangeNewKey];
+
+        if(newScreen != nil && ![newScreen isEqual:[NSNull null]])
+        {
+            if([kObserverSelectedScreenMain isEqualToString:keyPath])
+            {
+                newScreen.document = self.mainScreen.document;
+            }
+            else if([kObserverSelectedScreenHelper isEqualToString:keyPath])
+            {
+                newScreen.document = self.helperScreen.document;
+            }
+        }
+
+        [self.screenController unselectScreen:oldScreen];
+        [self.screenController selectScreen:newScreen];
+
+        [self.presentationController removeScreen:oldScreen];
+        [self.presentationController addScreen:newScreen];
 
         self.canStartPresentation = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
     }
@@ -480,7 +323,18 @@
         if(self.selectedPresentationMode == SplitShowPresentationModeCustom)
         {
             [self updatePreviewLayouts];
-            [self reloadPresentation];
+            [self.presentationController reloadPresentation];
+        }
+    }
+    else if([object isEqual:self.presentationController] && [keyPath isEqualToString:@"presenting"])
+    {
+        if([[change objectForKey:NSKeyValueChangeNewKey] boolValue])
+        {
+            self.presentationButton.title = NSLocalizedString(@"Stop presentation", @"Stop presentation");
+        }
+        else
+        {
+            self.presentationButton.title = NSLocalizedString(@"Start presentation", @"Start presentation");
         }
     }
     else
@@ -496,19 +350,15 @@
         return;
     }
 
+    //FIXME: Causes crash in observer
     SplitShowScreen *tmp = self.selectedScreenMain;
     self.selectedScreenMain = self.selectedScreenHelper;
     self.selectedScreenHelper = tmp;
 }
 
-- (BOOL)isPresenting
-{
-    return (self.presentationControllers.count > 0);
-}
-
 - (void)exportCustomLayout:(id)sender
 {
-    if(self.splitShowDocument.customLayouts.count == 0)
+    if(self.splitShowDocument.customLayout.count == 0)
     {
         return;
     }
@@ -531,7 +381,7 @@
 
             [JSONObject setObject:@(self.splitShowDocument.customLayoutMode) forKey:@"customLayoutMode"];
 
-            NSMutableArray *layouts = [NSMutableArray arrayWithArray:self.splitShowDocument.customLayouts];
+            NSMutableArray *layouts = [NSMutableArray arrayWithArray:self.splitShowDocument.customLayout];
 
             for(NSMutableDictionary *info in layouts)
             {
@@ -624,108 +474,28 @@
             }
 
             ((SplitShowDocument*)self.document).customLayoutMode = [[JSONObject objectForKey:@"customLayoutMode"] integerValue];
-            ((SplitShowDocument*)self.document).customLayouts = parsedLayouts;
+            ((SplitShowDocument*)self.document).customLayout = parsedLayouts;
         }
     }];
 }
 
 - (IBAction)togglePresentation:(id)sender
 {
-    if(self.isPresenting)
+    if(self.presentationController.presenting)
     {
-        self.presentationButton.title = NSLocalizedString(@"Start presentation", @"Start presentation");
-        [self stopPresentation];
+        [self.presentationController stopPresentation];
     }
     else
     {
-        self.presentationButton.title = NSLocalizedString(@"Stop presentation", @"Stop presentation");
-        [self startPresentation];
+        [self.presentationController startPresentation];
     }
-}
-
-- (void)startPresentation
-{
-    if(self.isPresenting)
-    {
-        return;
-    }
-
-    [[CustomLayoutController sharedCustomLayoutController] close];
-
-    [self updatePresentationLayouts];
-
-    for(NSDictionary *info in self.presentationScreens)
-    {
-        SplitShowScreen *screen = [info objectForKey:@"screen"];
-        PDFDocument *document = [info objectForKey:@"document"];
-        NSString *title = [info objectForKey:@"name"];
-        BOOL wantsTimer = [[info objectForKey:@"timer"] boolValue];
-
-        SplitShowPresentationWindow *presentationWindow;
-        DisplayController *presentationViewController;
-
-        NSRect windowFrame;
-
-        if([screen isPseudoScreen])
-        {
-            windowFrame = self.window.frame;
-        }
-        else
-        {
-            windowFrame = screen.screen.frame;
-        }
-
-        presentationViewController = [[DisplayController alloc] initWithFrame:windowFrame];
-        presentationViewController.document = document;
-        presentationViewController.title = title;
-        [presentationViewController bindToWindowController:self];
-
-        if(wantsTimer)
-        {
-            [presentationViewController.view addSubview:self.timerController.view];
-        }
-
-        NSUInteger mask = NSTitledWindowMask | NSClosableWindowMask | NSMiniaturizableWindowMask | NSResizableWindowMask | NSFullSizeContentViewWindowMask;
-
-        presentationWindow = [[SplitShowPresentationWindow alloc] initWithContentRect:windowFrame styleMask:mask backing:NSBackingStoreBuffered defer:NO screen:screen.screen];
-        presentationWindow.contentViewController = presentationViewController;
-        presentationWindow.releasedWhenClosed = YES;
-        presentationWindow.collectionBehavior = NSWindowCollectionBehaviorFullScreenAllowsTiling | NSWindowCollectionBehaviorFullScreenPrimary;
-
-        NSWindowController *presentationWindowController = [[NSWindowController alloc] initWithWindow:presentationWindow];
-
-        [self.presentationControllers addObject:presentationWindowController];
-
-        [presentationWindowController showWindow:nil];
-
-        if(![screen isPseudoScreen])
-        {
-            [presentationWindowController.window toggleFullScreen:nil];
-        }
-    }
-}
-
-- (void)stopPresentation
-{
-    if(!self.isPresenting)
-    {
-        return;
-    }
-
-    for(NSWindowController *presentationWindowController in self.presentationControllers)
-    {
-        [((DisplayController*)presentationWindowController.contentViewController) unbind];
-        [presentationWindowController close];
-    }
-
-    [self.presentationControllers removeAllObjects];
 }
 
 - (BOOL)validateMenuItem:(NSMenuItem *)menuItem
 {
     if(menuItem.action == @selector(togglePresentation:))
     {
-        if(self.isPresenting)
+        if(self.presentationController.presenting)
         {
             menuItem.title = NSLocalizedString(@"Stop presentation", @"Stop presentation");
         }
@@ -738,7 +508,7 @@
     }
     else if(menuItem.action == @selector(exportCustomLayout:))
     {
-        return (self.splitShowDocument.customLayouts.count > 0);
+        return (self.splitShowDocument.customLayout.count > 0);
     }
     else if(menuItem.action == @selector(changeSelectedScreen:))
     {
@@ -749,6 +519,19 @@
     return YES;
 }
 
+- (void)keyDown:(NSEvent *)event
+{
+    [self.presentationController interpretKeyEvents:@[event]];
+}
+
+//TODO: Why is ESC not a keyDown event?
+- (void)cancel:(id)sender
+{
+    [self.presentationController stopPresentation];
+}
+
+#pragma mark - State restoration
+
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
     [super encodeRestorableStateWithCoder:coder];
@@ -756,59 +539,17 @@
     [coder encodeObject:self.selectedScreenMain forKey:@"selectedScreenMain"];
     [coder encodeObject:self.selectedScreenHelper forKey:@"selectedScreenHelper"];
     [coder encodeObject:@(self.selectedPresentationMode) forKey:@"selectedPresentationMode"];
-    [coder encodeObject:@(self.currentSlideIndex) forKey:@"currentSlideIndex"];
+    [coder encodeObject:self.presentationController forKey:@"presentationController"];
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     [super restoreStateWithCoder:coder];
 
+    self.presentationController = [coder decodeObjectForKey:@"presentationController"];
     self.selectedScreenMain = [coder decodeObjectForKey:@"selectedScreenMain"];
     self.selectedScreenHelper = [coder decodeObjectForKey:@"selectedScreenHelper"];
     self.selectedPresentationMode = (SplitShowPresentationMode)[[coder decodeObjectForKey:@"selectedPresentationMode"] integerValue];
-    self.currentSlideIndex = [[coder decodeObjectForKey:@"currentSlideIndex"] integerValue];
-    [self reloadCurrentSlide];
-}
-
-- (void)keyDown:(NSEvent *)theEvent
-{
-    [self interpretKeyEvents:@[theEvent]];
-}
-
-- (void)cancel:(id)sender
-{
-    self.presentationButton.title = NSLocalizedString(@"Start presentation", @"Start presentation");
-    [self stopPresentation];
-}
-
-- (void)pageUp:(id)sender
-{
-    [self presentPrevSlide];
-}
-
--(void)moveUp:(id)sender
-{
-    [self presentPrevSlide];
-}
-
-- (void)moveLeft:(id)sender
-{
-    [self presentPrevSlide];
-}
-
-- (void)pageDown:(id)sender
-{
-    [self presentNextSlide];
-}
-
-- (void)moveDown:(id)sender
-{
-    [self presentNextSlide];
-}
-
--(void)moveRight:(id)sender
-{
-    [self presentNextSlide];
 }
 
 @end

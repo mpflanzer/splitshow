@@ -8,15 +8,25 @@
 
 #import <Cocoa/Cocoa.h>
 
+@class PDFDocument;
+
 typedef enum : NSUInteger {
-    SplitShowPseudoDisplayIDNewWindow = 1,
-} SplitShowPseudoDisplayID;
+    SplitShowScreenModePreview,
+    SplitShowScreenModeWindow,
+    SplitShowScreenModeFullscreen,
+} SplitShowScreenMode;
 
 @interface SplitShowScreen : NSObject<NSCoding>
 
 @property (readonly) NSString *name;
 @property (readonly) CGDirectDisplayID displayID;
 @property (readonly) NSScreen *screen;
+@property PDFDocument *document;
+@property SplitShowScreenMode mode;
+@property BOOL showTimer;
+
++ (instancetype)previewScreen;
++ (instancetype)windowScreen;
 
 - (instancetype)initWithDisplayID:(CGDirectDisplayID)displayID;
 - (instancetype)initWithScreen:(NSScreen*)screen;
@@ -25,7 +35,5 @@ typedef enum : NSUInteger {
 - (BOOL)isAvailable;
 
 - (BOOL)isEqualToSplitShowScreen:(SplitShowScreen*)screen;
-
-+ (BOOL)isPseudoDisplayID:(CGDirectDisplayID)displayID;
 
 @end

@@ -7,9 +7,11 @@
 //
 
 #import "DisplayController.h"
-#import <Quartz/Quartz.h>
-#import "PreviewController.h"
+
+#import "PresentationController.h"
 #import "SlideView.h"
+
+#import <Quartz/Quartz.h>
 
 @interface DisplayController ()
 
@@ -35,7 +37,7 @@
     return self;
 }
 
-- (void)bindToWindowController:(NSWindowController *)controller
+- (void)bindToPresentationController:(PresentationController *)controller
 {
     [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(updateView:) name:kSplitShowNotificationChangeSlide object:controller];
 }

@@ -9,7 +9,6 @@
 #import <Cocoa/Cocoa.h>
 
 @class PDFDocument;
-@class CustomLayoutController;
 
 typedef enum : NSInteger {
     SplitShowSlideModeNormal,
@@ -34,14 +33,14 @@ typedef enum : NSInteger {
 
 @interface SplitShowDocument : NSDocument
 
-@property NSMutableArray<NSMutableDictionary*> *customLayouts;
-@property SplitShowSlideMode customLayoutMode;
-
 @property (readonly) NSString *name;
 @property (readonly) NSSize pageSize;
 
 @property (readonly) BOOL hasInterleavedInsideDocument;
 @property (readonly) BOOL hasInterleavedOutsideDocument;
+
+@property NSMutableArray<NSMutableDictionary*> *customLayout;
+@property SplitShowSlideMode customLayoutMode;
 
 - (PDFDocument*)createMirroredDocument;
 - (PDFDocument*)createInterleavedDocumentForGroup:(SplitShowInterleaveGroup)mode inMode:(SplitShowInterleaveMode)mode;
@@ -49,4 +48,3 @@ typedef enum : NSInteger {
 - (PDFDocument*)createDocumentFromIndices:(NSArray*)indices forMode:(SplitShowSlideMode)mode;
 
 @end
-

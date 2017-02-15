@@ -7,20 +7,24 @@
 //
 
 #import "SplitShowDocument.h"
-#import <Quartz/Quartz.h>
+
+#import "CustomLayoutController.h"
+#import "DisplayController.h"
+#import "Errors.h"
 #import "NavFile.h"
-#import "PDFDocument+Presentation.h"
+
 #if __MAC_OS_X_VERSION_MAX_ALLOWED < 101202
 #import "PDFDocument+CopyFix.h"
 #endif
+
+#import "PDFDocument+Presentation.h"
 #import "PreviewController.h"
-#import "CustomLayoutController.h"
-#import "DisplayController.h"
 #import "Utilities.h"
-#import "Errors.h"
+
+#import <Quartz/Quartz.h>
 
 #define kSplitShowDocumentEncodeCustomLayoutMode @"kSplitShowDocumentEncodeCustomLayoutMode"
-#define kSplitShowDocumentEncodeCustomLayouts @"kSplitShowDocumentEncodeCustomLayouts"
+#define kSplitShowDocumentEncodeCustomLayout @"kSplitShowDocumentEncodeCustomLayout"
 
 @interface SplitShowDocument ()
 
@@ -41,6 +45,8 @@
     if(self)
     {
         self.supportedSlideModes = [NSSet setWithObjects:@(SplitShowSlideModeNormal), @(SplitShowSlideModeSplit), nil];
+        self.customLayout = [NSMutableArray array];
+        self.customLayoutMode = SplitShowSlideModeNormal;
     }
 
     return self;
@@ -53,6 +59,11 @@
 
 + (BOOL)autosavesInPlace {
     return NO;
+}
+
++ (BOOL)canConcurrentlyReadDocumentsOfType:(NSString *)typeName
+{
+    return YES;
 }
 
 - (void)makeWindowControllers
@@ -78,8 +89,6 @@
 
 - (BOOL)readFromURL:(NSURL *)url ofType:(NSString *)typeName error:(NSError * _Nullable __autoreleasing *)outError
 {
-    self.customLayouts = [NSMutableArray array];
-    self.customLayoutMode = SplitShowSlideModeNormal;
     self.pdfDocument = [[PDFDocument alloc] initWithURL:url];
 
     if(!self.pdfDocument)
@@ -280,25 +289,22 @@
     return document;
 }
 
-//+ (NSArray<NSString *> *)restorableStateKeyPaths
-//{
-//    return @[@"self.documentMode", @"self.layouts"];
-//}
+#pragma mark - State restoration
 
 - (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
     [super encodeRestorableStateWithCoder:coder];
 
-    [coder encodeObject:@(self.customLayoutMode) forKey:kSplitShowDocumentEncodeCustomLayoutMode];
-    [coder encodeObject:self.customLayouts forKey:kSplitShowDocumentEncodeCustomLayouts];
+    [coder encodeInteger:self.customLayoutMode forKey:kSplitShowDocumentEncodeCustomLayoutMode];
+    [coder encodeObject:self.customLayout forKey:kSplitShowDocumentEncodeCustomLayout];
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     [super restoreStateWithCoder:coder];
-
-    self.customLayoutMode = [[coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayoutMode] integerValue];
-    self.customLayouts = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayouts];
+    
+    self.customLayoutMode = [coder decodeIntegerForKey:kSplitShowDocumentEncodeCustomLayoutMode];;
+    self.customLayout = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayout];
 }
 
 @end

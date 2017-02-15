@@ -10,7 +10,7 @@
 
 @protocol CustomLayoutDelegate <NSObject>
 
-@property(readonly) NSInteger maxSlidesPerLayout;
+@property (readonly) NSUInteger numberOfSlides;
 
 - (void)willUpdateSlides;
 - (void)didUpdateSlides;

@@ -18,11 +18,11 @@
 
 - (void)setObjectValue:(id)objectValue
 {
-    SplitShowScreen *screen = [objectValue objectForKey:@"screen"];
+    SplitShowScreen *screen = [objectValue objectForKey:@"display"];
 
     if(![screen isAvailable])
     {
-        [objectValue removeObjectForKey:@"screen"];
+        [objectValue removeObjectForKey:@"display"];
     }
 
     [super setObjectValue:objectValue];
@@ -32,6 +32,7 @@
 {
     if([@"objectValue.name" isEqualToString:keyPath])
     {
+        NSLog(@"Name changed");
         [self.delegate didChangeLayoutName];
     }
     else
@@ -50,7 +51,7 @@
         [self.displayButton unbind:@"contentValues"];
         [self.displayButton unbind:@"selectedObject"];
 
-        [self removeObserver:self.delegate forKeyPath:@"objectValue.screen"];
+        [self removeObserver:self.delegate forKeyPath:@"objectValue.display"];
     }
 }
 

@@ -79,7 +79,9 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
 
     for(NSScreen *screen in sortedScreens)
     {
-        [array addObject:[[SplitShowScreen alloc] initWithScreen:screen]];
+        SplitShowScreen *s = [[SplitShowScreen alloc] initWithScreen:screen];
+        s.mode = SplitShowScreenModeFullscreen;
+        [array addObject:s];
     }
 
     return array;
@@ -97,7 +99,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         return NO;
     }
 
-    if(screen && ![screen isEqual:[NSNull null]] && !screen.isPseudoScreen)
+    if(screen != nil && ![screen isEqual:[NSNull null]] && !screen.isPseudoScreen)
     {
         return [self addSelectedObjects:@[screen]];
     }
@@ -112,7 +114,7 @@ void displayReconfigurationCallback(CGDirectDisplayID display, CGDisplayChangeSu
         return NO;
     }
 
-    if(screen && ![screen isEqual:[NSNull null]] && !screen.isPseudoScreen)
+    if(screen != nil && ![screen isEqual:[NSNull null]] && !screen.isPseudoScreen)
     {
         return [self removeSelectedObjects:@[screen]];
     }

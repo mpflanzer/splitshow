@@ -15,14 +15,16 @@
 @interface SplitShowScreen ()
 
 @property (readwrite) CGDirectDisplayID displayID;
+@property NSString *pseudoName;
 
-- (void)customInit;
++ (void)initPseudoLock;
 
 @end
 
 @implementation SplitShowScreen
 
-static NSDictionary* pseudoScreenNames = nil;
+static CGDirectDisplayID pseudoDisplayID = 0;
+static NSLock *pseudoLock = nil;
 
 - (instancetype)initWithCoder:(NSCoder *)aDecoder
 {
@@ -30,9 +32,8 @@ static NSDictionary* pseudoScreenNames = nil;
 
     if(self)
     {
-        self.displayID = [[aDecoder decodeObjectForKey:kSplitShowScreenEncodeDisplayID] intValue];
-
-        [self customInit];
+        self.displayID = [[aDecoder decodeObjectForKey:kSplitShowScreenEncodeDisplayID] unsignedIntValue];
+        self.pseudoName = [aDecoder decodeObjectForKey:kSplitShowScreenEncodePseudoName];
     }
 
     return self;
@@ -45,8 +46,6 @@ static NSDictionary* pseudoScreenNames = nil;
     if(self)
     {
         self.displayID = screen.displayID;
-
-        [self customInit];
     }
 
     return self;
@@ -59,29 +58,55 @@ static NSDictionary* pseudoScreenNames = nil;
     if(self)
     {
         self.displayID = displayID;
-
-        [self customInit];
     }
 
     return self;
 }
 
-- (void)customInit
++ (void)initPseudoLock
 {
     static dispatch_once_t onceToken;
 
     dispatch_once(&onceToken, ^{
-        pseudoScreenNames = @{@(SplitShowPseudoDisplayIDNewWindow): NSLocalizedString(@"New window", @"New window")};
+        pseudoLock = [[NSLock alloc] init];
     });
+}
+
++ (instancetype)previewScreen
+{
+    [SplitShowScreen initPseudoLock];
+
+    SplitShowScreen *screen = [[SplitShowScreen alloc] init];
+    screen.mode = SplitShowScreenModePreview;
+    screen.pseudoName = NSLocalizedString(@"Preview", @"Preview");
+
+    [pseudoLock lock];
+    screen.displayID = pseudoDisplayID++;
+    [pseudoLock unlock];
+
+    return screen;
+}
+
++ (instancetype)windowScreen
+{
+    [SplitShowScreen initPseudoLock];
+
+    SplitShowScreen *screen = [[SplitShowScreen alloc] init];
+    screen.mode = SplitShowScreenModeWindow;
+    screen.pseudoName = NSLocalizedString(@"New window", @"New window");
+
+    [pseudoLock lock];
+    screen.displayID = pseudoDisplayID++;
+    [pseudoLock unlock];
+
+    return screen;
 }
 
 - (NSString *)name
 {
-    NSString *pseudoName = [pseudoScreenNames objectForKey:@(self.displayID)];
-
-    if(pseudoName)
+    if(self.pseudoName)
     {
-        return pseudoName;
+        return self.pseudoName;
     }
 
     NSScreen *screen = [NSScreen screenWithDisplayID:self.displayID];
@@ -96,7 +121,7 @@ static NSDictionary* pseudoScreenNames = nil;
 
 - (BOOL)isPseudoScreen
 {
-    return ([pseudoScreenNames objectForKey:@(self.displayID)] != nil);
+    return self.pseudoName != nil;
 }
 
 - (BOOL)isAvailable
@@ -109,14 +134,10 @@ static NSDictionary* pseudoScreenNames = nil;
     return ([NSScreen screenWithDisplayID:self.displayID] != nil);
 }
 
-+ (BOOL)isPseudoDisplayID:(CGDirectDisplayID)displayID
-{
-    return (displayID == SplitShowPseudoDisplayIDNewWindow);
-}
-
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
     [aCoder encodeObject:@(self.displayID) forKey:kSplitShowScreenEncodeDisplayID];
+    [aCoder encodeObject:self.pseudoName forKey:kSplitShowScreenEncodePseudoName];
 }
 
 - (BOOL)isEqual:(id)object
@@ -141,12 +162,23 @@ static NSDictionary* pseudoScreenNames = nil;
         return YES;
     }
 
-    return (self.displayID == screen.displayID);
+    if(self.pseudoName != nil && screen.pseudoName != nil)
+    {
+        return [self.pseudoName isEqualToString:screen.pseudoName];
+    }
+    else if(self.pseudoName == nil && screen.pseudoName == nil)
+    {
+        return self.displayID == screen.displayID;
+    }
+    else
+    {
+        return NO;
+    }
 }
 
 - (NSUInteger)hash
 {
-    return self.displayID;
+    return [self.pseudoName intValue] ^ self.displayID;
 }
 
 @end

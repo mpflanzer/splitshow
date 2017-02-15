@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="12118" systemVersion="16D32" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES" customObjectInstantitationMethod="direct">
+    <dependencies>
+        <deployment identifier="macosx"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="12118"/>
+        <plugIn identifier="com.apple.pdfkit.ibplugin" version="12118"/>
+        <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
+    </dependencies>
+    <objects>
+        <customObject id="-2" userLabel="File's Owner" customClass="PresentationWindowController">
+            <connections>
+                <outlet property="displayController" destination="ibj-e8-372" id="fkK-Pd-QML"/>
+                <outlet property="timerController" destination="d9m-ED-k2z" id="UFe-77-CZK"/>
+                <outlet property="window" destination="QvC-M9-y7g" id="Z8S-7G-W3s"/>
+            </connections>
+        </customObject>
+        <customObject id="-1" userLabel="First Responder" customClass="FirstResponder"/>
+        <customObject id="-3" userLabel="Application" customClass="NSObject"/>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" visibleAtLaunch="NO" animationBehavior="default" id="QvC-M9-y7g">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowCollectionBehavior key="collectionBehavior" moveToActiveSpace="YES" fullScreenPrimary="YES" fullScreenDisallowsTiling="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="196" y="240" width="506" height="296"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1440" height="877"/>
+            <view key="contentView" wantsLayer="YES" id="EiT-Mj-1SZ">
+                <rect key="frame" x="0.0" y="0.0" width="506" height="296"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <pdfView autoresizesSubviews="NO" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="SD1-2X-iT2" customClass="SlideView">
+                        <rect key="frame" x="0.0" y="0.0" width="506" height="296"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    </pdfView>
+                    <customView hidden="YES" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="OwJ-ZG-fd6">
+                        <rect key="frame" x="0.0" y="0.0" width="214" height="112"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                        <subviews>
+                            <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" allowsCharacterPickerTouchBarItem="YES" translatesAutoresizingMaskIntoConstraints="NO" id="WHH-LG-eSm">
+                                <rect key="frame" x="18" y="47" width="178" height="50"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMinY="YES"/>
+                                <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="right" title="00:00:00" id="zgd-pn-DgH">
+                                    <font key="font" metaFont="system" size="41"/>
+                                    <color key="textColor" name="labelColor" catalog="System" colorSpace="catalog"/>
+                                    <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                                </textFieldCell>
+                            </textField>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="H8S-y0-Y79">
+                                <rect key="frame" x="118" y="20" width="76" height="27"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <buttonCell key="cell" type="square" title="Reset" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="LNS-yV-lnI">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                                    <font key="font" metaFont="system" size="16"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="resetTimer:" target="d9m-ED-k2z" id="Y4F-5y-PoX"/>
+                                </connections>
+                            </button>
+                            <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="vDi-f1-X8o">
+                                <rect key="frame" x="20" y="20" width="76" height="27"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <buttonCell key="cell" type="square" title="Start" bezelStyle="shadowlessSquare" imagePosition="overlaps" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="m8F-kv-q1U">
+                                    <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES" changeBackground="YES" changeGray="YES"/>
+                                    <font key="font" metaFont="system" size="16"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="toggleStartStopButton:" target="d9m-ED-k2z" id="KnF-ci-sfT"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </customView>
+                </subviews>
+            </view>
+            <point key="canvasLocation" x="152" y="175"/>
+        </window>
+        <viewController id="d9m-ED-k2z" customClass="TimerController">
+            <connections>
+                <outlet property="startStopButton" destination="vDi-f1-X8o" id="5Gu-KI-GD6"/>
+                <outlet property="timeLabel" destination="WHH-LG-eSm" id="xoe-nk-yqv"/>
+                <outlet property="view" destination="OwJ-ZG-fd6" id="ALd-eH-Lvc"/>
+            </connections>
+        </viewController>
+        <viewController id="ibj-e8-372" customClass="DisplayController">
+            <connections>
+                <outlet property="view" destination="SD1-2X-iT2" id="D24-XN-Ipq"/>
+            </connections>
+        </viewController>
+    </objects>
+</document>
