@@ -690,7 +690,7 @@
         presentationWindow = [[SplitShowPresentationWindow alloc] initWithContentRect:windowFrame styleMask:mask backing:NSBackingStoreBuffered defer:NO screen:screen.screen];
         presentationWindow.contentViewController = presentationViewController;
         presentationWindow.releasedWhenClosed = YES;
-        presentationWindow.collectionBehavior = NSWindowCollectionBehaviorFullScreenDisallowsTiling | NSWindowCollectionBehaviorFullScreenPrimary;
+        presentationWindow.collectionBehavior = NSWindowCollectionBehaviorFullScreenAllowsTiling | NSWindowCollectionBehaviorFullScreenPrimary;
 
         NSWindowController *presentationWindowController = [[NSWindowController alloc] initWithWindow:presentationWindow];
 
