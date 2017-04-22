@@ -299,10 +299,12 @@
             if([kObserverSelectedScreenMain isEqualToString:keyPath])
             {
                 newScreen.document = self.mainScreen.document;
+                newScreen.showTimer = NO;
             }
             else if([kObserverSelectedScreenHelper isEqualToString:keyPath])
             {
                 newScreen.document = self.helperScreen.document;
+                newScreen.showTimer = YES;
             }
         }
 
