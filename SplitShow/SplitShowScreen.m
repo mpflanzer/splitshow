@@ -11,6 +11,8 @@
 
 #define kSplitShowScreenEncodeDisplayID @"kSplitShowScreenEncodeDisplayID"
 #define kSplitShowScreenEncodePseudoName @"kSplitShowScreenEncodePseudoName"
+#define kSplitShowScreenEncodeMode @"kSplitShowScreenEncodeMode"
+#define kSplitShowScreenEncodeShowTimer @"kSplitShowScreenEncodeShowTimer"
 
 @interface SplitShowScreen ()
 
@@ -32,8 +34,10 @@ static NSLock *pseudoLock = nil;
 
     if(self)
     {
-        self.displayID = [[aDecoder decodeObjectForKey:kSplitShowScreenEncodeDisplayID] unsignedIntValue];
+        self.displayID = (CGDirectDisplayID)[aDecoder decodeIntegerForKey:kSplitShowScreenEncodeDisplayID];
         self.pseudoName = [aDecoder decodeObjectForKey:kSplitShowScreenEncodePseudoName];
+        self.mode = [aDecoder decodeIntegerForKey:kSplitShowScreenEncodeMode];
+        self.showTimer = [aDecoder decodeBoolForKey:kSplitShowScreenEncodeShowTimer];
     }
 
     return self;
@@ -136,8 +140,10 @@ static NSLock *pseudoLock = nil;
 
 -(void)encodeWithCoder:(NSCoder *)aCoder
 {
-    [aCoder encodeObject:@(self.displayID) forKey:kSplitShowScreenEncodeDisplayID];
+    [aCoder encodeInteger:self.displayID forKey:kSplitShowScreenEncodeDisplayID];
     [aCoder encodeObject:self.pseudoName forKey:kSplitShowScreenEncodePseudoName];
+    [aCoder encodeInteger:self.mode forKey:kSplitShowScreenEncodeMode];
+    [aCoder encodeBool:self.showTimer forKey:kSplitShowScreenEncodeShowTimer];
 }
 
 - (BOOL)isEqual:(id)object
