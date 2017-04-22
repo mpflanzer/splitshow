@@ -39,7 +39,6 @@
 
     if(self)
     {
-        // FIXME: Need to save the current slide index
         self.currentSlideIndex = 0;
         self.timer = [[Timer alloc] initWithTime:0 andMode:SplitShowTimerModeForward];
         self.windowControllers = [NSMutableSet set];
@@ -237,29 +236,24 @@
                                                                      kSplitShowChangeSlideActionGoToIndex : @(self.currentSlideIndex)}];
 }
 
-#pragma mark - Encoding
+#pragma mark - State restoration
 
-- (void)encodeWithCoder:(NSCoder *)aCoder
+- (void)encodeRestorableStateWithCoder:(NSCoder *)coder
 {
-    [super encodeWithCoder:aCoder];
-    
-    [aCoder encodeInteger:self.currentSlideIndex forKey:@"currentSlide"];
-    [aCoder encodeObject:self.timer forKey:@"timer"];
+    [super encodeRestorableStateWithCoder:coder];
+
+    [coder encodeInteger:self.currentSlideIndex forKey:@"currentSlide"];
+    [coder encodeObject:self.timer forKey:@"timer"];
 }
 
-- (instancetype)initWithCoder:(NSCoder *)aDecoder
+- (void)restoreStateWithCoder:(NSCoder *)coder
 {
-    self = [super init];
+    [super restoreStateWithCoder:coder];
 
-    if(self)
-    {
-        self.currentSlideIndex = [aDecoder decodeIntegerForKey:@"currentSlide"];
-        self.timer = [aDecoder decodeObjectForKey:@"timer"];
-        self.windowControllers = [NSMutableSet set];
-        self.screens = [NSMutableSet set];
-    }
+    self.currentSlideIndex = [coder decodeIntegerForKey:@"currentSlide"];
+    self.timer = [coder decodeObjectForKey:@"timer"];
 
-    return self;
+    [self reloadCurrentSlide];
 }
 
 @end

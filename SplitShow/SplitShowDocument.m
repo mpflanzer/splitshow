@@ -44,6 +44,7 @@
 
     if(self)
     {
+        self.presentationController = [[PresentationController alloc] init];
         self.supportedSlideModes = [NSSet setWithObjects:@(SplitShowSlideModeNormal), @(SplitShowSlideModeSplit), nil];
         self.customLayout = [NSMutableArray array];
         self.customLayoutMode = SplitShowSlideModeNormal;
@@ -295,6 +296,8 @@
 {
     [super encodeRestorableStateWithCoder:coder];
 
+    [self.presentationController encodeRestorableStateWithCoder:coder];
+
     [coder encodeInteger:self.customLayoutMode forKey:kSplitShowDocumentEncodeCustomLayoutMode];
     [coder encodeObject:self.customLayout forKey:kSplitShowDocumentEncodeCustomLayout];
 }
@@ -305,6 +308,8 @@
     
     self.customLayoutMode = [coder decodeIntegerForKey:kSplitShowDocumentEncodeCustomLayoutMode];;
     self.customLayout = [coder decodeObjectForKey:kSplitShowDocumentEncodeCustomLayout];
+
+    [self.presentationController restoreStateWithCoder:coder];
 }
 
 @end

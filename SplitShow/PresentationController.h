@@ -6,11 +6,8 @@
 //  Copyright © 2016 Moritz Pflanzer. All rights reserved.
 //
 
-#import "SplitShowDocument.h"
+#import <Cocoa/Cocoa.h>
 
-#import <Foundation/Foundation.h>
-
-@class PDFDocument;
 @class SplitShowScreen;
 
 #define kSplitShowNotificationChangeSlide @"kSplitShowNotificationChangeSlide"

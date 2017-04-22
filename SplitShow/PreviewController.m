@@ -16,7 +16,6 @@
 #import "CustomLayoutParser.h"
 #import "CustomLayoutController.h"
 #import "Errors.h"
-#import "PresentationController.h"
 
 #define kObserverCustomLayouts @"customLayouts"
 #define kObserverPresentationMode @"selectedPresentationMode"
@@ -26,7 +25,6 @@
 @interface PreviewController ()
 
 @property (readonly) SplitShowDocument *splitShowDocument;
-@property PresentationController *presentationController;
 
 @property SplitShowScreenArrayController *screenController;
 @property TimerController *timerController;
@@ -66,8 +64,6 @@
 {
     [super windowDidLoad];
 
-    self.presentationController = [[PresentationController alloc] init];
-
     self.mainScreen = [SplitShowScreen previewScreen];
     self.helperScreen = [SplitShowScreen previewScreen];
 
@@ -79,6 +75,9 @@
 
     self.selectedPresentationMode = [self guessPresentationMode];
 
+    [self.splitShowDocument.presentationController addScreen:self.mainScreen];
+    [self.splitShowDocument.presentationController addScreen:self.helperScreen];
+
     [self bindDisplayMenuButton:self.mainDisplayButton toProperty:kObserverSelectedScreenMain];
     [self bindDisplayMenuButton:self.helperDisplayButton toProperty:kObserverSelectedScreenHelper];
 
@@ -89,16 +88,13 @@
 
     [self.splitShowDocument addObserver:self forKeyPath:kObserverCustomLayouts options:NSKeyValueObservingOptionNew context:NULL];
 
-    [self.presentationController addObserver:self forKeyPath:@"presenting" options:NSKeyValueObservingOptionNew context:nil];
+    [self.splitShowDocument.presentationController addObserver:self forKeyPath:@"presenting" options:NSKeyValueObservingOptionNew context:nil];
 
-    [self.mainPreview bindToPresentationController:self.presentationController];
-    [self.helperPreview bindToPresentationController:self.presentationController];
+    [self.mainPreview bindToPresentationController:self.splitShowDocument.presentationController];
+    [self.helperPreview bindToPresentationController:self.splitShowDocument.presentationController];
 
     [self.mainPreview bind:@"document" toObject:self.mainScreen withKeyPath:@"document" options:nil];
     [self.helperPreview bind:@"document" toObject:self.helperScreen withKeyPath:@"document" options:nil];
-
-    [self.presentationController addScreen:self.mainScreen];
-    [self.presentationController addScreen:self.helperScreen];
 }
 
 - (void)windowDidBecomeMain:(NSNotification *)notification
@@ -120,7 +116,7 @@
     [self removeObserver:self forKeyPath:kObserverSelectedScreenHelper];
     [self removeObserver:self forKeyPath:kObserverPresentationMode];
     [self.splitShowDocument removeObserver:self forKeyPath:kObserverCustomLayouts];
-    [self.presentationController removeObserver:self forKeyPath:@"presenting"];
+    [self.splitShowDocument.presentationController removeObserver:self forKeyPath:@"presenting"];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationWindowWillClose object:self.splitShowDocument];
 }
@@ -289,7 +285,7 @@
         }
 
         [self updatePreviewLayouts];
-        [self.presentationController reloadPresentation];
+        [self.splitShowDocument.presentationController reloadPresentation];
     }
     // TODO: Use outlet collection
     else if([kObserverSelectedScreenMain isEqualToString:keyPath] ||
@@ -313,8 +309,8 @@
         [self.screenController unselectScreen:oldScreen];
         [self.screenController selectScreen:newScreen];
 
-        [self.presentationController removeScreen:oldScreen];
-        [self.presentationController addScreen:newScreen];
+        [self.splitShowDocument.presentationController removeScreen:oldScreen];
+        [self.splitShowDocument.presentationController addScreen:newScreen];
 
         self.canStartPresentation = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
     }
@@ -323,10 +319,10 @@
         if(self.selectedPresentationMode == SplitShowPresentationModeCustom)
         {
             [self updatePreviewLayouts];
-            [self.presentationController reloadPresentation];
+            [self.splitShowDocument.presentationController reloadPresentation];
         }
     }
-    else if([object isEqual:self.presentationController] && [keyPath isEqualToString:@"presenting"])
+    else if([object isEqual:self.splitShowDocument.presentationController] && [keyPath isEqualToString:@"presenting"])
     {
         if([[change objectForKey:NSKeyValueChangeNewKey] boolValue])
         {
@@ -481,13 +477,13 @@
 
 - (IBAction)togglePresentation:(id)sender
 {
-    if(self.presentationController.presenting)
+    if(self.splitShowDocument.presentationController.presenting)
     {
-        [self.presentationController stopPresentation];
+        [self.splitShowDocument.presentationController stopPresentation];
     }
     else
     {
-        [self.presentationController startPresentation];
+        [self.splitShowDocument.presentationController startPresentation];
     }
 }
 
@@ -495,7 +491,7 @@
 {
     if(menuItem.action == @selector(togglePresentation:))
     {
-        if(self.presentationController.presenting)
+        if(self.splitShowDocument.presentationController.presenting)
         {
             menuItem.title = NSLocalizedString(@"Stop presentation", @"Stop presentation");
         }
@@ -521,13 +517,13 @@
 
 - (void)keyDown:(NSEvent *)event
 {
-    [self.presentationController interpretKeyEvents:@[event]];
+    [self.splitShowDocument.presentationController interpretKeyEvents:@[event]];
 }
 
 //TODO: Why is ESC not a keyDown event?
 - (void)cancel:(id)sender
 {
-    [self.presentationController stopPresentation];
+    [self.splitShowDocument.presentationController stopPresentation];
 }
 
 #pragma mark - State restoration
@@ -538,18 +534,28 @@
 
     [coder encodeObject:self.selectedScreenMain forKey:@"selectedScreenMain"];
     [coder encodeObject:self.selectedScreenHelper forKey:@"selectedScreenHelper"];
-    [coder encodeObject:@(self.selectedPresentationMode) forKey:@"selectedPresentationMode"];
-    [coder encodeObject:self.presentationController forKey:@"presentationController"];
+    [coder encodeInteger:self.selectedPresentationMode forKey:@"selectedPresentationMode"];
 }
 
 - (void)restoreStateWithCoder:(NSCoder *)coder
 {
     [super restoreStateWithCoder:coder];
 
-    self.presentationController = [coder decodeObjectForKey:@"presentationController"];
-    self.selectedScreenMain = [coder decodeObjectForKey:@"selectedScreenMain"];
-    self.selectedScreenHelper = [coder decodeObjectForKey:@"selectedScreenHelper"];
-    self.selectedPresentationMode = (SplitShowPresentationMode)[[coder decodeObjectForKey:@"selectedPresentationMode"] integerValue];
+    SplitShowScreen *screen = [coder decodeObjectForKey:@"selectedScreenMain"];
+
+    if(screen != nil && ![screen isEqual:[NSNull null]])
+    {
+        self.selectedScreenMain = screen;
+    }
+
+    screen = [coder decodeObjectForKey:@"selectedScreenHelper"];
+
+    if(screen != nil && ![screen isEqual:[NSNull null]])
+    {
+        self.selectedScreenHelper = screen;
+    }
+
+    self.selectedPresentationMode = (SplitShowPresentationMode)[coder decodeIntegerForKey:@"selectedPresentationMode"];
 }
 
 @end
