@@ -78,9 +78,9 @@ static NSLock *pseudoLock = nil;
 
 + (instancetype)previewScreen
 {
-    [SplitShowScreen initPseudoLock];
+    [self initPseudoLock];
 
-    SplitShowScreen *screen = [[SplitShowScreen alloc] init];
+    SplitShowScreen *screen = [[self alloc] init];
     screen.mode = SplitShowScreenModePreview;
     screen.pseudoName = NSLocalizedString(@"Preview", @"Preview");
 
@@ -93,9 +93,9 @@ static NSLock *pseudoLock = nil;
 
 + (instancetype)windowScreen
 {
-    [SplitShowScreen initPseudoLock];
+    [self initPseudoLock];
 
-    SplitShowScreen *screen = [[SplitShowScreen alloc] init];
+    SplitShowScreen *screen = [[self alloc] init];
     screen.mode = SplitShowScreenModeWindow;
     screen.pseudoName = NSLocalizedString(@"New window", @"New window");
 
@@ -104,6 +104,22 @@ static NSLock *pseudoLock = nil;
     [pseudoLock unlock];
 
     return screen;
+}
+
++ (instancetype)screenWithScreen:(SplitShowScreen*)screen
+{
+    [self initPseudoLock];
+
+    SplitShowScreen *newScreen = [[self alloc] init];
+    newScreen.mode = screen.mode;
+    newScreen.pseudoName = screen.pseudoName;
+    newScreen.showTimer = screen.showTimer;
+
+    [pseudoLock lock];
+    newScreen.displayID = pseudoDisplayID++;
+    [pseudoLock unlock];
+
+    return newScreen;
 }
 
 - (NSString *)name
@@ -168,18 +184,13 @@ static NSLock *pseudoLock = nil;
         return YES;
     }
 
-    if(self.pseudoName != nil && screen.pseudoName != nil)
-    {
-        return [self.pseudoName isEqualToString:screen.pseudoName];
-    }
-    else if(self.pseudoName == nil && screen.pseudoName == nil)
+    if((self.pseudoName != nil && screen.pseudoName != nil) ||
+       (self.pseudoName == nil && screen.pseudoName == nil))
     {
         return self.displayID == screen.displayID;
     }
-    else
-    {
-        return NO;
-    }
+
+    return NO;
 }
 
 - (NSUInteger)hash

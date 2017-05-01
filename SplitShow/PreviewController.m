@@ -296,6 +296,12 @@
 
         if(newScreen != nil && ![newScreen isEqual:[NSNull null]])
         {
+            // Nedd to make a copy if it's a pseudo screen as the screen controller only contains a single instance
+            if([newScreen isPseudoScreen])
+            {
+                newScreen = [SplitShowScreen screenWithScreen:newScreen];
+            }
+
             if([kObserverSelectedScreenMain isEqualToString:keyPath])
             {
                 newScreen.document = self.mainScreen.document;

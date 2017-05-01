@@ -27,6 +27,7 @@ typedef enum : NSUInteger {
 
 + (instancetype)previewScreen;
 + (instancetype)windowScreen;
++ (instancetype)screenWithScreen:(SplitShowScreen*)screen;
 
 - (instancetype)initWithDisplayID:(CGDirectDisplayID)displayID;
 - (instancetype)initWithScreen:(NSScreen*)screen;
