@@ -48,8 +48,6 @@
 @property SplitShowScreen *mainScreen;
 @property SplitShowScreen *helperScreen;
 
-@property NSArray *presentationScreens;
-
 - (void)bindDisplayMenuButton:(NSPopUpButton*)button toProperty:(NSString*)property;
 
 - (SplitShowPresentationMode)guessPresentationMode;
@@ -292,6 +290,13 @@
             [kObserverSelectedScreenHelper isEqualToString:keyPath])
     {
         SplitShowScreen *oldScreen = [change objectForKey:NSKeyValueChangeOldKey];
+
+        if(oldScreen != nil && ![oldScreen isEqual:[NSNull null]])
+        {
+            [self.screenController unselectScreen:oldScreen];
+            [self.splitShowDocument.presentationController removeScreen:oldScreen];
+        }
+
         SplitShowScreen *newScreen = [change objectForKey:NSKeyValueChangeNewKey];
 
         if(newScreen != nil && ![newScreen isEqual:[NSNull null]])
@@ -312,13 +317,10 @@
                 newScreen.document = self.helperScreen.document;
                 newScreen.showTimer = YES;
             }
+
+            [self.screenController selectScreen:newScreen];
+            [self.splitShowDocument.presentationController addScreen:newScreen];
         }
-
-        [self.screenController unselectScreen:oldScreen];
-        [self.screenController selectScreen:newScreen];
-
-        [self.splitShowDocument.presentationController removeScreen:oldScreen];
-        [self.splitShowDocument.presentationController addScreen:newScreen];
 
         self.canStartPresentation = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
     }
@@ -354,10 +356,12 @@
         return;
     }
 
-    //FIXME: Causes crash in observer
-    SplitShowScreen *tmp = self.selectedScreenMain;
-    self.selectedScreenMain = self.selectedScreenHelper;
-    self.selectedScreenHelper = tmp;
+    // If not done like this one screen is lost due to observer
+    SplitShowScreen *main = self.selectedScreenMain;
+    SplitShowScreen *helper = self.selectedScreenHelper;
+    self.selectedScreenMain = nil;
+    self.selectedScreenHelper = main;
+    self.selectedScreenMain = helper;
 }
 
 - (void)exportCustomLayout:(id)sender
