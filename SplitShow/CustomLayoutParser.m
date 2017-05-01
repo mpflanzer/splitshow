@@ -176,7 +176,7 @@
         return nil;
     }
 
-    if(![self parseLayouts:[customLayout objectForKey:@"customLayouts"]])
+    if(![self parseLayouts:[customLayout objectForKey:@"customLayout"]])
     {
         [self setError:error];
         return nil;

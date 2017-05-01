@@ -17,7 +17,7 @@
 #import "CustomLayoutController.h"
 #import "Errors.h"
 
-#define kObserverCustomLayouts @"customLayouts"
+#define kObserverCustomLayout @"customLayout"
 #define kObserverPresentationMode @"selectedPresentationMode"
 #define kObserverSelectedScreenMain @"selectedScreenMain"
 #define kObserverSelectedScreenHelper @"selectedScreenHelper"
@@ -53,6 +53,7 @@
 - (SplitShowPresentationMode)guessPresentationMode;
 
 - (void)updatePreviewLayouts;
+- (void)initCustomScreens;
 
 @end
 
@@ -84,7 +85,7 @@
 
     [self addObserver:self forKeyPath:kObserverPresentationMode options:(NSKeyValueObservingOptionInitial | NSKeyValueObservingOptionNew) context:NULL];
 
-    [self.splitShowDocument addObserver:self forKeyPath:kObserverCustomLayouts options:NSKeyValueObservingOptionNew context:NULL];
+    [self.splitShowDocument addObserver:self forKeyPath:kObserverCustomLayout options:NSKeyValueObservingOptionNew context:NULL];
 
     [self.splitShowDocument.presentationController addObserver:self forKeyPath:@"presenting" options:NSKeyValueObservingOptionNew context:nil];
 
@@ -113,7 +114,7 @@
     [self removeObserver:self forKeyPath:kObserverSelectedScreenMain];
     [self removeObserver:self forKeyPath:kObserverSelectedScreenHelper];
     [self removeObserver:self forKeyPath:kObserverPresentationMode];
-    [self.splitShowDocument removeObserver:self forKeyPath:kObserverCustomLayouts];
+    [self.splitShowDocument removeObserver:self forKeyPath:kObserverCustomLayout];
     [self.splitShowDocument.presentationController removeObserver:self forKeyPath:@"presenting"];
 
     [[NSNotificationCenter defaultCenter] postNotificationName:kSplitShowNotificationWindowWillClose object:self.splitShowDocument];
@@ -192,18 +193,37 @@
             {
                 info = [self.splitShowDocument.customLayout objectAtIndex:0];
 
-                self.mainScreen.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
+                self.mainScreen.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"indices"] forMode:self.splitShowDocument.customLayoutMode];
 
                 if(self.splitShowDocument.customLayout.count > 1)
                 {
                     info = [self.splitShowDocument.customLayout objectAtIndex:1];
 
-                    self.helperScreen.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"slides"] forMode:self.splitShowDocument.customLayoutMode];
+                    self.helperScreen.document = [self.splitShowDocument createDocumentFromIndices:[info objectForKey:@"indices"] forMode:self.splitShowDocument.customLayoutMode];
                 }
             }
 
             break;
         }
+    }
+}
+
+- (void)initCustomScreens
+{
+    for(NSDictionary *info in self.splitShowDocument.customLayout)
+    {
+        SplitShowScreen *screen = [info objectForKey:@"screen"];
+
+        if(screen == nil)
+        {
+            continue;
+        }
+
+        NSMutableArray *indices = [info objectForKey:@"indices"];
+
+        screen.document = [self.splitShowDocument createDocumentFromIndices:indices forMode:self.splitShowDocument.customLayoutMode];
+
+        [self.splitShowDocument.presentationController addScreen:screen];
     }
 }
 
@@ -324,7 +344,7 @@
 
         self.canStartPresentation = ([self.selectedScreenMain isAvailable] || [self.selectedScreenHelper isAvailable]);
     }
-    else if([kObserverCustomLayouts isEqualToString:keyPath])
+    else if([keyPath isEqualToString:kObserverCustomLayout])
     {
         if(self.selectedPresentationMode == SplitShowPresentationModeCustom)
         {
@@ -398,7 +418,7 @@
                 [info removeObjectForKey:@"screen"];
             }
 
-            [JSONObject setObject:layouts forKey:@"customLayouts"];
+            [JSONObject setObject:layouts forKey:@"customLayout"];
 
             NSData *JSONData = [NSJSONSerialization dataWithJSONObject:JSONObject options:0 error:&JSONError];
 
@@ -495,6 +515,11 @@
     }
     else
     {
+        if(self.selectedPresentationMode == SplitShowPresentationModeCustom)
+        {
+            [self initCustomScreens];
+        }
+
         [self.splitShowDocument.presentationController startPresentation];
     }
 }

@@ -40,8 +40,6 @@
 - (void)initSelectedDisplays;
 - (void)setupViews;
 
-- (IBAction)changeLayoutMode:(NSPopUpButton*)button;
-
 @end
 
 @implementation CustomLayoutController
@@ -152,7 +150,7 @@
 
         NSLog(@"Screen changed");
 
-//        NSLog(@"%@", self.splitShowDocument.customLayouts[0][@"name"]);
+//        NSLog(@"%@", self.splitShowDocument.customLayout[0][@"name"]);
 
         [self.document invalidateRestorableState];
     }
@@ -212,8 +210,7 @@
             break;
 
         case SplitShowSlideModeSplit:
-            //FIXME
-            //self.pdfDocument = [self.splitShowDocument createSplitDocument];
+            self.pdfDocument = [self.splitShowDocument createSplitDocumentForMode:SplitShowSplitModeBoth];
             break;
     }
 
@@ -229,8 +226,8 @@
 
     for(NSDictionary *info in self.splitShowDocument.customLayout)
     {
-        PDFDocument *document = [info objectForKey:@"document"];
-        max = MAX(max, document.pageCount);
+        NSMutableArray *indices = [info objectForKey:@"indices"];
+        max = MAX(max, indices.count);
     }
 
     return max;
@@ -238,12 +235,12 @@
 
 - (void)willUpdateSlides
 {
-    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+    [self.splitShowDocument willChangeValueForKey:@"customLayout"];
 }
 
 - (void)didUpdateSlides
 {
-    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+    [self.splitShowDocument didChangeValueForKey:@"customLayout"];
 }
 
 - (void)didChangeLayoutName
@@ -253,14 +250,15 @@
 
 - (void)removeAllSlides
 {
-    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+    [self.splitShowDocument willChangeValueForKey:@"customLayout"];
 
     for(NSMutableDictionary *info in self.splitShowDocument.customLayout)
     {
-        [info setObject:[[PDFDocument alloc] init] forKey:@"document"];
+        NSMutableArray *indices = [info objectForKey:@"indices"];
+        [indices removeAllObjects];
     }
 
-    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+    [self.splitShowDocument didChangeValueForKey:@"customLayout"];
 }
 
 - (NSImage *)previewImageForSlide:(NSInteger)slide
@@ -378,7 +376,7 @@
 - (IBAction)addLayout:(id)sender
 {
     NSMutableDictionary *info = [NSMutableDictionary dictionaryWithObjectsAndKeys:
-                                 [[PDFDocument alloc] init], @"document",
+                                 [NSMutableArray array], @"indices",
                                  [NSString stringWithFormat:@"%@ #%lu", NSLocalizedString(@"Layout", @"Layout"), self.splitShowDocument.customLayout.count + 1], @"name",
                                  nil];
     [self.layoutController addObject:info];
@@ -455,17 +453,18 @@
         return;
     }
     
-    [self.splitShowDocument willChangeValueForKey:@"customLayouts"];
+    [self.splitShowDocument willChangeValueForKey:@"customLayout"];
 
     NSArray *sortedIndexPath = [self.selectedSlides sortedArrayUsingDescriptors:@[[[NSSortDescriptor alloc] initWithKey:@"section" ascending:YES], [[NSSortDescriptor alloc] initWithKey:@"item" ascending:NO]]];
 
     for(NSIndexPath *indexPath in sortedIndexPath)
     {
         NSMutableDictionary *info = [self.splitShowDocument.customLayout objectAtIndex:indexPath.section];
-        [[info objectForKey:@"document"] removePageAtIndex:indexPath.item];
+        NSMutableArray *indices = [info objectForKey:@"indices"];
+        [indices removeObjectAtIndex:indexPath.item];
     }
 
-    [self.splitShowDocument didChangeValueForKey:@"customLayouts"];
+    [self.splitShowDocument didChangeValueForKey:@"customLayout"];
 
     [self.selectedSlides removeAllObjects];
     [self invalidateRestorableState];

@@ -87,7 +87,7 @@
 
 - (NSMutableArray *)slides
 {
-    return [self.objectValue objectForKey:@"slides"];
+    return [self.objectValue objectForKey:@"indices"];
 }
 
 - (CAShapeLayer *)createSelectionMarkerAtIndex:(NSInteger)slideIndex

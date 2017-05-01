@@ -18,11 +18,11 @@
 
 - (void)setObjectValue:(id)objectValue
 {
-    SplitShowScreen *screen = [objectValue objectForKey:@"display"];
+    SplitShowScreen *screen = [objectValue objectForKey:@"screen"];
 
     if(![screen isAvailable])
     {
-        [objectValue removeObjectForKey:@"display"];
+        [objectValue removeObjectForKey:@"screen"];
     }
 
     [super setObjectValue:objectValue];
@@ -51,7 +51,7 @@
         [self.displayButton unbind:@"contentValues"];
         [self.displayButton unbind:@"selectedObject"];
 
-        [self removeObserver:self.delegate forKeyPath:@"objectValue.display"];
+        [self removeObserver:self.delegate forKeyPath:@"objectValue.screen"];
     }
 }
 
