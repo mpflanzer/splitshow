@@ -166,6 +166,11 @@
 
 #pragma mark - Key events
 
+- (void)scrollPageUp:(id)sender
+{
+    [self gotoPreviousSlide];
+}
+
 - (void)pageUp:(id)sender
 {
     [self gotoPreviousSlide];
@@ -182,6 +187,11 @@
 }
 
 - (void)pageDown:(id)sender
+{
+    [self gotoNextSlide];
+}
+
+- (void)scrollPageDown:(id)sender
 {
     [self gotoNextSlide];
 }
