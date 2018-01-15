@@ -1,5 +1,8 @@
 # Xcode
 #
+
+doc/demo/output/
+
 build/
 *.pbxuser
 !default.pbxuser
