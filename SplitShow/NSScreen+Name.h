@@ -3,7 +3,7 @@
 //  SplitShow
 //
 //  Created by Moritz Pflanzer on 06/05/2015.
-//  Copyright © 2015-2016 Moritz Pflanzer. All rights reserved.
+//  Copyright © 2015-2016, 2018 Moritz Pflanzer. All rights reserved.
 //
 
 #import <Foundation/Foundation.h>
