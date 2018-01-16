@@ -54,7 +54,7 @@
         {
             for(NSString *key in displayNames)
             {
-                if([key containsString:userLocale.languageCode])
+                if([key containsString:[userLocale objectForKey:NSLocaleLanguageCode]])
                 {
                     displayName = [displayNames valueForKey:key];
                     break;
@@ -67,7 +67,7 @@
         {
             for(NSString *key in displayNames)
             {
-                if([key containsString:systemLocale.languageCode])
+                if([key containsString:[systemLocale objectForKey:NSLocaleLanguageCode]])
                 {
                     displayName = [displayNames valueForKey:key];
                     break;
