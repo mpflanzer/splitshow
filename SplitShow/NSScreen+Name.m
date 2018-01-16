@@ -40,21 +40,29 @@
         NSLocale *userLocale = [NSLocale currentLocale];
         NSLocale *systemLocale = [NSLocale systemLocale];
 
+        NSString *userLocaleIdentifier = userLocale.localeIdentifier;
+        NSString *userLocaleLanguage = [userLocale objectForKey:NSLocaleLanguageCode];
+        NSString *systemLocaleIdentifier = systemLocale.localeIdentifier;
+        NSString *systemLocaleLanguage = [systemLocale objectForKey:NSLocaleLanguageCode];
+
         // Try display name for user locale
-        displayName = [displayNames valueForKey:userLocale.localeIdentifier];
+        if(userLocaleIdentifier)
+        {
+            displayName = [displayNames valueForKey:userLocaleIdentifier];
+        }
 
         // Try display name for system locale
-        if(!displayName)
+        if(!displayName && systemLocaleIdentifier)
         {
-            displayName = [displayNames valueForKey:systemLocale.localeIdentifier];
+            displayName = [displayNames valueForKey:systemLocaleIdentifier];
         }
 
         // Try display name for user language
-        if(!displayName)
+        if(!displayName && userLocaleLanguage)
         {
             for(NSString *key in displayNames)
             {
-                if([key containsString:[userLocale objectForKey:NSLocaleLanguageCode]])
+                if([key containsString:userLocaleLanguage])
                 {
                     displayName = [displayNames valueForKey:key];
                     break;
@@ -63,11 +71,11 @@
         }
 
         // Try display name for system language
-        if(!displayName)
+        if(!displayName && systemLocaleLanguage)
         {
             for(NSString *key in displayNames)
             {
-                if([key containsString:[systemLocale objectForKey:NSLocaleLanguageCode]])
+                if([key containsString:systemLocaleLanguage])
                 {
                     displayName = [displayNames valueForKey:key];
                     break;
