@@ -20,6 +20,7 @@ typedef enum : NSInteger
     SplitShowPresentationModeSplit,
     SplitShowPresentationModeInverseSplit,
     SplitShowPresentationModeMirror,
+    SplitShowPresentationModePresenter,
     SplitShowPresentationModeCustom,
 } SplitShowPresentationMode;
 

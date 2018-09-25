@@ -183,6 +183,11 @@
             self.helperScreen.document = [self.splitShowDocument createMirroredDocument];
             break;
 
+        case SplitShowPresentationModePresenter:
+            self.mainScreen.document = [self.splitShowDocument createMirroredDocument];
+            self.helperScreen.document = [self.splitShowDocument createPresenterDocument];
+            break;
+
         case SplitShowPresentationModeCustom:
         {
             NSDictionary *info;
@@ -276,6 +281,11 @@
             case SplitShowPresentationModeMirror:
                 self.mainDisplayItem.label = NSLocalizedString(@"First display", @"First display");
                 self.helperDisplayItem.label = NSLocalizedString(@"Second display", @"Second display");
+                break;
+
+            case SplitShowPresentationModePresenter:
+                self.mainDisplayItem.label = NSLocalizedString(@"Audience display", @"Audience display");
+                self.helperDisplayItem.label = NSLocalizedString(@"Presenter display", @"Presenter display");
                 break;
 
             case SplitShowPresentationModeCustom:

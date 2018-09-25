@@ -47,6 +47,7 @@ typedef enum : NSInteger {
 @property SplitShowSlideMode customLayoutMode;
 
 - (PDFDocument*)createMirroredDocument;
+- (PDFDocument*)createPresenterDocument;
 - (PDFDocument*)createInterleavedDocumentForGroup:(SplitShowInterleaveGroup)mode inMode:(SplitShowInterleaveMode)mode;
 - (PDFDocument*)createSplitDocumentForMode:(SplitShowSplitMode)mode;
 - (PDFDocument*)createDocumentFromIndices:(NSArray*)indices forMode:(SplitShowSlideMode)mode;

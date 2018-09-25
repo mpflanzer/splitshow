@@ -179,6 +179,13 @@
     return [self.pdfDocument copy];
 }
 
+- (PDFDocument*)createPresenterDocument
+{
+    PDFDocument *doc = [self.pdfDocument copy];
+    [doc removePageAtIndex:0];
+    return doc;
+}
+
 - (PDFDocument*)createInterleavedDocumentForGroup:(SplitShowInterleaveGroup)group inMode:(SplitShowInterleaveMode)mode
 {
     // TODO: Add caching
